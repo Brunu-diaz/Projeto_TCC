@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro</title>
+    <style>
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+        }
+    </style>
+</head>
+<body>
+    <h1>Cadastro de Usuário</h1>
+    <fieldset>
+        <legend>Formulário</legend>
+        <form action="" method="post">
+            <label for="nome">Digite seu nome:</label><br>
+            <input type="text" name="" id="nome" placeholder="Nome Completo"></form><br>
+
+            <label for="email">Digite seu e-mail</label><br>
+            <input type="email" name="" id="email" placeholder="E-mail"></input>
+            <br><br>
+
+            <label for="senha">Cadastre sua senha:</label><br>
+            <input type="text" name="" id="senha" placeholder="Máx. 8 caracteres" maxlength="8" required title="Apenas números"></input><br><br>
+
+            <label for="data">Data de nascimento:</label><br>
+            <input type="date" name="" id="data"></input><br><br>
+
+            <label for="curso">Esolha o curso:</label><br>
+            <select name="" id="curso">
+                <option value="">Cursos</option>
+                    <optgroup label="Tecnologia">
+                        <option value="">Engenharia de Software</option>
+                        <option value="">Ciência da Computação</option>
+                        <option value="">Sistema de Informação</option>
+                    </optgroup>
+                    <optgroup label="Engenharia">
+                        <option value="">Civil</option>
+                        <option value="">Elétrica</option>
+                        <option value="">Mecânica</option>
+                    </optgroup>
+            </select><br><br>
+
+            <input type="checkbox" id="termo"> <label for="termo">Termos de uso</label><br><br>
+
+            <input type="submit" value="Cadastrar">
+            <input type="reset" value="Limpar">
+            
+        </form>
+    </fieldset>
+</body>
+</html>
