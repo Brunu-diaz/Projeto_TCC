@@ -1,0 +1,34 @@
+-- ============================================
+-- Script SQL - Projeto LTP
+-- Sistema de Cadastro de Usuários
+-- Execute este script no phpMyAdmin ou MySQL Workbench
+-- ============================================
+
+-- Cria o banco de dados
+CREATE DATABASE IF NOT EXISTS projetoltp
+DEFAULT CHARACTER SET utf8mb4
+DEFAULT COLLATE utf8mb4_general_ci;
+
+-- Seleciona o banco de dados
+USE projetoltp;
+
+-- Recria a tabela caso já exista
+DROP TABLE IF EXISTS usuario;
+
+-- Cria a tabela usuario
+CREATE TABLE IF NOT EXISTS usuario (
+    id     INT AUTO_INCREMENT PRIMARY KEY COMMENT 'ID único do usuário',
+    nome   VARCHAR(100) NOT NULL          COMMENT 'Nome completo do usuário',
+    email  VARCHAR(100) NOT NULL UNIQUE   COMMENT 'Email do usuário (único)',
+    senha  VARCHAR(255) NOT NULL          COMMENT 'Senha criptografada com MD5',
+    status TINYINT(1)   DEFAULT 1         COMMENT '1 = Ativo, 0 = Inativo'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='Tabela de usuários do sistema';
+
+-- Insere dados de exemplo
+INSERT INTO usuario (nome, email, senha, status) VALUES
+('João Silva',     'joao@email.com',  MD5('123456'), 1),
+('Maria Santos',   'maria@email.com', MD5('123456'), 1),
+('Pedro Oliveira', 'pedro@email.com', MD5('123456'), 1);
+
+-- Exibe os dados inseridos
+SELECT * FROM usuario;

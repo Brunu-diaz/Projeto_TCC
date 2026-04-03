@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medida Certa - Home</title>
+    <!-- CSS do Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Seus ícones (Bootstrap Icons) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <!-- Favicon (Ícone na aba do navegador) -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><path fill='%230d6efd' d='M8 16a6 6 0 0 0 6-6c0-1.65-1.35-4-6-10-4.65 6-6 8.35-6 10a6 6 0 0 0 6 6z'/></svg>">
+    <!-- Link para arquivo css-->
+    <link rel="stylesheet" href="/HTML/css/style.css">
+</head>
+<body>
+    <!-- Hero Section -->
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm">
+            <div class="container">
+                <!-- Logo com o ícone de gota -->
+                <a class="navbar-brand d-flex align-items-center fw-bold" href="index.html">
+                    <i class="bi bi-droplet-fill me-2"></i> <!-- Ícone de gota -->
+                        MedidaCerta
+                </a>
+                    <!-- Botão para celular (hamburger) -->
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <!-- Links do Menu -->
+                    <div class="collapse navbar-collapse" id="navbarNav">
+                        <ul class="navbar-nav ms-auto text-white">
+                        <li class="nav-item"><a class="nav-link active fw-bold" href="index.html">Home</a></li>
+                        <li class="nav-item"><a class="nav-link" href="quemsomos.html">Quem Somos</a></li>
+                        <li class="nav-item"><a class="nav-link" href="index.html#contato">Contato</a></li>
+                        <li class="nav-item"><a class="nav-link" href="dashboard.html">Dashboard</a></li>
+                        <li class="nav-item"><a class="nav-link" href="login.html">Login <i class="bi bi-box-arrow-in-right"></i></a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <div id="carouselMedidaCerta" class="carousel slide" data-bs-ride="carousel">
+    <div class="carousel-inner">
+
+    <!-- Slide 1: Boas Vindas -->
+    <div class="carousel-item active" style="height: 550px;">
+        <img src="assets/Design sem nome (37).png" class="d-block w-100 h-100" alt="MedidaCerta" style="object-fit: cover;">
+        <div class="carousel-caption d-flex flex-column h-100 align-items-center justify-content-center">
+            <i class="bi bi-droplet-fill display-1 mb-3 text-white"></i>
+            <h1 class="display-4 fw-bold text-white">Bem-vindo ao MedidaCerta</h1>
+            <p class="lead text-white">A tecnologia que transforma a gestão de água no seu condomínio</p>
+            <a href="login.html" class="btn btn-primary btn-lg mt-3 fw-bold">Acessar Painel</a>
+        </div>
+    </div>
+
+    <!-- Slide 2: Economia -->
+    <div class="carousel-item bg-info" style="height: 550px;">
+    <img src="assets/Design sem nome (38).png" class="d-block w-100 h-100" alt="MedidaCerta" style="object-fit: cover;">
+    <div class="carousel-caption d-flex flex-column h-100 align-items-start justify-content-center text-start">
+        <div class="bg-dark-overlay p-4 rounded">
+            <h1 class="display-4 fw-bold text-white">Economia Real</h1>
+            <p class="lead text-white">Reduza o desperdício em até 30% com a individualização precisa</p>
+        </div>
+    </div>
+</div>
+
+    <!-- Slide 3: Transparência -->
+    <div class="carousel-item bg-info" style="height: 550px;">
+        <img src="assets/Design sem nome (39).png" class="d-block w-100 h-100" alt="MedidaCerta" style="object-fit: cover;">
+    <div class="carousel-caption d-flex flex-column h-100 align-items-start justify-content-center text-start">
+        <div class="carousel-caption d-flex flex-column h-100 align-items-center justify-content-center">
+            <i class="bi bi-file-earmark-check display-1 mb-3 text-white"></i>
+            <h1 class="display-4 fw-bold text-white">Transparência Total</h1>
+            <p class="lead text-white">Faturas detalhadas em PDF disponíveis a qualquer momento para o morador</p>
+        </div>
+    </div>
+</div>
+
+    <!-- BOTÕES DE CONTROLE (Certifique-se que o data-bs-target é o ID da div principal) -->
+    <button class="carousel-control-prev" type="button" data-bs-target="#carouselMedidaCerta" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Anterior</span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#carouselMedidaCerta" data-bs-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Próximo</span>
+    </button>
+</div>
+    <!-- Seção de Funcionalidades -->
+    <section id="funcionalidades" class="py-5 bg-light">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="fw-bold">Por que o MedidaCerta?</h2>
+                <p class="text-muted">Tecnologia a serviço da economia e do consumo consciente.</p>
+            </div>
+            <div class="row g-4 text-center">
+                <!-- Card 1 -->
+                <div class="col-md-4">
+                    <div class="p-4 border rounded-3 bg-white shadow-sm h-100">
+                        <i class="bi bi-graph-up-arrow text-primary fs-1 mb-3"></i>
+                        <h4>Gráficos de Consumo</h4>
+                        <p class="text-muted">Acompanhe seu histórico mensal e visualize tendências de gasto de forma clara.</p>
+                    </div>
+                </div>
+                <!-- Card 2 -->
+                <div class="col-md-4">
+                    <div class="p-4 border rounded-3 bg-white shadow-sm h-100">
+                        <i class="bi bi-file-earmark-pdf text-primary fs-1 mb-3"></i>
+                        <h4>Faturas em PDF</h4>
+                        <p class="text-muted">Geração automática de demonstrativos detalhados para cada unidade.</p>
+                    </div>
+                </div>
+                <!-- Card 3 -->
+                <div class="col-md-4">
+                    <div class="p-4 border rounded-3 bg-white shadow-sm h-100">
+                        <i class="bi bi-shield-check text-primary fs-1 mb-3"></i>
+                        <h4>Precisão Total</h4>
+                        <p class="text-muted">Cálculos automáticos baseados em tarifas reais, eliminando erros humanos.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+<!-- Seção "Como Funciona" -->
+<section class="bg-light py-5">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <h2 class="fw-bold mb-4">Gestão simplificada na palma da mão</h2>
+                <ul class="list-unstyled">
+                    <li class="mb-3 d-flex align-items-start">
+                        <i class="bi bi-1-circle-fill text-primary me-3 fs-4"></i>
+                        <div><strong>Medição:</strong> O leiturista registra o hidrômetro pelo sistema.</div>
+                    </li>
+                    <li class="mb-3 d-flex align-items-start">
+                        <i class="bi bi-2-circle-fill text-primary me-3 fs-4"></i>
+                        <div><strong>Processamento:</strong> O MedidaCerta calcula o consumo e gera o valor.</div>
+                    </li>
+                    <li class="mb-3 d-flex align-items-start">
+                        <i class="bi bi-3-circle-fill text-primary me-3 fs-4"></i>
+                        <div><strong>Disponibilização:</strong> O morador recebe o alerta e acessa o PDF.</div>
+                    </li>
+                </ul>
+            </div>
+            <div class="col-lg-6 text-center">
+                <!-- Aqui você pode colocar uma imagem do seu sistema no futuro -->
+                    <img src="assets/Design sem nome (39).png" class="d-block w-100 h-100 img-fluid rounded-4 shadow" alt="MedidaCerta" style="object-fit: cover;">
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-5 bg-white text-center">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4">
+                <h2 class="fw-bold text-primary">30%</h2>
+                <p class="text-muted text-uppercase small">Economia Média</p>
+            </div>
+            <div class="col-md-4">
+                <h2 class="fw-bold text-primary">100%</h2>
+                <p class="text-muted text-uppercase small">Digital e Sem Papel</p>
+            </div>
+            <div class="col-md-4">
+                <h2 class="fw-bold text-primary">+1500</h2>
+                <p class="text-muted text-uppercase small">Leituras Realizadas</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-5 bg-light">
+    <div class="container">
+        <h2 class="text-center fw-bold mb-5">Dúvidas Frequentes</h2>
+        <div class="accordion w-75 mx-auto" id="faqMedidaCerta">
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#item1">
+                        Como acesso minha fatura?
+                    </button>
+                </h2>
+                <div id="item1" class="accordion-collapse collapse" data-bs-parent="#faqMedidaCerta">
+                    <div class="accordion-body">
+                        Basta realizar o login com seu e-mail e senha e clicar no botão "Baixar PDF" no seu painel.
+                    </div>
+                </div>
+            </div>
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#item2">
+                        O sistema detecta vazamentos?
+                    </button>
+                </h2>
+                <div id="item2" class="accordion-collapse collapse" data-bs-parent="#faqMedidaCerta">
+                    <div class="accordion-body">
+                        Sim! Nosso algoritmo identifica aumentos bruscos de consumo e emite um alerta preventivo.
+                    </div>
+                </div>
+            </div>
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#item3">
+                        O sistema funciona sem internet?
+                    </button>
+                </h2>
+                <div id="item3" class="accordion-collapse collapse  " data-bs-parent="#faqMedidaCerta">
+                    <div class="accordion-body">
+                        Para garantir a sincronização dos dados e a segurança do seu histórico, é necessária uma conexão ativa. No entanto, o sistema é otimizado para funcionar bem mesmo em conexões de baixa velocidade.
+                    </div>
+                </div>
+            </div>
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#item4">
+                        O sistema MedidaCerta precisa de instalação no computador?
+                    </button>
+                </h2>
+                <div id="item4" class="accordion-collapse collapse" data-bs-parent="#faqMedidaCerta">
+                    <div class="accordion-body">
+                        Não. O sistema é 100% baseado na nuvem (SaaS). Você pode acessar de qualquer navegador (Chrome, Safari, Edge) no seu computador, tablet ou smartphone, sem ocupar espaço no seu dispositivo.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Seção de Contato -->
+<section id="contato" class="py-5 bg-white">
+    <div class="container">
+        <div class="row g-5">
+            <!-- Coluna 1: Informações de Contato -->
+            <div class="col-lg-5">
+                <h2 class="fw-bold text-primary mb-4">Fale Conosco</h2>
+                <p class="text-muted mb-4">
+                    Tem dúvidas sobre como implementar o sistema no seu condomínio? 
+                    Nossa equipe está pronta para ajudar.
+                </p>
+                
+                <div class="d-flex align-items-center mb-3">
+                    <div class="bg-primary text-white rounded-circle p-3 me-3">
+                        <i class="bi bi-geo-alt-fill"></i>
+                    </div>
+                    <div>
+                        <h6 class="mb-0 fw-bold">Localização</h6>
+                        <small class="text-muted">Brasília, DF - Brasil</small>
+                    </div>
+                </div>
+
+                <div class="d-flex align-items-center mb-3">
+                    <div class="bg-primary text-white rounded-circle p-3 me-3">
+                        <i class="bi bi-whatsapp"></i>
+                    </div>
+                    <div>
+                        <h6 class="mb-0 fw-bold">WhatsApp</h6>
+                        <small class="text-muted">(11) 99999-9999</small>
+                    </div>
+                </div>
+
+                <div class="d-flex align-items-center">
+                    <div class="bg-primary text-white rounded-circle p-3 me-3">
+                        <i class="bi bi-envelope-at-fill"></i>
+                    </div>
+                    <div>
+                        <h6 class="mb-0 fw-bold">E-mail</h6>
+                        <small class="text-muted">contato@medidacerta.com.br</small>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Coluna 2: Formulário -->
+            <div class="col-lg-7">
+                <div class="shadow-sm border-0 p-4">
+                    <form method="post" autocomplete="off" action="https://formspree.io/f/xjgazdoj">
+                        <input type="hidden" name="_next" value="http://127.0.0.1:5500/index.html?#/obrigado.html">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold" for="inome">Seu Nome</label>
+                                <input type="text" name="nome" class="form-control bg-light border-0" id="inome" placeholder="Nome completo">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold" for="iemail">E-mail</label>
+                                <input type="email" name="email" class="form-control bg-light border-0" id="iemail" placeholder="email@exemplo.com">
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label fw-semibold" for="icond">Nome do Condomínio</label>
+                                <input type="text" name="condominio" class="form-control bg-light border-0" placeholder="Ex: Edifício Gota de Ouro" id="icond">
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label fw-semibold" for="imens">Mensagem</label>
+                                <textarea class="form-control bg-light border-0" name="mensagem" rows="4" placeholder="Como podemos ajudar?" id="imens"></textarea>
+                            </div>
+                            <div class="col-12">
+                                <button type="submit" class="btn btn-primary btn-lg w-100 fw-bold shadow-sm">
+                                    Enviar Solicitação <i class="bi bi-send ms-2"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Footer Simples -->
+<footer class="py-4 bg-dark text-center text-white">
+    <div class="container">
+        <p class="mb-0">&copy; 2026 MedidaCerta - Sistema de Gestão de Água Condominial. Todos os direitos reservados.</p>
+        <p class="mb-0">CNPJ: 00.000.000/0001-00</p>
+        <p class="mb-0">Brasília-DF</p>
+    </div>
+</footer>
+
+</body>
+</html>
