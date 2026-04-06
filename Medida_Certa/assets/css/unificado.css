@@ -1,0 +1,168 @@
+/* ==========================================================================
+   1. GLOBAL & ESTRUTURA
+   ========================================================================== */
+body { 
+    font-family: 'Inter', sans-serif; 
+    background-color: #f8f9fa; 
+    margin: 0;
+}
+
+/* Header com o gradiente escuro padrão */
+.header-gradient { 
+    background: #1a202c; 
+    padding-bottom: 60px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.main-content { 
+    margin-top: -30px; 
+}
+
+/* ==========================================================================
+   2. NAVEGAÇÃO E PERFIL (ESTILO CÁPSULA ATUALIZADO)
+   ========================================================================== */
+
+/* Links do Menu - Efeito Cápsula */
+.navbar-nav .nav-link.custom-nav-link {
+    color: rgba(255, 255, 255, 0.7) !important;
+    border-radius: 50px !important; /* Arredondamento idêntico à imagem */
+    transition: all 0.2s ease-in-out;
+    font-size: 0.9rem;
+    font-weight: 500;
+    padding: 0.5rem 1.5rem !important;
+    align-items: center;
+    display: flex;
+}
+
+.navbar-nav .nav-link.custom-nav-link:hover {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+    color: #fff !important;
+}
+
+.navbar-nav .nav-link.custom-nav-link.active {
+    background-color: rgba(255, 255, 255, 0.15) !important;
+    color: #fff !important;
+}
+
+/* Ajuste do Badge ADMIN no logo */
+.admin-badge-style {
+    font-size: 0.55rem !important; 
+    padding: 0.35em 0.7em !important; 
+    letter-spacing: 0.5px;
+}
+
+/* Notificações (Sino CENTRALIZADO) */
+.nav-link-capsule {
+    width: 40px;
+    height: 40px;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50px;
+    transition: all 0.2s;
+    background-color:
+    position: relative;
+    text-decoration: none;
+}
+
+.nav-link-capsule:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Bolinha Vermelha de Notificação */
+.custom-notification-badge {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    background-color: #dc3545;
+    color: #ffffff;
+    border: 2px solid #1a1d20;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px !important;
+    font-weight: 800;
+}
+
+/* Perfil */
+.profile-circle {
+    width: 32px;
+    height: 32px;
+    background-color: #0d6efd;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 0.75rem;
+    border: 2px solid rgba(255,255,255,0.2);
+}
+
+/* ==========================================================================
+   3. DASHBOARD, CARDS E STATUS (CENTRALIZADOS)
+   ========================================================================== */
+
+/* Badges de Status (Ativo/Alerta) CENTRALIZADOS */
+.badge {
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    min-width: 65px;
+    height: 24px;
+    font-weight: 600;
+    font-size: 0.7rem;
+    padding: 0 10px !important;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    border-radius: 50px !important;
+}
+
+.card { 
+    border: none; 
+    border-radius: 16px; 
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05) !important;
+    transition: transform 0.2s; 
+}
+
+/* Ações Rápidas (Estilo List Group) */
+.card.actions-card .btn {
+    background-color: #f8fafc !important;
+    color: #475569 !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 12px !important;
+    padding: 1rem 1.25rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    transition: all 0.2s ease;
+}
+
+.card.actions-card .btn:hover {
+    background-color: #ffffff !important;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08) !important;
+}
+
+/* ==========================================================================
+   4. TABELAS E FOOTER
+   ========================================================================== */
+.table-container { background: #fff; border-radius: 15px; padding: 20px; }
+
+footer {
+    background-color: #1a202c !important;
+    color: rgba(255, 255, 255, 0.6) !important;
+    padding: 3rem 0;
+    margin-top: 4rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* Animações */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}

@@ -1,0 +1,147 @@
+/* Configurações Gerais */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    font-family: 'Inter', sans-serif;
+    background-color: #f0f4f8;
+}
+
+/* Navbar e Footer */
+.bg-primary, footer {
+    background: linear-gradient(135deg, #0d6efd 0%, #004085 100%) !important;
+}
+
+.main-container {
+    flex: 1;
+    padding: 60px 20px;
+}
+
+/* Card de Conteúdo Principal */
+.about-card {
+    border-radius: 25px;
+    border: none;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.08);
+    background-color: #ffffff;
+}
+
+/* Títulos - LINHAS AZUIS REMOVIDAS */
+.section-title {
+    color: #004085;
+    font-weight: 700;
+    margin-bottom: 10px;
+    display: block;
+    position: relative;
+    border: none !important; /* Garante que não haja borda */
+}
+
+/* Removido explicitamente qualquer indicador visual de linha */
+.section-title::after, .section-title::before {
+    display: none !important;
+    content: none !important;
+}
+
+/* Cards de Diferenciais (Missão, Visão, Valores e Pilares) */
+/* --- Cards da Página Quem Somos (Padrão Admin) --- */
+.feature-box {
+    background-color: #ffffff;
+    /* Começa com a borda neutra e suave */
+    border: 1px solid #e9ecef !important;
+    border-radius: 16px !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05) !important;
+    
+    /* Transição suave idêntica à Home/Admin */
+    transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+    cursor: default;
+}
+
+/* --- Hover: Ativa o Azul do MedidaCerta --- */
+.feature-box:hover {
+    transform: translateY(-8px);
+    border-color: #0d6efd !important; /* Borda azul no hover */
+    box-shadow: 0 12px 24px rgba(13, 110, 253, 0.15) !important; /* Sombra azulada */
+}
+
+/* Suavidade nos ícones */
+.feature-box i {
+    transition: transform 0.3s ease;
+    display: inline-block;
+}
+
+.feature-box:hover i {
+    transform: scale(1.1);
+}
+
+/* Ajuste específico para o card de Valores (lista) */
+.feature-box ul {
+    margin-top: 1rem;
+    padding-left: 0;
+}
+
+.about-card {
+    border: 1px solid #e9ecef !important;
+    border-radius: 20px !important;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.05) !important;
+}
+
+/* Equipe */
+.team-image-wrapper {
+    position: relative;
+    max-width: 320px;
+    margin: 0 auto;
+}
+
+.team-photo {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 5px solid #fff;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+}
+
+.drop-decorator {
+    position: absolute;
+    bottom: 15px;
+    right: 15px;
+    padding: 12px;
+    border: 3px solid #fff;
+}
+
+/* Remoção de linhas de divisão de seção */
+.border-top {
+    border-top: none !important;
+}
+
+/* Estilo para Textos */
+.lead {
+    color: #4a5568;
+    line-height: 1.7;
+}
+
+.text-muted {
+    color: #6c757d !important;
+}
+
+.logo-login {
+    font-size: 2.5rem;
+    color: #0d6efd;
+}
+
+/* Navbar links */
+.nav-link.active {
+    border-bottom: 2px solid #fff !important;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .main-container { padding: 30px 15px; }
+    .feature-box { margin-bottom: 10px; }
+    .team-image-wrapper { max-width: 250px; margin-bottom: 30px; }
+}

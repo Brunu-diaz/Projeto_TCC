@@ -8,75 +8,26 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Ícones do Bootstrap -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
-    
-    <style>
-        body {
-            background-color: #f0f2f5;
-            min-height: 100vh;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
-        /* Header com o seu degradê exato: 135deg, #0d6efd 0%, #0056b3 100% */
-        .navbar-custom {
-            background: linear-gradient(135deg, #0d6efd 0%, #0056b3 100%);
-        }
-
-        .card-custom {
-            border: none;
-            border-radius: 15px;
-            transition: transform 0.3s ease;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-        }
-
-        .card-custom:hover {
-            transform: translateY(-5px);
-        }
-
-        .icon-shape {
-            width: 50px;
-            height: 50px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-        }
-
-        .bg-gradient-blue {
-            background: linear-gradient(135deg, #0d6efd 0%, #0056b3 100%);
-            color: white;
-        }
-
-        .table-container {
-            background: white;
-            border-radius: 15px;
-            padding: 25px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-        }
-
-        /* Estilo para o gráfico não quebrar o layout */
-        #chartWrapper {
-            position: relative;
-            height: 300px;
-            width: 100%;
-        }
-    </style>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/css/dashboard.css">
 </head>
 <body>
 
     <!-- Header Padrão MedidaCerta -->
     <header>
-        <nav class="navbar navbar-expand-lg navbar-dark navbar-custom shadow-sm">
+        <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm">
             <div class="container">
-                <a class="navbar-brand d-flex align-items-center fw-bold" href="index.html">
-                    <i class="bi bi-droplet-fill me-2 text-white"></i> MedidaCerta
+                <a class="navbar-brand d-flex align-items-center fw-bold" href="../index.php">
+                    <i class="bi bi-droplet-fill me-2"></i> MedidaCerta
                 </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav ms-auto">
-                        <li class="nav-item"><a class="nav-link" href="login.html">Logon <i class="bi bi-box-arrow-in-right"></i></a></li>
+                        <li class="nav-item"><a class="nav-link" href="login.php">Sair <i class="bi bi-box-arrow-right"></i></a></li>
                     </ul>
                 </div>
             </div>
@@ -217,6 +168,14 @@
             </div>
         </div>
     </div>
+
+    <footer class="py-4 text-center text-white">
+    <div class="container">
+        <p class="mb-0">&copy; 2026 MedidaCerta - Sistema de Gestão de Água Condominial. Todos os direitos reservados.</p>
+        <p class="mb-0">CNPJ: 00.000.000/0001-00</p>
+        <p class="mb-0">Brasília-DF</p>
+    </div>
+</footer>
 
     <!-- Scripts: Bootstrap + Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

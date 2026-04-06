@@ -1,0 +1,51 @@
+        body {
+            background-color: #f0f2f5;
+            min-height: 100vh;
+            font-family: 'Inter', sans-serif;
+        }
+
+        /* Header com o seu degradê exato: 135deg, #0d6efd 0%, #0056b3 100% */
+        .bg-primary, footer {
+            background: linear-gradient(135deg, #0d6efd 0%, #004085 100%) !important;
+            width: 100%;
+        }
+
+        .card-custom {
+            border: none;
+            border-radius: 15px;
+            transition: transform 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+
+        .card-custom:hover {
+            transform: translateY(-5px);
+        }
+
+        .icon-shape {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .bg-gradient-blue {
+            background: linear-gradient(135deg, #0d6efd 0%, #0056b3 100%);
+            color: white;
+        }
+
+        .table-container {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+
+        /* Estilo para o gráfico não quebrar o layout */
+        #chartWrapper {
+            position: relative;
+            height: 300px;
+            width: 100%;
+        }

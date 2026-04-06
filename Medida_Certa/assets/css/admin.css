@@ -1,0 +1,431 @@
+/* ==========================================================================
+   1. GLOBAL & ESTRUTURA
+   ========================================================================== */
+body { 
+    font-family: 'Inter', sans-serif;  
+}
+
+.header-gradient { 
+    background: #1a202c; 
+    padding-bottom: 60px; 
+}
+
+.main-content { 
+    margin-top: -30px; 
+}
+
+/* Utilitários de Cards e Badges */
+.card { 
+    border: none; 
+    border-radius: 15px; 
+    transition: transform 0.2s; 
+}
+
+.badge { 
+    padding: 0.5em 1em; 
+    font-weight: 600; 
+}
+
+.badge i {
+    vertical-align: middle;
+    font-size: 0.85rem;
+}
+
+/* Deixa o card um pouco mais alto para acomodar o indicador */
+.stat-card .card-body {
+    padding: 1.25rem 1rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+/* ==========================================================================
+   NOVA ESTILIZAÇÃO INTEGRADA (CARD BRANCO) - AÇÕES RÁPIDAS
+   ========================================================================== */
+
+/* 1. O Card: Agora é Branco e segue o padrão visual do Dashboard */
+.card.actions-card {
+    background-color: #ffffff !important; /* Fundo branco puro */
+    border: none;
+    border-radius: 16px; /* Cantos suaves como os outros cards */
+    padding: 2rem !important; /* Espaçamento interno generoso */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05) !important; /* Sombra sutil padrão */
+}
+
+/* 2. O Título: Escuro e Discreto */
+.card.actions-card h6 {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #1a202c; /* Cinza escuro/preto sóbrio */
+    margin-bottom: 1.5rem !important;
+    text-align: left; /* Alinhamento padrão à esquerda */
+    display: flex;
+    align-items: center;
+}
+
+/* Ícone sutil opcional antes do título */
+.card.actions-card h6::before {
+    content: '\F4E1'; /* Ícone bi-lightning-charge */
+    font-family: 'Bootstrap-icons';
+    margin-right: 8px;
+    color: #0d6efd; /* Azul tema para o ícone */
+    font-size: 1.1rem;
+}
+
+/* 3. Os Botões: Estilo 'List Group' Sofisticado */
+.card.actions-card .d-grid {
+    gap: 10px; /* Espaçamento entre botões */
+}
+
+.card.actions-card .btn {
+    background-color: #f8fafc !important; /* Fundo cinza ultra-claro */
+    color: #475569 !important;           /* Texto cinza médio/escuro profissional */
+    border: 1px solid #e2e8f0 !important; /* Borda sutil */
+    border-radius: 12px !important;
+    padding: 1rem 1.25rem;
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+    text-align: left; /* Alinhamento do texto à esquerda */
+    display: flex;
+    align-items: center;
+    width: 100% !important;
+}
+
+/* 4. Os Ícones: Ganham Cores Separadas e Destaque */
+.card.actions-card .btn i {
+    font-size: 1.25rem;
+    margin-right: 15px !important;
+    transition: transform 0.2s ease;
+}
+
+/* Cores específicas para os ícones no estado inicial */
+.card.actions-card .btn.btn-nova-leitura i { color: #0d6efd; } /* Azul */
+.card.actions-card .btn.btn-cadastrar-unidade i { color: #198754; } /* Verde */
+
+/* 5. Hover Premium (Elevação e Realce de Cor) */
+.card.actions-card .btn:hover {
+    background-color: #ffffff !important; /* Fundo volta a ser branco no hover */
+    border-color: #cbd5e1 !important;     /* Borda fica um pouco mais visível */
+    transform: translateY(-2px);         /* Leve elevação tátil */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08) !important;
+    color: #1e293b !important;           /* Texto fica mais escuro */
+}
+
+/* Animação sutil no ícone ao passar o mouse */
+.card.actions-card .btn:hover i {
+    transform: scale(1.1);
+}
+
+/* ==========================================================================
+   6. RODAPÉ (FOOTER)
+   ========================================================================== */
+footer {
+    background-color: #1a202c !important; /* Mesmo tom sóbrio da Navbar */
+    color: rgba(255, 255, 255, 0.6) !important; /* Texto claro mas discreto */
+    padding: 3rem 0;
+    margin-top: 4rem;
+    width: 100%;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+footer p {
+    margin-bottom: 0.5rem;
+}
+
+footer strong {
+    color: #ffffff;
+    font-weight: 600;
+}
+
+/* Ajuste para o container do footer no seu HTML */
+footer.container {
+    max-width: 100% !important;
+    margin: 0;
+}
+
+/* ==========================================================================
+   2. NAVEGAÇÃO E PERFIL
+   ========================================================================== */
+/* Estilo para os links da Navbar */
+.navbar-nav .nav-link {
+    color: rgba(255, 255, 255, 0.8) !important;
+    font-weight: 500;
+    font-size: 0.95rem;
+    padding: 0.5rem 1rem !important;
+    transition: all 0.3s ease;
+    border-radius: 8px;
+}
+
+.navbar-nav .nav-link:hover {
+    color: #fff !important;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.navbar-nav .nav-link.active {
+    color: #fff !important;
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.navbar-nav .nav-link i {
+    font-size: 1.1rem;
+    opacity: 0.9;
+}
+
+.profile-circle {
+    width: 38px;
+    height: 38px;
+    background-color: #ffffff;
+    color: #0d6efd;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 0.85rem;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    transition: all 0.3s ease;
+}
+
+.profile-circle:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+/* Notificações (Sino e Badge) */
+.nav-item .bi-bell {
+    color: rgba(255, 255, 255, 0.8) !important;
+    font-size: 1.2rem;
+    transition: all 0.3s ease;
+}
+
+.nav-item:hover .bi-bell {
+    color: #ffffff !important;
+    filter: drop-shadow(0 0 5px rgba(13, 110, 253, 0.5));
+}
+
+.bg-danger {
+    background-color: #ff3b30 !important;
+    border: 2px solid #212529 !important;
+    width: 10px;
+    height: 10px;
+}
+
+/* Dropdown Moderno */
+.dropdown-menu {
+    border-radius: 12px !important;
+    padding: 0.5rem;
+    min-width: 200px;
+    border: none;
+    box-shadow: 0 10px 15px rgba(0,0,0,0.1) !important;
+}
+
+.dropdown-item {
+    border-radius: 8px;
+    padding: 0.6rem 1rem;
+    font-size: 0.9rem;
+    transition: all 0.2s;
+    white-space: normal;
+}
+
+.dropdown-item:hover {
+    background-color: #f8f9fa;
+    color: #0d6efd;
+}
+
+/* Container do link do sino */
+.nav-item.dropdown .nav-link {
+    width: 38px;
+    height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s;
+    border-radius: 50%; /* Faz o efeito de hover ser um círculo */
+}
+
+.nav-item.dropdown .nav-link:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* A Badge (Bolinha Vermelha) */
+.custom-notification-badge {
+    position: absolute;
+    top: 5px;    /* Ajuste fino para descer a bolinha */
+    right: 5px;  /* Ajuste fino para trazer para a esquerda */
+    
+    background-color: #dc3545; /* Vermelho do Bootstrap */
+    color: #ffffff;
+    
+    /* Borda escura para dar separação do ícone do sino */
+    border: 1.5px solid #212529; 
+    
+    /* Tamanho fixo ideal (não fica nem grande nem pequeno demais) */
+    width: 15px;
+    height: 15px;
+    
+    /* Formato perfeitamente circular */
+    border-radius: 50%;
+    
+    /* Centralização do número dentro da bolinha */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+    /* Tipografia do número */
+    font-size: 10px;
+    font-weight: 800;
+    line-height: 1;
+    padding: 0;
+}
+
+/* Estilização interna do Dropdown (Menu) */
+.dropdown-menu {
+    border-radius: 12px; /* Cantos mais arredondados para um ar moderno */
+    margin-top: 10px !important;
+}
+
+.dropdown-item:active {
+    background-color: #f8f9fa;
+    color: #212529;
+}
+
+/* Ajuste do scroll para não ficar feio */
+.dropdown-menu div::-webkit-scrollbar {
+    width: 5px;
+}
+
+.dropdown-menu div::-webkit-scrollbar-thumb {
+    background: #e0e0e0;
+    border-radius: 10px;
+}
+/* ==========================================================================
+   3. DASHBOARD E ESTATÍSTICAS
+   ========================================================================== */
+.stat-card { 
+    background: #fff; 
+    padding: 1.5rem; 
+    border-left: 4px solid #0d6efd; 
+}
+
+/* Progress bar personalizada */
+.progress { 
+    background-color: #e9ecef; 
+    border-radius: 10px; 
+}
+
+/* Alertas Prioritários (Lado Direito) */
+.alert-critical { 
+    background: #fff5f5; 
+    border: 1px solid #feb2b2; 
+    border-radius: 12px; 
+    animation: fadeIn 0.8s ease-out;
+}
+
+.pulse-icon {
+    animation: pulse-red 2s infinite;
+}
+
+/* ==========================================================================
+   4. TABELAS (MONITORAMENTO)
+   ========================================================================== */
+.table-container { 
+    background: #fff; 
+    border-radius: 15px; 
+    padding: 20px; 
+}
+
+.table { 
+    border-collapse: separate; 
+    border-spacing: 0 10px; 
+}
+
+.table thead th {
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 1px;
+    color: #718096;
+    border: none;
+}
+
+.table tbody tr {
+    background-color: #ffffff;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+    border-radius: 10px;
+    transition: transform 0.2s ease;
+}
+
+.table tbody tr:hover {
+    transform: scale(1.01);
+    background-color: #f8fafc !important;
+}
+
+.table td {
+    padding: 1.25rem;
+    border: none !important;
+}
+
+/* Container Otimizado para o Card do Gráfico */
+.card .chart-container {
+    position: relative;
+    width: 100%;
+    margin-top: 15px; /* Espaço para a legenda não colar no título */
+}
+
+/* Ajuste do Título e Badge para maior clareza */
+.card h6.fw-bold.mb-0 {
+    font-size: 0.9rem;
+    color: #212529 !important;
+}
+
+.card .badge.bg-light.text-dark.border {
+    font-size: 0.65rem;
+    padding: 0.35em 0.7em;
+    border-radius: 6px;
+    color: #64748b !important;
+    border-color: #e2e8f0 !important;
+}
+
+/* Feedback visual para quando não houver resultados (opcional) */
+#tabelaCorpo tr {
+    animation: fadeIn 0.3s ease;
+}
+
+/* Deixa os selects de filtro com a mesma estética dos inputs */
+.form-select-sm {
+    border-color: #dee2e6;
+    color: #64748b;
+    font-size: 0.8rem;
+}
+
+.form-select:focus {
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.1);
+}
+
+/* ==========================================================================
+   5. ANIMAÇÕES E PRINT
+   ========================================================================== */
+@keyframes pulse-red {
+    0% { transform: scale(0.95); opacity: 0.7; }
+    70% { transform: scale(1.1); opacity: 1; }
+    100% { transform: scale(0.95); opacity: 0.7; }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@media print {
+    .navbar, .btn, .input-group, footer, .header-gradient { 
+        display: none !important; 
+    }
+    .main-content { 
+        margin-top: 0 !important; 
+    }
+    .card, .table-container { 
+        box-shadow: none !important; 
+        border: 1px solid #eee !important; 
+    }
+}   

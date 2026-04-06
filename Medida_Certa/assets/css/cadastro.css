@@ -1,0 +1,126 @@
+/* Configurações Gerais - Reset para preenchimento total */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    font-family: 'Inter', sans-serif;
+}
+
+/* Navbar e Footer com o degradê padrão MedidaCerta */
+.bg-primary, footer {
+    background: linear-gradient(135deg, #0d6efd 0%, #004085 100%) !important;
+    width: 100%;
+}
+
+.main-container {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+}
+
+/* Card de Cadastro (seguindo o padrão 400px do login) */
+.login-card {
+    border-radius: 20px;
+    border: none;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+    width: 100%;
+    max-width: 420px; /* Um pouco mais largo para acomodar melhor o form de cadastro */
+}
+
+/* Estilização de Inputs (Padronizado com o Login) */
+.form-control {
+    border-radius: 10px;
+    padding: 12px;
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    transition: all 0.2s ease-in-out;
+}
+
+.form-control:focus {
+    background-color: #fff;
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.1);
+}
+
+.input-group-text {
+    border-radius: 10px 0 0 10px;
+    border: 1px solid #dee2e6;
+    border-right: none;
+    background-color: #f8f9fa;
+    color: #6c757d;
+}
+
+/* Ajuste de Bordas dos Grupos de Input */
+.input-group > .form-control {
+    border-radius: 0 10px 10px 0 !important;
+}
+
+/* Campos que possuem o botão de "Olhinho" (Senha e Confirmar) */
+.input-group > input[type="password"], 
+.input-group > input[type="text"].pw-input {
+    border-radius: 0 !important;
+    border-right: none !important;
+}
+
+/* Botões de visualizar senha */
+.btn-eye {
+    border-radius: 0 10px 10px 0 !important;
+    border: 1px solid #dee2e6 !important;
+    border-left: none !important;
+    background-color: #f8f9fa !important;
+}
+
+/* Botão Finalizar (Igual ao botão Entrar) */
+.btn-custom {
+    border-radius: 10px;
+    padding: 12px;
+    font-weight: bold;
+    transition: all 0.3s;
+    background-color: #0d6efd;
+    border: none;
+    color: white;
+}
+
+.btn-custom, 
+.btn-custom i,
+.btn-custom:hover, 
+.btn-custom:hover i,
+.btn-custom:focus,
+.btn-custom:active {
+    color: white !important;
+}
+
+.btn-custom:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(13, 110, 253, 0.3);
+    background-color: #0056b3;
+}
+
+.btn-custom:disabled {
+    background-color: #6c757d;
+    opacity: 0.6;
+}
+
+.logo-login {
+    font-size: 2.5rem;
+    color: #0d6efd;
+}
+
+/* Barra de Força da Senha */
+#barra-forca {
+    transition: width 0.4s ease, background-color 0.4s ease;
+}
+
+/* Responsividade */
+@media (max-width: 576px) {
+    .login-card { padding: 1.5rem !important; }
+    .logo-login { font-size: 2rem; }
+}

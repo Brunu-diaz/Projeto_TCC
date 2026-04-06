@@ -1,6 +1,3 @@
-//index.php
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js">
-
 //cadastro.php
     // Função para mostrar/esconder senha (genérica)
 function toggleSenha(idInput, idIcone) {
@@ -73,4 +70,3 @@ function avaliarForcaSenha() {
         texto.className = "text-success small";
     }
 }
-</script>

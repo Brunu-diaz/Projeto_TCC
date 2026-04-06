@@ -1,0 +1,116 @@
+/* Configurações Gerais */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    font-family: 'Inter', sans-serif;
+}
+
+/* Estilização da Navbar e Footer com o degradê do MedidaCerta */
+.bg-primary, footer {
+    background: linear-gradient(135deg, #0d6efd 0%, #004085 100%) !important;
+    width: 100%;
+}
+
+.main-container {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background-color: #f0f4f8;
+}
+
+/* Card de Login */
+.login-card {
+    border-radius: 20px;
+    border: none;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+    width: 100%;
+    max-width: 400px;
+}
+
+/* Inputs e Grupos */
+.form-control {
+    border-radius: 10px;
+    padding: 12px;
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    transition: all 0.2s ease-in-out;
+}
+
+.form-control:focus {
+    background-color: #fff;
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.1);
+}
+
+.input-group-text {
+    border-radius: 10px 0 0 10px;
+    border: 1px solid #dee2e6;
+    background-color: #f8f9fa;
+    color: #6c757d;
+}
+
+/* Ajuste Fino: Arredondamento dos campos */
+/* 1. Para campos sem botão (E-mail) */
+.input-group > .form-control:not(:last-child) {
+    border-radius: 0 10px 10px 0;
+    border-left: 1px solid #dee2e6;
+}
+
+/* 2. Para o campo com botão (Senha) */
+.input-group > #isenha {
+    border-radius: 0;
+    border: 1px solid #dee2e6;
+}
+
+/* Botão do Olhinho */
+#btn-senha {
+    border-radius: 0 10px 10px 0;
+    border: 1px solid #dee2e6;
+    border-left: none;
+    background-color: #f8f9fa;
+}
+
+#btn-senha:hover {
+    background-color: #f1f1f1;
+}
+
+#btn-senha:focus {
+    box-shadow: none;
+}
+
+/* Botão Entrar */
+.btn-login {
+    border-radius: 10px;
+    padding: 12px;
+    font-weight: bold;
+    transition: all 0.3s;
+}
+
+.btn-login:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(13, 110, 253, 0.3);
+}
+
+.logo-login {
+    font-size: 2.5rem;
+    color: #0d6efd;
+}
+
+.nav-link.active {
+    border-bottom: 2px solid #fff;
+}
+
+/* Responsividade */
+@media (max-width: 576px) {
+    .login-card { padding: 1.5rem !important; }
+    .logo-login { font-size: 2rem; }
+}

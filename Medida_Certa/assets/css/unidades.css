@@ -1,0 +1,161 @@
+/* ==========================================
+    MEDIDACERTA - UNIDADES.CSS (ESTILO ADMIN)
+    ========================================== */
+
+/* 1. Reset e Estrutura (Sticky Footer) */
+html, body {
+    height: 100%;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    font-family: 'Inter', sans-serif;
+    background-color: #f8f9fa; 
+    color: #333;
+    margin: 0;
+}
+
+main {
+    flex: 1;
+}
+
+/* 2. Header e Navbar */
+.header-gradient {
+    background: linear-gradient(135deg, #1a1d20 0%, #212529 100%);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.navbar-brand .fs-5 {
+    letter-spacing: -0.5px;
+}
+
+.custom-nav-link {
+    color: rgba(255, 255, 255, 0.7) !important;
+    border-radius: 12px !important;
+    transition: all 0.2s ease-in-out;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.custom-nav-link:hover {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+    color: #fff !important;
+}
+
+.custom-nav-link.active {
+    background-color: rgba(255, 255, 255, 0.15) !important;
+    color: #fff !important;
+}
+
+/* 3. Notificações e Perfil (CENTRALIZAÇÃO DO SINO) */
+.nav-link-capsule {
+    width: 40px;
+    height: 40px;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    transition: background-color 0.2s;
+    position: relative;
+    text-decoration: none;
+    padding: 0; /* Remove padding que desloca o ícone */
+}
+
+.nav-link-capsule:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.custom-notification-badge {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    background-color: #dc3545;
+    color: #ffffff;
+    border: 2px solid #1a1d20;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px !important;
+    font-weight: 800;
+    line-height: 1;
+}
+
+/* 4. Badges de Status (CENTRALIZAÇÃO ATIVO/ALERTA) */
+.badge {
+    display: inline-flex !important; /* Força o flex */
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    vertical-align: middle;
+    min-width: 65px; /* Garante espaço para o texto */
+    height: 24px;   /* Altura fixa para centralizar melhor */
+    font-weight: 600;
+    font-size: 0.7rem;
+    padding: 0 10px !important; /* Padding horizontal apenas */
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    border-radius: 50px !important; /* Deixa as pontas bem arredondadas */
+}
+
+/* 5. Título e Cards */
+.page-header-box {
+    margin-top: -35px;
+    position: relative;
+    z-index: 10;
+}
+
+.page-header-box > div {
+    border: none !important;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.06) !important;
+}
+
+.unit-card {
+    background-color: #ffffff;
+    border: none !important;
+    border-radius: 16px !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05) !important;
+    transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+.unit-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1) !important;
+}
+
+.icon-square {
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+}
+
+.progress {
+    background-color: #e9ecef;
+    border-radius: 10px;
+    height: 6px;
+    overflow: hidden;
+}
+
+/* Footer */
+footer {
+    background-color: #212529;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    color: #adb5bd;
+    padding: 2.5rem 0;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .page-header-box {
+        margin-top: 0;
+    }
+    .page-header-box > div {
+        border-radius: 0 !important;
+    }
+}
