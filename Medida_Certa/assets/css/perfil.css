@@ -1,0 +1,195 @@
+:root {
+    --main-blue: #0d6efd;
+    --main-dark-blue: #004085;
+    --bg-light: #f8f9fa;
+    --text-muted: #6c757d;
+    --white: #ffffff;
+    --transition-fast: 0.2s ease;
+}
+
+body {
+    background-color: var(--bg-light);
+    font-family: 'Inter', sans-serif;
+    color: #333;
+}
+
+/* --- Componentes Globais --- */
+.bg-primary, 
+footer {
+    background: linear-gradient(135deg, var(--main-blue) 0%, var(--main-dark-blue) 100%) !important;
+}
+
+footer p {
+    color: var(--white) !important;
+}
+
+/* --- Header/Navbar (Círculo Pequeno) --- */
+.profile-circle-wrapper {
+    position: relative;
+    width: 38px;
+    height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform var(--transition-fast);
+}
+
+.profile-circle-wrapper:hover {
+    transform: scale(1.05);
+}
+
+/* Círculo de iniciais no Header */
+.profile-initials-min {
+    width: 38px;
+    height: 38px;
+    background: rgba(255, 255, 255, 0.2);
+    border: 2px solid rgba(255, 255, 255, 0.5);
+    border-radius: 50%;
+    color: var(--white);
+    font-weight: 700;
+    font-size: 0.8rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-transform: uppercase;
+}
+
+.profile-img-min {
+    width: 38px;
+    height: 38px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 2px solid rgba(255, 255, 255, 0.8);
+}
+
+/* --- Conteúdo Principal (Círculo Grande) --- */
+.card-profile {
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.05);
+    background: var(--white);
+}
+
+.profile-upload-container {
+    position: relative;
+    width: 140px;
+    height: 140px;
+    margin: 0 auto;
+}
+
+/* Imagem de perfil grande */
+.profile-upload-container img {
+    width: 140px;
+    height: 140px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 5px solid var(--white);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+}
+
+/* NOVO: Círculo de iniciais grande (O que faltava!) */
+.profile-initials-large {
+    width: 140px;
+    height: 140px;
+    background: linear-gradient(135deg, var(--main-blue), var(--main-dark-blue));
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3rem;
+    font-weight: 700;
+    border: 5px solid var(--white);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+    text-transform: uppercase;
+}
+
+.btn-camera {
+    position: absolute;
+    bottom: 5px;
+    right: 5px;
+    background: var(--main-blue);
+    color: var(--white);
+    border-radius: 50%;
+    width: 38px;
+    height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 3px solid var(--white);
+    cursor: pointer;
+    z-index: 10;
+    transition: var(--transition-fast);
+}
+
+.btn-camera:hover { 
+    transform: scale(1.1); 
+    background: #0056b3; 
+}
+
+/* --- Formulários --- */
+.form-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    font-weight: 700;
+    color: var(--text-muted);
+    letter-spacing: 0.5px;
+}
+
+.form-control { 
+    border-radius: 10px; 
+    padding: 0.75rem 1rem; 
+}
+
+.form-control:focus {
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.15);
+}
+
+/* Badge de edição no Header */
+.edit-badge {
+    position: absolute;
+    bottom: -2px;
+    right: -2px;
+    background: #198754; /* Verde para indicar "online" ou "editar" */
+    color: white;
+    border-radius: 50%;
+    width: 14px;
+    height: 14px;
+    font-size: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid var(--white);
+}
+
+.dropdown-item {
+            border-radius: 8px;
+            padding: 0.6rem 1rem;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            transition: all 0.2s;
+        }
+
+        .dropdown-item:hover {
+            background-color: #f8f9fa;
+            color: #0d6efd;
+        }
+
+        .dropdown-item i {
+            font-size: 1.1rem;
+        }
+
+@media (min-width: 768px) { 
+    .border-end-md { border-right: 1px solid #e9ecef !important; } 
+}
+
+/* --- Animações --- */
+.animate { animation-duration: 0.3s; animation-fill-mode: both; }
+
+@keyframes slideIn { 
+    0% { transform: translateY(1rem); opacity: 0; } 
+    100% { transform: translateY(0rem); opacity: 1; } 
+}
+
+.slideIn { animation-name: slideIn; }

@@ -1,167 +1,178 @@
+<?php
+// 1. Segurança e Trava de Admin
+require_once __DIR__ . '/../controller/TravaAdmin.php';
+?>
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MedidaCerta - Cadastro</title>
+    <title>MedidaCerta - Cadastrar Usuário</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><path fill='%230d6efd' d='M8 16a6 6 0 0 0 6-6c0-1.65-1.35-4-6-10-4.65 6-6 8.35-6 10a6 6 0 0 0 6 6z'/></svg>">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../assets/css/cadastro.css">
+    <link rel="stylesheet" href="../assets/css/unificado.css">
 </head>
-<body>
-    <header>
-        <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm">
-            <div class="container-fluid px-lg-5">
-                <a class="navbar-brand d-flex align-items-center fw-bold" href="../index.php">
-                    <i class="bi bi-droplet-fill me-2" aria-hidden="true"></i> MedidaCerta
-                </a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav ms-auto text-white">
-                        <li class="nav-item"><a class="nav-link" href="../index.php">Home</a></li>
-                        <li class="nav-item"><a class="nav-link" href="quemsomos.php">Quem Somos</a></li>
-                        <li class="nav-item"><a class="nav-link" href="../index.php#contato">Contato</a></li>
-                        <li class="nav-item"><a class="nav-link" href="dashboard.php">Dashboard</a></li>
-                        <li class="nav-item"><a class="nav-link active fw-bold" href="login.php">Login <i class="bi bi-box-arrow-in-right" aria-hidden="true"></i></a></li>
-                    </ul>
-                </div>
-            </div>
-        </nav>
-    </header>
-    
-    <div class="main-container bg-light">
-        <div class="card login-card p-4 bg-white">
-            <div class="card-body">
-                <div class="text-center mb-4">
-                    <i class="bi bi-person-plus-fill logo-login" aria-hidden="true"></i>
-                    <h2 class="fw-bold text-dark mt-2">Criar Conta</h2>
-                    <p class="text-muted">Cadastre-se para gerenciar seu consumo</p>
-                </div>
 
-                <form action="../controller/CadastroUsuarioControl.php" method="POST">
-                    
-                    <div class="mb-3">
-                        <label class="form-label fw-bold small" for="nome">Nome Completo</label>
-                        <div class="input-group">
-                            <span class="input-group-text bg-light border-1"><i class="bi bi-person text-muted" aria-hidden="true"></i></span>
-                            <input type="text" name="nome" class="form-control border-1" id="nome" placeholder="Seu nome aqui" autocomplete="name" required>
+<body class="bg-light">
+
+    <?php include '../view/includes/header.php'; ?>
+
+    <div class="container page-header-box mb-4">
+        <div class="bg-white py-3 px-4 shadow-sm d-flex justify-content-between align-items-center" style="border-radius: 16px; border: 1px solid #f1f5f9;">
+            <div>
+                <h4 class="fw-bold mb-0 text-dark">Novo Usuário</h4>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb mb-0" style="font-size: 0.75rem;">
+                        <li class="breadcrumb-item"><a href="admin.php" class="text-decoration-none text-muted">Admin</a></li>
+                        <li class="breadcrumb-item"><a href="usuarios.php" class="text-decoration-none text-muted">Usuários</a></li>
+                        <li class="breadcrumb-item active">Cadastrar</li>
+                    </ol>
+                </nav>
+            </div>
+            <a href="admin.php" class="btn btn-outline-secondary rounded-3 px-3 shadow-sm">
+                <i class="bi bi-arrow-left me-1"></i> Voltar
+            </a>
+        </div>
+    </div>
+
+    <main class="main-container container mb-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-10 col-xl-8">
+                <div class="card p-4 p-md-5 shadow-sm border-0" style="border-radius: 20px;">
+
+                    <?php if (isset($_GET['sucesso'])): ?>
+                        <div class="alert alert-success border-0 shadow-sm rounded-3 mb-4">
+                            <i class="bi bi-check-circle-fill me-2"></i> Usuário cadastrado com sucesso!
                         </div>
-                    </div>
+                    <?php endif; ?>
 
-                    <div class="mb-3">
-                        <label class="form-label fw-bold small" for="email">E-mail</label>
-                        <div class="input-group">
-                            <span class="input-group-text bg-light border-1"><i class="bi bi-envelope text-muted" aria-hidden="true"></i></span>
-                            <input type="email" name="email" class="form-control border-1" id="email" placeholder="exemplo@email.com" autocomplete="email" required>
+                    <form action="../controller/CadastroUsuarioControl.php" method="POST">
+
+                        <div class="mb-5">
+                            <div class="d-flex align-items-center mb-4">
+                                <div class="icon-square bg-primary-subtle rounded-3 me-3 p-3">
+                                    <i class="bi bi-person-badge text-primary fs-4"></i>
+                                </div>
+                                <div>
+                                    <h5 class="fw-bold text-dark mb-0">Dados Pessoais</h5>
+                                    <p class="text-muted small mb-0">Informações básicas do cliente ou administrador.</p>
+                                </div>
+                            </div>
+
+                            <div class="row g-3">
+                                <div class="col-md-12">
+                                    <label class="form-label fw-bold text-dark small">Nome Completo</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-white border-end-0 rounded-start-3"><i class="bi bi-person"></i></span>
+                                        <input type="text" name="nome" class="form-control form-control-lg rounded-end-3" placeholder="Ex: João Silva" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label fw-bold text-dark small">E-mail</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-white border-end-0 rounded-start-3"><i class="bi bi-envelope"></i></span>
+                                        <input type="email" name="email" class="form-control form-control-lg rounded-end-3" placeholder="joao@email.com" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label fw-bold text-dark small">Telefone / WhatsApp</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-white border-end-0 rounded-start-3"><i class="bi bi-whatsapp"></i></span>
+                                        <input type="text" name="telefone" class="form-control form-control-lg rounded-end-3" placeholder="(00) 00000-0000">
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <label class="form-label fw-bold text-dark small">CPF ou CNPJ</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-white border-end-0 rounded-start-3"><i class="bi bi-card-text"></i></span>
+                                        <input type="text" name="cpf_cnpj" class="form-control form-control-lg rounded-end-3" placeholder="000.000.000-00">
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                    </div>
 
-                    <div class="mb-3">
-    <label class="form-label fw-bold small" for="senha">Senha</label>
-    <div class="input-group">
-        <span class="input-group-text bg-light border-1"><i class="bi bi-lock text-muted" aria-hidden="true"></i></span>
-        <input type="password" name="senha" class="form-control border-1 pw-input" id="senha" placeholder="••••••••" required autocomplete="new-password" oninput="avaliarForcaSenha(); validarFormulario();">
-        <button class="btn btn-eye" type="button" style="cursor: pointer;" onclick="toggleSenha('senha', 'btn-senha-1')">
-            <i class="bi bi-eye-slash text-muted" id="btn-senha-1" aria-hidden="true"></i>
-</button>
-    </div>
-    <div class="progress mt-2" style="height: 10px; border-radius: 20px;">
-    <div id="barra-forca" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%; border-radius: 20px;"></div>
-</div>
-<div class="text-center mt-1">
-    <small id="texto-forca" class="form-text" style="font-size: 0.7rem; font-weight: bold;"></small>
-</div>
-</div>
-
-<div class="mb-4">
-    <label class="form-label fw-bold small" for="confirmar_senha">Confirmar Senha</label>
-    <div class="input-group">
-        <span class="input-group-text bg-light border-1"><i class="bi bi-lock text-muted"></i></span>
-        <input type="password" name="confirmar_senha" class="form-control border-1 pw-input" id="confirmar_senha" placeholder="••••••••" required autocomplete="new-password" oninput="validarFormulario()">
-        <button class="btn btn-eye" type="button" style="cursor: pointer;" onclick="toggleSenha('confirmar_senha', 'btn-senha-2')">
-            <i class="bi bi-eye-slash text-muted" id="btn-senha-2" aria-hidden="true"></i> </button>
-    </div>
-    <div id="msg-erro" class="small mt-2" style="display: none; color: #dc3545;">
-        <i class="bi bi-exclamation-circle" aria-hidden="true"></i> As senhas não coincidem!
-    </div>
-</div>
-
-                    <div class="mb-4">
-    <div class="form-check">
-        <input class="form-check-input" type="checkbox" id="termos" name="termos" required onchange="validarFormulario()">
-        <label class="form-check-label small text-muted" for="termos">
-            Eu li e aceito os <a href="#" data-bs-toggle="modal" data-bs-target="#modalTermos" class="text-decoration-none">Termos de Uso e Política de Privacidade</a>.
-        </label>
-    </div>
-</div>
-                    <button type="submit" id="btn-finalizar" class="btn btn-login w-100 btn-custom shadow-sm mb-3" disabled>
-                        Finalizar Cadastro <i class="bi bi-check-circle ms-2"></i>
-                    </button>
-
-                    <a href="login.php" class="btn btn-outline-secondary w-100 btn-custom border-0">
-                        Já tenho conta, quero entrar
-                    </a>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <!-- <fieldset>
- <legend>Administração</legend>
- <form action="../controller/TestarConexaoControl.php"
-method="post">
- <button type="submit">Testar Conexão com o Banco</button>
- </form>
- </fieldset> -->
-
-    <footer class="py-4 bg-dark text-center text-white">
-        <div class="container-fluid px-lg-5">
-            <p class="mb-0">&copy; 2026 MedidaCerta - Sistema de Gestão de Água Condominial. Todos os direitos reservados.</p>
-            <p class="mb-0">CNPJ: 00.000.000/0001-00</p>
-            <p class="mb-0">Brasília-DF</p>
-        </div>
-    </footer>
-
-<div class="modal fade" id="modalTermos" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-scrollable">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title fw-bold text-primary">Termos de Uso e Privacidade - Medida Certa</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body small text-muted">
-                <h6 class="fw-bold text-dark">1. Finalidade do Tratamento de Dados</h6>
-                <p>O sistema Medida Certa coleta e processa seu nome, e-mail e dados de consumo hídrico exclusivamente para viabilizar a medição individualizada e o faturamento do seu imóvel, conforme o Art. 7º, inciso V da LGPD (execução de contrato).</p>
-
-                <h6 class="fw-bold text-dark">2. Transparência e Consumo</h6>
-                <p>Os dados de medição de água são utilizados para gerar relatórios, alertas de vazamento e histórico de consumo. Estes dados são visíveis apenas para o usuário da unidade e para o administrador do sistema.</p>
-
-                <h6 class="fw-bold text-dark">3. Segurança e Criptografia</h6>
-                <p>Em conformidade com o Art. 46 da LGPD, utilizamos medidas técnicas como criptografia de senhas e proteção de banco de dados para garantir que suas informações não sejam acessadas por terceiros não autorizados.</p>
-
-                <h6 class="fw-bold text-dark">4. Seus Direitos</h6>
-                <p>Você possui o direito de acessar, corrigir ou solicitar a exclusão de seus dados pessoais a qualquer momento, desde que não interfira nas obrigações legais de cobrança do condomínio.</p>
-
-                <h6 class="fw-bold text-dark">5. Responsabilidade do Usuário</h6>
-                <p>O usuário compromete-se a fornecer informações verídicas e a manter o sigilo de suas credenciais de acesso, sendo responsável pelo uso de sua conta.</p>
-
-                <div class="alert alert-info mt-3 p-2">
-                    Ao clicar em "Entendi", você confirma que compreende a forma como seus dados são tratados no ecossistema MedidaCerta.
+                        <div class="p-4 bg-light rounded-4 border border-dashed mb-5">
+                            <h6 class="fw-bold mb-4 text-secondary">
+                                <i class="bi bi-shield-lock-fill me-2"></i>Credenciais de Acesso
+                            </h6>
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label class="form-label fw-bold text-dark small">Username (Login)</label>
+                                    <input type="text" name="username" class="form-control form-control-lg rounded-3" placeholder="ex: joao.silva" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label fw-bold text-dark small">Senha Provisória</label>
+                                    <div class="input-group">
+                                        <input type="password" name="senha_provisoria" id="senha_provisoria" class="form-control form-control-lg rounded-start-3" required>
+                                        <button class="btn btn-outline-secondary border-start-0" type="button" id="btnGerarSenha" title="Gerar Senha Aleatória">
+                                            <i class="bi bi-magic"></i>
+                                        </button>
+                                        <button class="btn btn-outline-secondary rounded-end-3" type="button" id="btnVerSenha">
+                                            <i class="bi bi-eye" id="iconeOlho"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <label class="form-label fw-bold text-dark small">Perfil de Acesso</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-white border-end-0 rounded-start-3"><i class="bi bi-layers text-secondary"></i></span>
+                                        <select name="perfil" class="form-select form-control-lg rounded-end-3">
+                                            <option value="Morador" selected>Cliente</option>
+                                            <option value="Administrador">Administrador</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-5 d-flex justify-content-center border-top pt-4">
+                            <button type="submit" class="btn btn-primary rounded-3 px-5 shadow-sm fw-bold py-2">
+                                <i class="bi bi-person-plus-fill me-2"></i>Finalizar Cadastro
+                            </button>
+                        </div>
+                    </form>
                 </div>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Entendi</button>
-            </div>
         </div>
-    </div>
-</div>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script src="../assets/js/cadastro.js"></script>
+    </main>
+
+    <?php include '../view/includes/footer.php'; ?>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        const inputSenha = document.getElementById('senha_provisoria');
+        const btnGerar = document.getElementById('btnGerarSenha');
+        const btnVer = document.getElementById('btnVerSenha');
+        const iconeOlho = document.getElementById('iconeOlho');
+
+        // Função para Gerar Senha Aleatória
+        btnGerar.addEventListener('click', () => {
+            const caracteres = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@#%';
+            let senha = '';
+            for (let i = 0; i < 8; i++) {
+                senha += caracteres.charAt(Math.floor(Math.random() * caracteres.length));
+            }
+            inputSenha.value = senha;
+            // Muda para tipo 'text' automaticamente para o admin ver o que foi gerado
+            inputSenha.type = 'text';
+            iconeOlho.classList.replace('bi-eye', 'bi-eye-slash');
+        });
+
+        // Função para Alternar Visualização
+        btnVer.addEventListener('click', () => {
+            if (inputSenha.type === 'password') {
+                inputSenha.type = 'text';
+                iconeOlho.classList.replace('bi-eye', 'bi-eye-slash');
+            } else {
+                inputSenha.type = 'password';
+                iconeOlho.classList.replace('bi-eye-slash', 'bi-eye');
+            }
+        });
+    </script>
 </body>
+
 </html>

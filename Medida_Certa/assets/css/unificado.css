@@ -1,135 +1,211 @@
 /* ==========================================================================
-   1. GLOBAL & ESTRUTURA
+   1. CONFIGURAÇÕES DE INPUT (LOGIN / SENHA)
    ========================================================================== */
-body { 
+.input-group {
+    border: 1px solid #e0e4e8;
+    border-radius: 10px !important;
+    background-color: #fcfdfe;
+    overflow: hidden;
+}
+
+.input-group-text, .input-group .btn {
+    background-color: transparent !important;
+    border: none !important;
+    color: #a0abbb !important;
+    padding: 12px 18px;
+}
+
+.input-group-text {
+    border-right: 1px solid #f0f2f5 !important;
+}
+
+.input-group .btn {
+    border-left: 1px solid #f0f2f5 !important;
+}
+
+.input-group .form-control {
+    border: none !important;
+    box-shadow: none !important;
+    background: transparent !important;
+    padding: 12px;
+    font-size: 1rem;
+}
+
+.input-group:focus-within {
+    border-color: #d1d5db;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+}
+
+/* ==========================================================================
+   2. GLOBAL & ESTRUTURA
+   ========================================================================== */
+html, body { 
     font-family: 'Inter', sans-serif; 
     background-color: #f8f9fa; 
     margin: 0;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
 }
 
-/* Header com o gradiente escuro padrão */
 .header-gradient { 
-    background: #1a202c; 
+    background: #1a202c !important; 
     padding-bottom: 60px;
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .main-content { 
-    margin-top: -30px; 
+    margin-top: -30px;
+}
+
+main, .main-content { 
+    flex: 1 0 auto; 
+}
+
+.page-header-box {
+    margin-top: -45px;
+    position: relative;
+    z-index: 10;
 }
 
 /* ==========================================================================
-   2. NAVEGAÇÃO E PERFIL (ESTILO CÁPSULA ATUALIZADO)
+   3. NAVEGAÇÃO E HEADER (ESTILO ADMIN UNIFICADO)
    ========================================================================== */
 
-/* Links do Menu - Efeito Cápsula */
-.navbar-nav .nav-link.custom-nav-link {
-    color: rgba(255, 255, 255, 0.7) !important;
-    border-radius: 50px !important; /* Arredondamento idêntico à imagem */
-    transition: all 0.2s ease-in-out;
-    font-size: 0.9rem;
-    font-weight: 500;
-    padding: 0.5rem 1.5rem !important;
-    align-items: center;
-    display: flex;
-}
-
-.navbar-nav .nav-link.custom-nav-link:hover {
-    background-color: rgba(255, 255, 255, 0.1) !important;
-    color: #fff !important;
-}
-
-.navbar-nav .nav-link.custom-nav-link.active {
-    background-color: rgba(255, 255, 255, 0.15) !important;
-    color: #fff !important;
-}
-
-/* Ajuste do Badge ADMIN no logo */
+/* Badge ADMIN ao lado do logo */
 .admin-badge-style {
-    font-size: 0.55rem !important; 
-    padding: 0.35em 0.7em !important; 
+    font-size: 0.55rem !important;
+    padding: 0.35em 0.7em !important;
     letter-spacing: 0.5px;
+    vertical-align: middle;
+    margin-bottom: 2px;
 }
 
-/* Notificações (Sino CENTRALIZADO) */
-.nav-link-capsule {
-    width: 40px;
-    height: 40px;
-    display: flex !important;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50px;
-    transition: all 0.2s;
-    background-color:
-    position: relative;
-    text-decoration: none;
+/* Alinhamento da lista de navegação para evitar saltos */
+.navbar-nav {
+    align-items: center !important;
 }
 
-.nav-link-capsule:hover {
-    background-color: rgba(255, 255, 255, 0.1);
+/* Links da Navbar - Unificação de altura e padding */
+html body .navbar-nav .nav-link {
+    color: rgba(255, 255, 255, 0.8) !important;
+    font-weight: 500;
+    font-size: 0.95rem;
+    padding: 0.5rem 1rem !important; /* Padding lateral fixo */
+    transition: all 0.3s ease;
+    border-radius: 8px;
 }
 
-/* Bolinha Vermelha de Notificação */
+html body .navbar-nav .nav-link:hover {
+    color: #fff !important;
+    background: rgba(255, 255, 255, 0.1) !important;
+}
+
+html body .navbar-nav .nav-link.active {
+    color: #fff !important;
+    background: rgba(255, 255, 255, 0.15) !important;
+    border-radius: 8px !important;
+}
+
+/* A Badge (Bolinha Vermelha) */
 .custom-notification-badge {
     position: absolute;
-    top: 4px;
-    right: 4px;
-    background-color: #dc3545;
+    top: 5px;    /* Ajuste fino para descer a bolinha */
+    right: 5px;  /* Ajuste fino para trazer para a esquerda */
+    
+    background-color: #dc3545; /* Vermelho do Bootstrap */
     color: #ffffff;
-    border: 2px solid #1a1d20;
-    width: 18px;
-    height: 18px;
+    
+    /* Borda escura para dar separação do ícone do sino */
+    border: 1.5px solid #212529; 
+    
+    /* Tamanho fixo ideal (não fica nem grande nem pequeno demais) */
+    width: 15px;
+    height: 15px;
+    
+    /* Formato perfeitamente circular */
     border-radius: 50%;
-    display: flex !important;
+    
+    /* Centralização do número dentro da bolinha */
+    display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 10px !important;
+    
+    /* Tipografia do número */
+    font-size: 10px;
     font-weight: 800;
+   
 }
 
-/* Perfil */
+/* Perfil (Iniciais no círculo) */
 .profile-circle {
-    width: 32px;
-    height: 32px;
-    background-color: #0d6efd;
-    color: white;
+    width: 38px;
+    height: 38px;
+    background-color: #ffffff;
+    color: #0d6efd;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-weight: bold;
-    font-size: 0.75rem;
-    border: 2px solid rgba(255,255,255,0.2);
+    font-weight: 600;
+    font-size: 1.2rem;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    
+}
+
+.profile-circle:hover {
+    transform: scale(1.05);
+}
+
+/* Dropdowns */
+.dropdown-menu {
+    border-radius: 12px !important;
+    padding: 0.5rem;
+    min-width: 200px;
+    border: none;
+    box-shadow: 0 10px 15px rgba(0,0,0,0.1) !important;
+    margin-top: 10px !important;
+}
+
+.dropdown-item {
+    border-radius: 8px;
+    padding: 0.6rem 1rem;
+    font-size: 0.9rem;
+    transition: all 0.2s;
 }
 
 /* ==========================================================================
-   3. DASHBOARD, CARDS E STATUS (CENTRALIZADOS)
+   4. CARDS E COMPONENTES
    ========================================================================== */
-
-/* Badges de Status (Ativo/Alerta) CENTRALIZADOS */
-.badge {
-    display: inline-flex !important;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    min-width: 65px;
-    height: 24px;
-    font-weight: 600;
-    font-size: 0.7rem;
-    padding: 0 10px !important;
-    letter-spacing: 0.5px;
-    text-transform: uppercase;
-    border-radius: 50px !important;
-}
-
 .card { 
     border: none; 
     border-radius: 16px; 
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05) !important;
-    transition: transform 0.2s; 
+    transition: all 0.2s ease-in-out;
 }
 
-/* Ações Rápidas (Estilo List Group) */
+.unit-card:hover {
+    transform: translateY(-8px) !important;
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15) !important;
+}
+
+.icon-square {
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.card-body .icon-square.icon-home { background-color: #e6f1fe !important; }
+.card-body .icon-square.icon-home i { color: #1a73e8 !important; }
+.card-body .icon-square.icon-store { background-color: #fffaf0 !important; }
+.card-body .icon-square.icon-store i { color: #f6c23e !important; }
+
+/* Botões de Ações Rápidas */
 .card.actions-card .btn {
     background-color: #f8fafc !important;
     color: #475569 !important;
@@ -139,29 +215,75 @@ body {
     font-weight: 600;
     display: flex;
     align-items: center;
-    transition: all 0.2s ease;
-}
-
-.card.actions-card .btn:hover {
-    background-color: #ffffff !important;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08) !important;
 }
 
 /* ==========================================================================
-   4. TABELAS E FOOTER
+   5. FOOTER E ANIMAÇÕES
    ========================================================================== */
-.table-container { background: #fff; border-radius: 15px; padding: 20px; }
-
 footer {
     background-color: #1a202c !important;
     color: rgba(255, 255, 255, 0.6) !important;
     padding: 3rem 0;
     margin-top: 4rem;
     border-top: 1px solid rgba(255, 255, 255, 0.05);
+    text-align: center;
+    flex-shrink: 0;
 }
 
-/* Animações */
+@media print {
+    /* Esconde menus, botões de filtro e o botão de imprimir na folha */
+    .sidebar, .navbar, .btn, form, .no-print {
+        display: none !important;
+    }
+    
+    /* Garante que a tabela ocupe a largura total no papel */
+    .container, .card {
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        border: none !important;
+    }
+
+    body {
+        background-color: white !important;
+    }
+
+    .table {
+        border-collapse: collapse !important;
+    }
+}
+
+/* Estilização dos inputs para parecerem mais modernos */
+.form-control:focus, .form-select:focus {
+    box-shadow: none;
+    border-color: #0d6efd; /* Cor do MedidaCerta */
+}
+
+.input-group-text {
+    color: #6c757d;
+    font-size: 1.1rem;
+}
+
+.form-label {
+    letter-spacing: 0.5px;
+    margin-bottom: 0.4rem;
+}
+
+/* Efeito suave nos botões internos do input de senha */
+.btn-white {
+    background: #fff;
+    border-color: #dee2e6;
+}
+.btn-white:hover {
+    background: #f8f9fa;
+    color: #0d6efd !important;
+}
+
+/* Card padding e sombra */
+.card {
+    transition: transform 0.2s ease;
+}
+
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(-10px); }
     to { opacity: 1; transform: translateY(0); }

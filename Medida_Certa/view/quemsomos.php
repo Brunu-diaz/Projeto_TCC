@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,6 +13,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../assets/css/quemsomos.css">
 </head>
+
 <body>
 
     <header>
@@ -29,7 +31,6 @@
                         <li class="nav-item"><a class="nav-link" href="../index.php">Home</a></li>
                         <li class="nav-item"><a class="nav-link active fw-bold" href="quemsomos.php">Quem Somos</a></li>
                         <li class="nav-item"><a class="nav-link" href="../index.php#contato">Contato</a></li>
-                        <li class="nav-item"><a class="nav-link" href="dashboard.php">Dashboard</a></li>
                         <li class="nav-item"><a class="nav-link" href="login.php">Login <i class="bi bi-box-arrow-in-right"></i></a></li>
                     </ul>
                 </div>
@@ -78,42 +79,42 @@
                             </div>
 
                             <div class="row g-4 mb-5">
-    <div class="col-md-4">
-        <div class="feature-box h-100 p-4 text-center">
-            <div class="mb-3">
-                <i class="bi bi-shield-check text-primary fs-1"></i>
-            </div>
-            <h3 class="fw-bold h5 section-title">Confiabilidade</h3>
-            <p class="small text-muted mt-3 mb-0">
-                Dados auditáveis e precisos processados com criptografia para garantir a segurança das informações do condomínio.
-            </p>
-        </div>
-    </div>
+                                <div class="col-md-4">
+                                    <div class="feature-box h-100 p-4 text-center">
+                                        <div class="mb-3">
+                                            <i class="bi bi-shield-check text-primary fs-1"></i>
+                                        </div>
+                                        <h3 class="fw-bold h5 section-title">Confiabilidade</h3>
+                                        <p class="small text-muted mt-3 mb-0">
+                                            Dados auditáveis e precisos processados com criptografia para garantir a segurança das informações do condomínio.
+                                        </p>
+                                    </div>
+                                </div>
 
-    <div class="col-md-4">
-        <div class="feature-box h-100 p-4 text-center">
-            <div class="mb-3">
-                <i class="bi bi-tree text-success fs-1"></i>
-            </div>
-            <h3 class="fw-bold h5 section-title">Efeito Ecológico</h3>
-            <p class="small text-muted mt-3 mb-0">
-                Foco total na redução drástica do desperdício através da identificação precoce de vazamentos e consumo consciente.
-            </p>
-        </div>
-    </div>
+                                <div class="col-md-4">
+                                    <div class="feature-box h-100 p-4 text-center">
+                                        <div class="mb-3">
+                                            <i class="bi bi-tree text-success fs-1"></i>
+                                        </div>
+                                        <h3 class="fw-bold h5 section-title">Efeito Ecológico</h3>
+                                        <p class="small text-muted mt-3 mb-0">
+                                            Foco total na redução drástica do desperdício através da identificação precoce de vazamentos e consumo consciente.
+                                        </p>
+                                    </div>
+                                </div>
 
-    <div class="col-md-4">
-        <div class="feature-box h-100 p-4 text-center">
-            <div class="mb-3">
-                <i class="bi bi-phone text-primary fs-1"></i>
-            </div>
-            <h3 class="fw-bold h5 section-title">Mobilidade</h3>
-            <p class="small text-muted mt-3 mb-0">
-                Controle total na palma da sua mão. Monitore seu consumo e receba alertas de qualquer lugar através do smartphone.
-            </p>
-        </div>
-    </div>
-</div>
+                                <div class="col-md-4">
+                                    <div class="feature-box h-100 p-4 text-center">
+                                        <div class="mb-3">
+                                            <i class="bi bi-phone text-primary fs-1"></i>
+                                        </div>
+                                        <h3 class="fw-bold h5 section-title">Mobilidade</h3>
+                                        <p class="small text-muted mt-3 mb-0">
+                                            Controle total na palma da sua mão. Monitore seu consumo e receba alertas de qualquer lugar através do smartphone.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
 
                             <div class="row align-items-center g-5 pt-5 border-top">
                                 <div class="col-md-5 order-md-2 text-center">
@@ -137,14 +138,15 @@
         </div>
     </main>
 
-    <footer class="py-4 text-center text-white">
-            <div class="container">
-                <p class="mb-0">&copy; 2026 MedidaCerta - Sistema de Gestão de Água Condominial. Todos os direitos reservados.</p>
-                <p class="mb-0">CNPJ: 00.000.000/0001-00</p>
-                <p class="mb-0">Brasília-DF</p>
-            </div>
-        </footer>
+    <footer class="py-4 text-center">
+        <div class="container">
+            <p class="mb-1 text-white"><strong>&copy; 2026 MedidaCerta</strong> Sistema de Gestão de Água Condominial. Todos os direitos reservados.</p>
+            <p class="mb-0 text-white small">CNPJ: 00.000.000/0001-00</p>
+            <p class="mb-0 text-white small">Brasília-DF</p>
+        </div>
+    </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>

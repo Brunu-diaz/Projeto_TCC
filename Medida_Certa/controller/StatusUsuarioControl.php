@@ -1,65 +1,40 @@
 <?php
 /**
-* Este arquivo funciona como um controlador de fluxo para a alteração de status
-* de um usuário (Ativo/Inativo).
-*/
-// 1. Importação da Camada de Persistência (Model/DAO)
-require_once '../Model/dao/UsuarioDAO.php';
-// 2. Verificação de Segurança
+ * Controller: StatusUsuarioControl.php
+ * Finalidade: Bloquear ou Desbloquear o acesso de um usuário (Solução Definitiva)
+ */
+
+require_once __DIR__ . '/TravaAdmin.php';
+require_once __DIR__ . '/../model/dao/UsuarioDAO.php';
+
 if (isset($_POST['id']) && isset($_POST['status'])) {
 
- $id = $_POST['id'];
- $novoStatus = $_POST['status'];
- // 3. Instanciação do DAO
- $usuarioDAO = new UsuarioDAO();
- // 4. Execução da alteração no banco de dados
- $resultado = $usuarioDAO->alterarStatus($id, $novoStatus);
- // ============================================================
- // 5. EXPLICAÇÃO DETALHADA DO "IF" (Lógica de Decisão)
- // ============================================================
+    $id = filter_input(INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT);
+    // Agora o status 1 significa BLOQUEADO e 0 significa LIBERADO
+    $novoStatusBloqueio = filter_input(INPUT_POST, 'status', FILTER_SANITIZE_NUMBER_INT);
 
- /* COMO O IF FUNCIONA AQUI:
- 1. O programa chega nesta linha e olha o valor da variável
-$novoStatus.
- 2. Ele faz uma comparação lógica: "O valor que está aqui dentro
-é igual a 1?".
- */
- if ($novoStatus == 1) {
- // O QUE ELE FARÁ:
- // Se a resposta for SIM (Verdadeiro), o PHP entra NESTE BLOCO.
- // Ele ignora tudo o que está no 'else' e define a mensagem
-abaixo:
- $msg = "Usuário ativado!";
+    $usuarioDAO = new UsuarioDAO();
 
- } else {
- // O QUE ELE FARÁ:
- // Se a resposta for NÃO (Falso), ou seja, se o status for 0 ou qualquer outro valor,
- // o PHP pula o bloco de cima e executa obrigatoriamente este aqui.
- $msg = "Usuário desativado!";
- }
- // Após sair do if/else, a variável $msg já possui o texto correto aguardado.
- // ============================================================
- // 6. Resposta ao Usuário via Script (JavaScript)
- if ($resultado) {
- //ESTE SEGUNDO 'IF' VERIFICA O SUCESSO DO BANCO:
- //Se $resultado for true: Gera o alerta com a $msg definida acima.
-//window.location.href: Redireciona o navegador para a página da lista.  */
- echo "<script>
- alert('$msg');
- window.location.href = '../View/listarUsuarios.php';
- </script>";
- } else {
-//Se $resultado for false: O erro aconteceu na conexão ou na query SQL.
+    // ALTERAÇÃO AQUI: Chamando o método que criamos para a nova coluna 'bloqueado'
+    $resultado = $usuarioDAO->alternarBloqueio($id, $novoStatusBloqueio);
 
- echo "<script>
- alert('Erro ao processar solicitação no banco de
-dados.');
- window.location.href = '../View/listarUsuarios.php';
- </script>";
- }
+    // Lógica de Mensagem baseada na coluna 'bloqueado'
+    if ($novoStatusBloqueio == 1) {
+        $msg = "Acesso do usuário suspenso!";
+    } else {
+        $msg = "Acesso do usuário liberado!";
+    }
+
+    if ($resultado) {
+        // Sugestão: Passar a mensagem via URL ou Sessão para o alert aparecer na lista
+        header("Location: ../view/listarUsuarios.php?msg=" . urlencode($msg));
+        exit;
+    } else {
+        header("Location: ../view/listarUsuarios.php?msg=erro");
+        exit;
+    }
+
 } else {
-//Redirecionamento de segurança caso o arquivo seja acessado sem dados POST
- header("Location: ../View/listarUsuarios.php");
- exit();
+    header("Location: ../view/listarUsuarios.php");
+    exit();
 }
-?>
