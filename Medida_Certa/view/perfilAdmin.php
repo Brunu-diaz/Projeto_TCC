@@ -222,10 +222,16 @@ if (empty($_SESSION['csrf_token'])) {
                 <h4 class="fw-bold mb-0 text-dark">Perfil do Administrador</h4>
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb mb-0" style="font-size: 0.75rem;">
-                        <li class="breadcrumb-item"><a href="admin.php" class="text-decoration-none text-muted">Admin</a></li>
-                        <li class="breadcrumb-item active">Perfil</li>
+                        <li class="breadcrumb-item"><a href="admin.php" class="text-decoration-none text-primary">Admin</a></li>
+                        <li class="breadcrumb-item active">Editar</li>
                     </ol>
                 </nav>
+                
+            </div>
+            <div class="d-flex gap-2">
+                <a href="javascript:history.back()" class="btn btn-outline-secondary rounded-3 px-4 shadow-sm">
+                    Voltar
+                </a>
             </div>
         </div>
     </div>
@@ -325,8 +331,7 @@ if (empty($_SESSION['csrf_token'])) {
                                             </div>
                                         </div>
 
-                                        <div class="d-flex flex-column flex-md-row justify-content-end gap-2 mt-4">
-                                            <a href="admin.php" class="btn btn-light rounded-pill px-4">Voltar</a>
+                                        <div class="d-flex flex-column flex-md-row justify-content-center gap-2 mt-4">
                                             <button type="submit" class="btn btn-primary rounded-pill px-5 fw-bold">Salvar Alterações</button>
                                         </div>
                                     </div>

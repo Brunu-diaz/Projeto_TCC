@@ -99,6 +99,23 @@ if (!$u) {
         .group-end {
             border-radius: 0 8px 8px 0 !important;
         }
+
+        .alert-floating-container {
+            position: fixed;
+            top: 25px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1060;
+        }
+
+        .alert-compacto {
+            background: #ffffff;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            border-radius: 50px;
+            padding: 10px 25px;
+            font-weight: 500;
+            color: #198754;
+        }
     </style>
 </head>
 
@@ -106,17 +123,37 @@ if (!$u) {
 
     <?php include '../view/includes/header.php'; ?>
 
-    <main class="container py-4">
+    <div class="alert-floating-container">
+        <?php if (isset($_GET['sucesso'])): ?>
+            <div class="alert alert-compacto fade show" id="sucessoAlert">
+                <i class="bi bi-check-circle-fill me-2"></i> Usuário atualizado com sucesso!
+            </div>
+        <?php endif; ?>
+        <?php if (isset($_GET['erro'])): ?>
+            <div class="alert alert-compacto fade show text-danger" id="alertaFlutuante" style="color: #dc3545; border-color: #f8d7da;">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                <?= htmlspecialchars($_GET['erro']) ?>
+            </div>
+        <?php endif; ?>
+    </div>
+
+    <main class="container">
 
         <div class="page-header-box mb-4">
-            <div class="bg-white border-bottom py-3 px-4 shadow-sm d-flex justify-content-between align-items-center" style="border-radius: 16px;">
+            <div class="bg-white py-3 px-4 shadow-sm d-flex justify-content-between align-items-center" style="border-radius: 16px; border: 1px solid #f1f5f9;">
                 <div>
-                    <h4 class="fw-bold mb-0 text-dark">Edição de Usuário</h4>
-                    <p class="text-muted small mb-0">Atualize as informações de acesso e permissões.</p>
+                    <h4 class="fw-bold mb-0 text-dark">Editar Cadastro</h4>
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb mb-0" style="font-size: 0.75rem;">
+                            <li class="breadcrumb-item"><a href="admin.php" class="text-decoration-none text-primary">Admin</a></li>
+                            <li class="breadcrumb-item"><a href="listarUsuarios.php" class="text-decoration-none text-primary">Usuários</a></li>
+                            <li class="breadcrumb-item active">Editar</li>
+                        </ol>
+                    </nav>
                 </div>
                 <div class="d-flex gap-2">
-                    <a href="listarUsuarios.php" class="btn btn-outline-secondary rounded-3 px-3 shadow-sm">
-                        <i class="bi bi-x-lg me-1"></i> Cancelar
+                    <a href="javascript:history.back()" class="btn btn-outline-secondary rounded-3 px-4 shadow-sm">
+                        Cancelar
                     </a>
                 </div>
             </div>
@@ -230,6 +267,29 @@ if (!$u) {
             input.value = pass;
             input.type = 'text';
             document.getElementById('iconSenha').classList.replace('bi-eye', 'bi-eye-slash');
+        }
+    </script>
+
+    <script>
+        const sucessoAlert = document.getElementById('sucessoAlert');
+        const alertToRemove = sucessoAlert;
+
+        if (alertToRemove) {
+            // 1. Limpa o parâmetro da URL sem recarregar a página
+            // Isso impede que o F5 mostre a mensagem de novo
+            if (window.history.replaceState) {
+                const url = new URL(window.location);
+                url.searchParams.delete('sucesso');
+                url.searchParams.delete('erro');
+                window.history.replaceState({}, document.title, url.pathname);
+            }
+
+            // 2. Animação de sumir o alerta após 3 segundos
+            setTimeout(() => {
+                alertToRemove.style.transition = "opacity 0.6s ease";
+                alertToRemove.style.opacity = "0";
+                setTimeout(() => alertToRemove.remove(), 600);
+            }, 3000);
         }
     </script>
 </body>

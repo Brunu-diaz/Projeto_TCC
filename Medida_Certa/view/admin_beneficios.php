@@ -34,20 +34,23 @@ try {
 
     // 2. Query Principal com Filtros Dinâmicos
     $sqlPrincipal = "SELECT DISTINCT
-        u.id_usuario, u.nome, un.bloco, un.numero,
+        u.id_usuario, u.nome, un.bloco, un.numero, un.id_unidade,
         ts.status_beneficio,
-        (SELECT l.consumo_calculado FROM leitura l 
-         JOIN hidrometro h2 ON l.id_hidrometro = h2.id_hidrometro
-         WHERE h2.id_unidade = un.id_unidade 
-         ORDER BY l.data_leitura DESC LIMIT 1) as ultimo_consumo,
-        COALESCE((SELECT COUNT(DISTINCT f2.id_fatura) FROM fatura f2 
-         JOIN leitura l2 ON f2.id_leitura = l2.id_leitura 
-         JOIN hidrometro h2 ON l2.id_hidrometro = h2.id_hidrometro
-         WHERE h2.id_unidade = un.id_unidade 
-         AND f2.status_pagamento IN ('Pendente', 'Atrasado')), 0) as qtd_debitos
+        -- Buscamos o consumo calculado (diferença) e não o valor medido (leitura total)
+        COALESCE((SELECT l.consumo_calculado 
+          FROM leitura l 
+          JOIN hidrometro h2 ON l.id_hidrometro = h2.id_hidrometro
+          WHERE h2.id_unidade = un.id_unidade 
+          ORDER BY l.data_leitura DESC, l.id_leitura DESC LIMIT 1), 0) as ultimo_consumo,
+        
+        COALESCE((SELECT COUNT(DISTINCT f2.id_fatura) 
+          FROM fatura f2 
+          JOIN leitura l2 ON f2.id_leitura = l2.id_leitura 
+          JOIN hidrometro h2 ON l2.id_hidrometro = h2.id_hidrometro
+          WHERE h2.id_unidade = un.id_unidade 
+          AND f2.status_pagamento IN ('Pendente', 'Atrasado')), 0) as qtd_debitos
     FROM usuario u
     JOIN unidade un ON u.id_usuario = un.id_usuario
-    LEFT JOIN hidrometro h ON un.id_unidade = h.id_unidade
     LEFT JOIN tarifa_social ts ON u.id_usuario = ts.id_usuario AND ts.status_beneficio = 'Ativo'
     WHERE 1=1";
 
@@ -143,6 +146,24 @@ try {
             color: #dc2626;
             font-size: 0.75rem;
         }
+
+        /* Container do Alerta Flutuante */
+        .alert-floating-container {
+            position: fixed;
+            top: 25px;
+            left: 50%;
+            z-index: 1060;
+            transform: translateX(-50%);
+        }
+
+        .alert-floating-container .alert {
+            background: #ffffff;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            border-radius: 50px;
+            padding: 10px 25px;
+            font-weight: 500;
+            color: #198754;
+        }
     </style>
 </head>
 
@@ -151,22 +172,22 @@ try {
     <?php include '../view/includes/header.php'; ?>
 
     <?php if (isset($_GET['status'])): ?>
-        <div class="alert alert-dismissible fade show shadow-sm mb-4 <?php
-                                                                        echo ($_GET['status'] == 'sucesso') ? 'alert-success' : 'alert-danger'; ?>" role="alert">
-            <i class="bi <?php echo ($_GET['status'] == 'sucesso') ? 'bi-check-circle-fill' : 'bi-exclamation-triangle-fill'; ?> me-2"></i>
+        <div id="sucessoAlert" class="alert-floating-container">
             <?php
-            switch ($_GET['status']) {
-                case 'sucesso':
-                    echo "Operação realizada com sucesso!";
-                    break;
-                case 'regra_violada':
-                    echo "Erro: Morador não cumpre os requisitos de consumo ou adimplência.";
-                    break;
-                default:
-                    echo "Ocorreu um erro ao processar a solicitação.";
-            }
+            $status = $_GET['status'];
+            $config = [
+                'sucesso' => ['class' => 'success', 'icon' => 'bi-check-circle-fill', 'msg' => 'Operação realizada com sucesso!'],
+                'regra_violada' => ['class' => 'danger', 'icon' => 'bi-exclamation-triangle-fill', 'msg' => 'Erro: Morador não cumpre os requisitos.'],
+                'erro' => ['class' => 'danger', 'icon' => 'bi-x-circle-fill', 'msg' => 'Erro ao processar a solicitação.']
+            ];
+            $current = $config[$status] ?? $config['erro'];
             ?>
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            <div class="alert alert-<?= $current['class'] ?> shadow-lg border-0 d-flex align-items-center animate__animated animate__fadeInRight" role="alert">
+                <i class="bi <?= $current['icon'] ?> fs-4 me-3"></i>
+                <div>
+                    <span class="small"><?= $current['msg'] ?></span>
+                </div>
+            </div>
         </div>
     <?php endif; ?>
 
@@ -327,6 +348,27 @@ try {
                 }
             });
         });
+    </script>
+
+    <script>
+        const sucessoAlert = document.getElementById('sucessoAlert');
+        const alertToRemove = sucessoAlert;
+
+        if (alertToRemove) {
+            // 1. Limpa o parâmetro 'status' da URL sem recarregar a página
+            if (window.history.replaceState) {
+                const url = new URL(window.location);
+                url.searchParams.delete('status'); // Aqui mudamos para 'status' que é o seu padrão nesta página
+                window.history.replaceState({}, document.title, url.pathname + url.search);
+            }
+
+            // 2. Animação de sumir o alerta após 3 segundos (conforme seu padrão)
+            setTimeout(() => {
+                alertToRemove.style.transition = "opacity 0.6s ease";
+                alertToRemove.style.opacity = "0";
+                setTimeout(() => alertToRemove.remove(), 600);
+            }, 3000);
+        }
     </script>
 </body>
 

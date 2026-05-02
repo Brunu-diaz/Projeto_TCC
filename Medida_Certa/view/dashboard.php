@@ -138,7 +138,11 @@ try {
     $tarifa = $pdo->query("SELECT valor_m3, taxa_esgoto FROM tarifa ORDER BY data_vigencia DESC LIMIT 1")->fetch(PDO::FETCH_ASSOC);
     $valor_m3 = $tarifa['valor_m3'] ?? 8.26;
     $taxa_esgoto = $tarifa['taxa_esgoto'] ?? 0;
-    $valorFatura = ($consumoExibir * $valor_m3) + $taxa_esgoto;
+    if (!$dadosUltimaLeitura) {
+        $valorFatura = 0;
+    } else {
+        $valorFatura = ($consumoExibir * $valor_m3) + $taxa_esgoto;
+    }
 
     // 4. HISTÓRICO COMPLETO PARA A TABELA (Mantida original)
     $sqlHistorico = "SELECT l.id_leitura, l.mes_referencia, l.ano_referencia, l.consumo_calculado, 

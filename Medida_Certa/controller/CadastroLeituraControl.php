@@ -146,10 +146,12 @@ try {
         $stmtFatura->execute($params);
     }
 
-    header('Location: ../view/cadastrarLeitura.php?sucesso=1');
-    exit;
+    // Redireciona com o parâmetro de sucesso que seu HTML já espera
+header('Location: ../view/cadastrarLeitura.php?sucesso=leitura_cadastrada');
+exit;
 } catch (PDOException $e) {
     error_log('Erro no MedidaCerta (Cadastro de Leitura/Fatura): ' . $e->getMessage());
-    header('Location: ../view/cadastrarLeitura.php?erro=db_error');
-    exit;
+    // Mantém o redirecionamento para a mesma página
+header('Location: ../view/cadastrarLeitura.php?erro=db_error');
+exit;
 }

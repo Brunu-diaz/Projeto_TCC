@@ -282,4 +282,46 @@ class UsuarioDAO
     {
         return $this->buscarUsuarioPorId($id);
     }
+
+    public function editarUsuarioAdministrador(UsuarioDTO $usuario, $id_usuario)
+{
+    try {
+        $this->pdo->beginTransaction();
+
+        // 1. Atualiza a tabela 'usuario'
+        $sqlUser = "UPDATE usuario SET nome = ?, email = ?, cpf_cnpj = ?, telefone = ?, id_perfil = ? WHERE id_usuario = ?";
+        $stmtUser = $this->pdo->prepare($sqlUser);
+        $stmtUser->execute([
+            $usuario->getNome(),
+            $usuario->getEmail(),
+            $usuario->getCpfCnpj(),
+            $usuario->getTelefone(),
+            $usuario->getIdPerfil(),
+            $id_usuario
+        ]);
+
+        // 2. Atualiza a tabela 'login' (username)
+        $sqlLogin = "UPDATE login SET username = :user";
+        $paramsLogin = [':user' => $usuario->getUsername(), ':id' => $id_usuario];
+
+        // Só atualiza a senha se ela não estiver vazia
+        if ($usuario->getSenha() != null) {
+            $sqlLogin .= ", senha_hash = :senha";
+            $paramsLogin[':senha'] = $usuario->getSenha();
+        }
+
+        $sqlLogin .= " WHERE id_usuario = :id";
+        $stmtLogin = $this->pdo->prepare($sqlLogin);
+        $stmtLogin->execute($paramsLogin);
+
+        $this->pdo->commit();
+        return true;
+    } catch (PDOException $e) {
+        if ($this->pdo->inTransaction()) {
+            $this->pdo->rollBack();
+        }
+        error_log("Erro ao editar usuário: " . $e->getMessage());
+        return false;
+    }
+}
 }

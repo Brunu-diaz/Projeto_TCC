@@ -10,10 +10,14 @@ if (!isset($_SESSION['perfil']) || $_SESSION['perfil'] !== 'Administrador') {
 require_once __DIR__ . '/../model/dao/Conexao.php';
 
 try {
-    $pdo = Conexao::getConexao(); 
+    $pdo = Conexao::getConexao();
 
-    // Buscamos todas as unidades cadastradas
-    $sql = "SELECT * FROM unidade ORDER BY numero ASC";
+    // Adicionamos o JOIN para pegar o nome do usuário responsável
+    $sql = "SELECT un.*, us.nome as responsavel 
+            FROM unidade un 
+            LEFT JOIN usuario us ON un.id_usuario = us.id_usuario 
+            ORDER BY un.numero ASC";
+
     $stmt = $pdo->query($sql);
     $unidades = $stmt->fetchAll(PDO::FETCH_ASSOC);
 } catch (PDOException $e) {
@@ -42,9 +46,9 @@ try {
             padding: 15px;
             border: 1px solid #edf2f7;
             margin-bottom: 2rem;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02);
         }
-        
+
         .search-input-group {
             position: relative;
             max-width: 500px;
@@ -77,37 +81,45 @@ try {
         }
 
         /* --- ESTILIZAÇÃO PREMIUM DOS CARDS --- */
-        .unit-card { 
-            border: 1px solid #f1f5f9 !important; 
-            border-radius: 20px; 
-            position: relative;
-            overflow: hidden; 
+        .unit-card {
             background: #fff;
+            border-radius: 15px;
+            /* Ajustado para 15px igual ao seu global */
             transition: transform 0.2s ease, box-shadow 0.2s ease;
+            border: none !important;
+            /* Removemos a borda fina cinza */
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05) !important;
+            /* Mesmo shadow dos actions-card */
         }
 
         .unit-card::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 0;
-            bottom: 0;
-            width: 4px;
-            border-radius: 20px 0 0 20px;
-            z-index: 10;
+            display: none !important;
         }
 
-        .card-residencial::before { background-color: #0d6efd; } 
-        .card-comercial::before { background-color: #fd7e14; }
+        .card-residencial {
+            border-left: 4px solid #0d6efd !important;
+        }
 
-        .text-comercial { color: #fd7e14 !important; }
-        .bg-comercial-subtle { background-color: #fffaf0 !important; }
-        .icon-residencial { background-color: #ebf8ff !important; color: #0d6efd !important; }
+        .card-comercial {
+            border-left: 4px solid #fd7e14 !important;
+        }
+
+        .text-comercial {
+            color: #fd7e14 !important;
+        }
+
+        .bg-comercial-subtle {
+            background-color: #fffaf0 !important;
+        }
+
+        .icon-residencial {
+            background-color: #ebf8ff !important;
+            color: #0d6efd !important;
+        }
 
         .unit-card:hover {
             transform: translateY(-4px);
-            box-shadow: 0 12px 24px rgba(0,0,0,0.06) !important;
-            border-color: #e2e8f0 !important;
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08) !important;
         }
 
         .icon-square {
@@ -144,7 +156,7 @@ try {
                 <h4 class="fw-bold mb-0 text-dark">Gerenciar Unidades</h4>
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb mb-0" style="font-size: 0.75rem;">
-                        <li class="breadcrumb-item"><a href="admin.php" class="text-decoration-none text-muted">Admin</a></li>
+                        <li class="breadcrumb-item"><a href="admin.php" class="text-decoration-none text-primary">Admin</a></li>
                         <li class="breadcrumb-item active">Unidades</li>
                     </ol>
                 </nav>
@@ -157,21 +169,21 @@ try {
     </div>
 
     <main class="main-container container mb-5">
-        
+
         <div class="search-wrapper">
             <div class="search-input-group">
                 <i class="bi bi-search"></i>
-                <input type="text" id="inputPesquisa" class="form-control" 
-                       placeholder="Pesquisar por número, bloco ou tipo...">
+                <input type="text" id="inputPesquisa" class="form-control"
+                    placeholder="Pesquisar por número, bloco ou tipo...">
             </div>
         </div>
 
         <div class="row g-4" id="containerUnidades">
             <?php if (count($unidades) > 0): ?>
-                <?php foreach ($unidades as $u): 
+                <?php foreach ($unidades as $u):
                     $complemento = $u['complemento'] ?? '';
                     $isComercial = (mb_stripos($complemento, 'Comercial') !== false);
-                    
+
                     $classeTipo = $isComercial ? 'card-comercial' : 'card-residencial';
                     $iconStyle = $isComercial ? 'bg-comercial-subtle text-comercial' : 'icon-residencial';
                     $iconClass = $isComercial ? 'bi-briefcase' : 'bi-house';
@@ -188,9 +200,16 @@ try {
                                     </span>
                                 </div>
 
-                                <h5 class="fw-bold mb-1 card-title" style="letter-spacing: -0.5px;">Unidade <?= htmlspecialchars($u['numero']) ?></h5>
-                                <p class="text-muted small mb-0"><?= htmlspecialchars($u['endereco']) ?></p>
-                                <p class="text-muted small">Bloco: <span class="fw-bold text-dark"><?= htmlspecialchars($u['bloco']) ?></span></p>
+                                <h5 class="fw-bold mb-1 card-title text-truncate" style="letter-spacing: -0.5px;" title="<?= htmlspecialchars($u['responsavel'] ?? 'Sem responsável') ?>">
+                                    <?= htmlspecialchars($u['responsavel'] ?? 'Sem responsável') ?>
+                                </h5>
+
+                                <p class="text-muted small mb-0">
+                                    Unidade: <span class="fw-bold text-dark"><?= htmlspecialchars($u['numero']) ?></span>
+                                </p>
+                                <p class="text-muted small mb-0">
+                                    Bloco: <span class="fw-bold text-dark"><?= htmlspecialchars($u['bloco']) ?></span>
+                                </p>
 
                                 <div class="p-3 rounded-3 my-3" style="background-color: #fcfcfc; border: 1px solid #f8fafc;">
                                     <div class="d-flex justify-content-between align-items-center mb-0 small">
@@ -203,9 +222,9 @@ try {
 
                                 <div class="row g-2">
                                     <div class="col-6">
-                                        <a href="detalhes_unidade_admin.php?id=<?= $u['id_unidade'] ?>" 
-                                           class="btn <?= $isComercial ? 'btn-outline-orange' : 'btn-outline-primary' ?> btn-sm w-100 rounded-pill py-2 fw-bold" 
-                                           style="font-size: 0.8rem;">Ver Detalhes</a>
+                                        <a href="detalhes_unidade_admin.php?id=<?= $u['id_unidade'] ?>"
+                                            class="btn <?= $isComercial ? 'btn-outline-orange' : 'btn-outline-primary' ?> btn-sm w-100 rounded-pill py-2 fw-bold"
+                                            style="font-size: 0.8rem;">Ver Detalhes</a>
                                     </div>
                                     <div class="col-6">
                                         <a href="editar_unidade.php?id=<?= $u['id_unidade'] ?>" class="btn btn-light btn-sm w-100 rounded-pill py-2 border-0 fw-bold" style="font-size: 0.8rem; background-color: #f1f5f9;">Editar</a>
@@ -215,7 +234,7 @@ try {
                         </div>
                     </div>
                 <?php endforeach; ?>
-                
+
                 <div id="avisoVazio" class="col-12 text-center py-5 d-none">
                     <div class="bg-white p-5 rounded-4 shadow-sm border">
                         <i class="bi bi-search fs-1 text-muted"></i>
@@ -273,4 +292,5 @@ try {
         }
     </script>
 </body>
+
 </html>

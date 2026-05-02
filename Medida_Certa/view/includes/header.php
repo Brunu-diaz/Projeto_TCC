@@ -142,13 +142,13 @@ try {
 
                     <li class="nav-item me-2">
                         <a class="nav-link d-flex align-items-center px-3 <?php echo ($pagina_atual == 'admin.php') ? 'active' : ''; ?>" href="admin.php">
-                            <i class="bi bi-speedometer2 me-2"></i> Visão Geral
+                            <i class="bi bi-house-door-fill me-1"></i> Visão Geral
                         </a>
                     </li>
 
                     <li class="nav-item me-2">
                         <a class="nav-link d-flex align-items-center <?php echo ($pagina_atual == 'unidades.php') ? 'active' : ''; ?>" href="unidades.php">
-                            <i class="bi bi-building me-2"></i> Unidades
+                            <i class="bi bi-building me-1"></i> Unidades
                         </a>
                     </li>
 
@@ -159,14 +159,14 @@ try {
                     </li>
 
                     <li class="nav-item me-2">
-                        <a class="nav-link d-flex align-items-center <?php echo ($pagina_atual == 'relatorios.php') ? 'active' : ''; ?>" href="relatorios.php">
-                            <i class="bi bi-bar-chart-line me-2"></i> Relatórios
+                        <a class="nav-link d-flex align-items-center <?php echo ($pagina_atual == 'listarLeituras.php') ? 'active' : ''; ?>" href="listarLeituras.php">
+                            <i class="bi bi-clock-history me-1"></i> Leituras
                         </a>
                     </li>
 
                     <li class="nav-item me-2">
-                        <a class="nav-link d-flex align-items-center <?php echo ($pagina_atual == 'admin_beneficios.php') ? 'active' : ''; ?>" href="admin_beneficios.php">
-                            <i class="bi bi-patch-check me-2"></i> Benefícios
+                        <a class="nav-link d-flex align-items-center <?php echo ($pagina_atual == 'listarHidrometros.php') ? 'active' : ''; ?>" href="listarHidrometros.php">
+                            <i class="bi bi-speedometer2 me-1"></i> Hidrômetros
                         </a>
                     </li>
 
@@ -243,6 +243,16 @@ try {
                                     <div>
                                         <span class="d-block">Meu Perfil</span>
                                         <small class="text-muted" style="font-size: 0.7rem;">Dados da conta</small>
+                                    </div>
+                                </a>
+                            </li>
+
+                            <li>
+                                <a class="dropdown-item d-flex align-items-center py-2" href="admin_beneficios.php">
+                                    <i class="bi bi-patch-check me-3 text-primary"></i>
+                                    <div>
+                                        <span class="d-block">Benefícios</span>
+                                        <small class="text-muted" style="font-size: 0.7rem;">Prêmios e vantagens</small>
                                     </div>
                                 </a>
                             </li>

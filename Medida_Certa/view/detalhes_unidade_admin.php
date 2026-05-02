@@ -163,26 +163,25 @@ try {
 
     <main class="container">
         <div class="page-header-box mb-4">
-            <div class="bg-white border py-3 px-4 shadow-sm d-flex justify-content-between align-items-center" style="border-radius: 16px;">
+            <div class="bg-white py-3 px-4 shadow-sm d-flex justify-content-between align-items-center" style="border-radius: 16px; border: 1px solid #f1f5f9;">
                 <div>
-                    <h4 class="fw-bold mb-0 text-dark">Unidade: <?= htmlspecialchars($unidade['bloco'] . " - " . $unidade['numero']) ?></h4>
-
-                    <?php
-                    // Define a cor e o texto baseado no status real
-                    $statusHidrometro = $unidade['h_status'] ?? 'Inativo'; // Se for nulo, assume inativo
-                    $badgeCor = ($statusHidrometro === 'Ativo') ? 'bg-success-subtle text-success border-success-subtle' : 'bg-danger-subtle text-danger border-danger-subtle';
-                    ?>
-
-                    <span class="badge <?= $badgeCor ?> border">
-                        <i class="bi bi-broadcast me-1"></i>
-                        Hidrômetro <?= $statusHidrometro ?>
-                    </span>
+                    <div>
+                        <h4 class="fw-bold mb-0 text-dark">Unidade: <?= htmlspecialchars($unidade['numero']) ?></h4>
+                    </div>
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb mb-0" style="font-size: 0.75rem;">
+                            <li class="breadcrumb-item"><a href="admin.php" class="text-decoration-none text-primary">Admin</a></li>
+                            <li class="breadcrumb-item"><a href="unidades.php" class="text-decoration-none text-primary">Unidades</a></li>
+                            <li class="breadcrumb-item active">Detalhes</li>
+                        </ol>
+                    </nav>
                 </div>
                 <div class="d-flex gap-2">
-                    <a href="editar_unidade.php?id=<?= $id_unidade ?>" class="btn btn-primary rounded-3 shadow-sm d-flex align-items-center">
+                    <a href="editar_unidade.php?id=<?= $id_unidade ?>" class="btn btn-primary rounded-3 shadow-sm d-flex align-items-center px-3">
                         <i class="bi bi-pencil me-2"></i>Editar
                     </a>
-                    <a href="unidades.php" class="btn btn-outline-secondary rounded-3 px-4 d-flex align-items-center">Voltar</a>
+                    <a href="javascript:history.back()" class="btn btn-outline-secondary rounded-3 px-4 shadow-sm"> Voltar
+                    </a>
                 </div>
             </div>
         </div>
@@ -218,11 +217,26 @@ try {
 
                     <div class="mb-4">
                         <label class="text-muted small d-block">Dados do Dispositivo</label>
+
                         <p class="mb-0 fw-semibold text-dark">
                             <i class="bi bi-upc-scan me-2"></i>Serial: <?= htmlspecialchars($unidade['h_serial'] ?? 'Não cadastrado') ?>
                         </p>
-                        <span class="badge bg-light text-dark border mt-1 font-monospace">
+
+                        <!-- Adicionado d-block para ocupar a linha toda -->
+                        <span class="badge bg-light text-dark border mt-1 font-monospace d-block" style="width: fit-content;">
                             Modelo: <?= htmlspecialchars($unidade['modelo'] ?? 'Padrão') ?>
+                        </span>
+
+                        <?php
+                        // Define a cor e o texto baseado no status real
+                        $statusHidrometro = $unidade['h_status'] ?? 'Inativo';
+                        $badgeCor = ($statusHidrometro === 'Ativo') ? 'bg-success-subtle text-success border-success-subtle' : 'bg-danger-subtle text-danger border-danger-subtle';
+                        ?>
+
+                        <!-- Adicionado d-block e mt-1 para dar espaçamento do modelo -->
+                        <span class="badge <?= $badgeCor ?> border d-block mt-1" style="width: fit-content;">
+                            <i class="bi bi-broadcast me-1"></i>
+                            Hidrômetro <?= $statusHidrometro ?>
                         </span>
                     </div>
 

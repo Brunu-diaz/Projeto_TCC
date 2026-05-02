@@ -15,11 +15,43 @@ require_once __DIR__ . '/../controller/TravaAdmin.php';
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../assets/css/unificado.css">
+    <style>
+        .alert-floating-container {
+            position: fixed;
+            top: 25px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1060;
+        }
+
+        .alert-compacto {
+            background: #ffffff;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            border-radius: 50px;
+            padding: 10px 25px;
+            font-weight: 500;
+            color: #198754;
+        }
+    </style>
 </head>
 
 <body class="bg-light">
 
     <?php include '../view/includes/header.php'; ?>
+
+    <div class="alert-floating-container">
+        <?php if (isset($_GET['sucesso'])): ?>
+            <div class="alert alert-compacto fade show" id="sucessoAlert">
+                <i class="bi bi-check-circle-fill me-2"></i> Usuário cadastrado com sucesso!
+            </div>
+        <?php endif; ?>
+        <?php if (isset($_GET['erro'])): ?>
+            <div class="alert alert-compacto fade show text-danger" id="alertaFlutuante" style="color: #dc3545; border-color: #f8d7da;">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                <?= htmlspecialchars($_GET['erro']) ?>
+            </div>
+        <?php endif; ?>
+    </div>
 
     <div class="container page-header-box mb-4">
         <div class="bg-white py-3 px-4 shadow-sm d-flex justify-content-between align-items-center" style="border-radius: 16px; border: 1px solid #f1f5f9;">
@@ -33,9 +65,12 @@ require_once __DIR__ . '/../controller/TravaAdmin.php';
                     </ol>
                 </nav>
             </div>
-            <a href="admin.php" class="btn btn-outline-secondary rounded-3 px-3 shadow-sm">
-                <i class="bi bi-arrow-left me-1"></i> Voltar
-            </a>
+            <div class="d-flex gap-2">
+                <a href="javascript:history.back()" class="btn btn-outline-secondary rounded-3 px-4 shadow-sm">
+                    Voltar
+                </a>
+
+            </div>
         </div>
     </div>
 
@@ -43,12 +78,6 @@ require_once __DIR__ . '/../controller/TravaAdmin.php';
         <div class="row justify-content-center">
             <div class="col-lg-10 col-xl-8">
                 <div class="card p-4 p-md-5 shadow-sm border-0" style="border-radius: 20px;">
-
-                    <?php if (isset($_GET['sucesso'])): ?>
-                        <div class="alert alert-success border-0 shadow-sm rounded-3 mb-4">
-                            <i class="bi bi-check-circle-fill me-2"></i> Usuário cadastrado com sucesso!
-                        </div>
-                    <?php endif; ?>
 
                     <form action="../controller/CadastroUsuarioControl.php" method="POST">
 
@@ -128,14 +157,23 @@ require_once __DIR__ . '/../controller/TravaAdmin.php';
                                 </div>
                             </div>
                         </div>
-                        <div class="mt-5 d-flex justify-content-center border-top pt-4">
-                            <button type="submit" class="btn btn-primary rounded-3 px-5 shadow-sm fw-bold py-2">
-                                <i class="bi bi-person-plus-fill me-2"></i>Finalizar Cadastro
-                            </button>
+                        <hr class="my-4 opacity-25">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <button type="submit" class="btn btn-primary btn-lg w-100 shadow-sm fw-bold">
+                                    <i class="bi bi-cloud-check me-2"></i>Finalizar Cadastro
+                                </button>
+                            </div>
+                            <div class="col-md-6">
+                                <a href="unidades.php" class="btn btn-light btn-lg w-100 text-muted border">
+                                    Cancelar
+                                </a>
+                            </div>
                         </div>
-                    </form>
                 </div>
+                </form>
             </div>
+        </div>
         </div>
     </main>
 
@@ -172,6 +210,29 @@ require_once __DIR__ . '/../controller/TravaAdmin.php';
                 iconeOlho.classList.replace('bi-eye-slash', 'bi-eye');
             }
         });
+    </script>
+
+    <script>
+        const sucessoAlert = document.getElementById('sucessoAlert');
+        const alertToRemove = sucessoAlert;
+
+        if (alertToRemove) {
+            // 1. Limpa o parâmetro da URL sem recarregar a página
+            // Isso impede que o F5 mostre a mensagem de novo
+            if (window.history.replaceState) {
+                const url = new URL(window.location);
+                url.searchParams.delete('sucesso');
+                url.searchParams.delete('erro');
+                window.history.replaceState({}, document.title, url.pathname);
+            }
+
+            // 2. Animação de sumir o alerta após 3 segundos
+            setTimeout(() => {
+                alertToRemove.style.transition = "opacity 0.6s ease";
+                alertToRemove.style.opacity = "0";
+                setTimeout(() => alertToRemove.remove(), 600);
+            }, 3000);
+        }
     </script>
 </body>
 

@@ -149,6 +149,23 @@ require_once __DIR__ . '/../controller/TravaAdmin.php';
             padding-right: 2rem;
             background-position: right 0.5rem center;
         }
+
+        .alert-floating-container {
+            position: fixed;
+            top: 25px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1060;
+        }
+
+        .alert-compacto {
+            background: #ffffff;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            border-radius: 50px;
+            padding: 10px 25px;
+            font-weight: 500;
+            color: #198754;
+        }
     </style>
 </head>
 
@@ -156,40 +173,42 @@ require_once __DIR__ . '/../controller/TravaAdmin.php';
 
     <?php include '../view/includes/header.php'; ?>
 
+    <div class="alert-floating-container">
+        <?php if (isset($_GET['sucesso'])): ?>
+            <div class="alert alert-compacto fade show" id="sucessoAlert">
+                <i class="bi bi-check-circle-fill me-2"></i> Unidade cadastrada com sucesso!
+            </div>
+        <?php endif; ?>
+        <?php if (isset($_GET['erro'])): ?>
+            <div class="alert alert-compacto fade show text-danger" id="alertaFlutuante" style="color: #dc3545; border-color: #f8d7da;">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                <?= htmlspecialchars($_GET['erro']) ?>
+            </div>
+        <?php endif; ?>
+    </div>
+
     <div class="container page-header-box mb-4">
         <div class="bg-white py-3 px-4 shadow-sm d-flex justify-content-between align-items-center" style="border-radius: 16px; border: 1px solid #f1f5f9;">
             <div>
                 <h4 class="fw-bold mb-0 text-dark">Cadastrar Nova Unidade</h4>
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb mb-0" style="font-size: 0.75rem;">
-                        <li class="breadcrumb-item"><a href="admin.php" class="text-decoration-none text-muted">Admin</a></li>
-                        <li class="breadcrumb-item"><a href="unidades.php" class="text-decoration-none text-muted">Unidades</a></li>
+                        <li class="breadcrumb-item"><a href="admin.php" class="text-decoration-none text-primary">Admin</a></li>
+                        <li class="breadcrumb-item"><a href="unidades.php" class="text-decoration-none text-primary">Unidades</a></li>
                         <li class="breadcrumb-item active">Cadastrar</li>
                     </ol>
                 </nav>
             </div>
-            <a href="unidades.php" class="btn btn-outline-secondary rounded-3 px-4 shadow-sm">
-                <i class="bi bi-arrow-left me-2"></i>Voltar
+            <a href="javascript:history.back()" class="btn btn-outline-secondary rounded-3 px-4 shadow-sm">
+            Voltar
             </a>
         </div>
     </div>
 
     <main class="main-container container mb-5">
 
-        <?php if (isset($_GET['sucesso'])): ?>
-            <div style="background-color: #d4edda; color: #155724; padding: 15px; border: 1px solid #c3e6cb; border-radius: 5px; margin-bottom: 20px;">
-                <strong>Cadastro realizado com sucesso!</strong>
-            </div>
-        <?php endif; ?>
-
-        <?php if (isset($_GET['erro'])): ?>
-            <div style="background-color: #f8d7da; color: #721c24; padding: 15px; border: 1px solid #f5c6cb; border-radius: 5px; margin-bottom: 20px;">
-                <strong>Erro:</strong> <?php echo htmlspecialchars($_GET['erro']); ?>
-            </div>
-        <?php endif; ?>
-
         <div class="row justify-content-center">
-            <div class="col-lg-10">
+            <div class="col-lg-8">
                 <div class="card border-0 shadow-sm overflow-hidden">
                     <div class="card-body p-4 p-md-5">
                         <form action="../controller/CadastroUnidadeControl.php" method="POST" id="formCadastro" class="needs-validation" novalidate autocomplete="off">
@@ -312,14 +331,16 @@ require_once __DIR__ . '/../controller/TravaAdmin.php';
                                 </div>
                             </div>
 
+                            <hr class="my-4 opacity-25">
+                            
                             <div class="row g-3 pt-3">
                                 <div class="col-md-6">
                                     <button type="submit" class="btn btn-primary btn-lg w-100 rounded-3 shadow-sm py-3 fw-bold">
-                                        <i class="bi bi-cloud-check me-2"></i>Finalizar Cadastro
+                                    Finalizar Cadastro
                                     </button>
                                 </div>
                                 <div class="col-md-6">
-                                    <a href="unidades.php" class="btn btn-light btn-lg w-100 rounded-3 py-3 text-muted border">
+                                    <a href="javascript:history.back()" class="btn btn-light btn-lg w-100 rounded-3 py-3 text-muted border">
                                         Cancelar
                                     </a>
                                 </div>
@@ -410,6 +431,29 @@ require_once __DIR__ . '/../controller/TravaAdmin.php';
             let alertas = document.querySelectorAll('div[style*="padding: 15px"]');
             alertas.forEach(a => a.style.display = 'none');
         }, 4000);
+    </script>
+
+    <script>
+        const sucessoAlert = document.getElementById('sucessoAlert');
+        const alertToRemove = sucessoAlert;
+
+        if (alertToRemove) {
+            // 1. Limpa o parâmetro da URL sem recarregar a página
+            // Isso impede que o F5 mostre a mensagem de novo
+            if (window.history.replaceState) {
+                const url = new URL(window.location);
+                url.searchParams.delete('sucesso');
+                url.searchParams.delete('erro');
+                window.history.replaceState({}, document.title, url.pathname);
+            }
+
+            // 2. Animação de sumir o alerta após 3 segundos
+            setTimeout(() => {
+                alertToRemove.style.transition = "opacity 0.6s ease";
+                alertToRemove.style.opacity = "0";
+                setTimeout(() => alertToRemove.remove(), 600);
+            }, 3000);
+        }
     </script>
 </body>
 

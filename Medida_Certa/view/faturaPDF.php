@@ -1,4 +1,7 @@
 <?php
+// Define que o cookie de sessão vale para a raiz do servidor
+session_set_cookie_params(['path' => '/']);
+
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
@@ -14,23 +17,34 @@ if (!isset($_SESSION['id_usuario']) || !isset($_SESSION['perfil'])) {
 }
 
 if (!function_exists('getNomeMes')) {
-    function getNomeMes($mes) {
+    function getNomeMes($mes)
+    {
         $meses = [
-            1 => 'Jan', 2 => 'Fev', 3 => 'Mar', 4 => 'Abr', 
-            5 => 'Mai', 6 => 'Jun', 7 => 'Jul', 8 => 'Ago', 
-            9 => 'Set', 10 => 'Out', 11 => 'Nov', 12 => 'Dez'
+            1 => 'Jan',
+            2 => 'Fev',
+            3 => 'Mar',
+            4 => 'Abr',
+            5 => 'Mai',
+            6 => 'Jun',
+            7 => 'Jul',
+            8 => 'Ago',
+            9 => 'Set',
+            10 => 'Out',
+            11 => 'Nov',
+            12 => 'Dez'
         ];
         return $meses[(int)$mes] ?? 'Indef';
     }
 }
 
-$id_fatura = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
+$id_fatura = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT) ?: filter_input(INPUT_GET, 'id_fatura', FILTER_VALIDATE_INT);
 $id_leitura = filter_input(INPUT_GET, 'leitura', FILTER_VALIDATE_INT);
 $id_logado = $_SESSION['id_usuario'];
 $perfil_logado = $_SESSION['perfil']; // 'Administrador' ou 'Cliente'
 
 if (!$id_fatura && !$id_leitura) {
-    die("Erro: Parâmetros da fatura ausentes.");
+    header("Location: dashboard.php?erro=id_ausente");
+    exit;
 }
 
 try {
@@ -39,7 +53,7 @@ try {
     // 2. BUSCA COMPLETA (Fatura + Unidade + Leitura + Tarifa)
     $sqlBusca = "SELECT f.*, l.valor_medido, l.data_leitura, l.mes_referencia, l.ano_referencia,
                         u.bloco, u.numero, u.id_usuario as dono_unidade,
-                        t.valor_m3, t.taxa_esgoto
+                        t.valor_m3, t.taxa_esgoto, t.valor_fixo AS tarifa_valor_fixo
                  FROM fatura f
                  INNER JOIN leitura l ON f.id_leitura = l.id_leitura
                  INNER JOIN hidrometro h ON l.id_hidrometro = h.id_hidrometro
@@ -47,7 +61,7 @@ try {
                  LEFT JOIN tarifa t ON f.id_tarifa = t.id_tarifa
                  WHERE (:id_fatura IS NOT NULL AND f.id_fatura = :id_fatura)
                     OR (:id_leitura IS NOT NULL AND f.id_leitura = :id_leitura)";
-    
+
     $stmt = $pdo->prepare($sqlBusca);
     $stmt->execute([
         ':id_fatura' => $id_fatura,
@@ -65,35 +79,71 @@ try {
         exit;
     }
 
-    // 4. DADOS DO MORADOR E BENEFÍCIOS
+    // 4. DADOS DO MORADOR
     $usuarioDAO = new UsuarioDAO();
     $dadosMorador = $usuarioDAO->buscarUsuarioPorId($dadosFatura['dono_unidade']);
     $nomeMorador = $dadosMorador['nome'] ?? 'Cliente';
 
-    $sqlBeneficio = "SELECT percentual_desconto, tipo_beneficio 
-                     FROM tarifa_social 
-                     WHERE id_usuario = :id_user AND status_beneficio = 'Ativo' 
-                     LIMIT 1";
-    $stmtBen = $pdo->prepare($sqlBeneficio);
-    $stmtBen->execute([':id_user' => $dadosFatura['dono_unidade']]);
-    $beneficio = $stmtBen->fetch(PDO::FETCH_ASSOC);
-
-    // 5. CÁLCULOS
+    // 5. CÁLCULOS (NOVO MODELO PROGRESSIVO)
     $statusFatura = $dadosFatura['status_pagamento'] ?? 'Pendente';
-    $consumoM3 = (float)($dadosFatura['consumo_m3'] ?? 0);
-    $valorM3 = (float)($dadosFatura['valor_m3'] ?? 0);
-    $taxaEsgoto = (float)($dadosFatura['taxa_esgoto'] ?? 0);
+    $consumoRestante = (float)($dadosFatura['consumo_m3'] ?? 0);
+    $valorFixo = (float)($dadosFatura['tarifa_valor_fixo'] ?? $dadosFatura['valor_fixo'] ?? 0);
+    $taxaEsgotoPercentual = max(0, (float)($dadosFatura['taxa_esgoto'] ?? 0));
 
-    $valorConsumoBase = $consumoM3 * $valorM3;
-    $subtotalBruto = $valorConsumoBase + $taxaEsgoto;
-
-    $economiaReal = 0;
-    if (!empty($beneficio)) {
-        $percentual = (float)$beneficio['percentual_desconto'] / 100;
-        $economiaReal = $valorConsumoBase * $percentual;
+    if ($valorFixo <= 0 && !empty($dadosFatura['id_tarifa'])) {
+        $stmtTarifaFixo = $pdo->prepare("SELECT valor_fixo FROM tarifa WHERE id_tarifa = :id_tarifa LIMIT 1");
+        $stmtTarifaFixo->execute([':id_tarifa' => $dadosFatura['id_tarifa']]);
+        $tarifaFixoRow = $stmtTarifaFixo->fetch(PDO::FETCH_ASSOC);
+        if ($tarifaFixoRow) {
+            $valorFixo = (float)$tarifaFixoRow['valor_fixo'];
+        }
     }
-    $totalExibicao = $subtotalBruto - $economiaReal;
 
+    // Busca as faixas configuradas para esta tarifa
+    $stmtF = $pdo->prepare("SELECT * FROM tarifa_faixas WHERE id_tarifa = :id ORDER BY limite_superior ASC");
+    $stmtF->execute([':id' => $dadosFatura['id_tarifa']]);
+    $faixas = $stmtF->fetchAll(PDO::FETCH_ASSOC);
+
+    $valorAguaTotal = 0.0;
+    $detalhesConsumo = [];
+    $limiteAnterior = 0;
+    $ultimaTarifaM3 = (float)($dadosFatura['valor_m3'] ?? 0);
+
+    foreach ($faixas as $faixa) {
+        if ($consumoRestante <= 0) break;
+
+        $ultimaTarifaM3 = (float)$faixa['valor_m3'];
+        $limiteFaixa = (int)$faixa['limite_superior'] - $limiteAnterior;
+        $consumoNestaFaixa = min($consumoRestante, $limiteFaixa);
+        $valorNaFaixa = $consumoNestaFaixa * $ultimaTarifaM3;
+
+        if ($consumoNestaFaixa > 0) {
+            $detalhesConsumo[] = [
+                'texto' => "Faixa {$limiteAnterior} a {$faixa['limite_superior']} m³ ({$consumoNestaFaixa} m³)",
+                'valor' => $valorNaFaixa
+            ];
+        }
+
+        $valorAguaTotal += $valorNaFaixa;
+        $consumoRestante -= $consumoNestaFaixa;
+        $limiteAnterior = $faixa['limite_superior'];
+    }
+
+    if ($consumoRestante > 0) {
+        $valorExtra = $consumoRestante * $ultimaTarifaM3;
+        $valorAguaTotal += $valorExtra;
+        $detalhesConsumo[] = [
+            'texto' => "{$consumoRestante} m³ x R$ " . number_format($ultimaTarifaM3, 2, ',', '.'),
+            'valor' => $valorExtra
+        ];
+    }
+
+    $valorEsgoto = round($valorAguaTotal * ($taxaEsgotoPercentual / 100), 2);
+    $valorVariavelTotal = $valorAguaTotal + $valorEsgoto;
+    $subtotalBruto = round($valorFixo + $valorVariavelTotal, 2);
+    $valorTotalFatura = $subtotalBruto;
+    $economiaReal = max(0.0, $subtotalBruto - $valorTotalFatura);
+    $detalhamentoDesconto = trim($dadosFatura['detalhamento_desconto'] ?? '');
 } catch (Exception $e) {
     die("Erro técnico: " . $e->getMessage());
 }
@@ -101,6 +151,7 @@ try {
 
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
     <meta charset="UTF-8">
     <title>Fatura - MedidaCerta</title>
@@ -110,8 +161,44 @@ try {
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../assets/css/faturaPDF.css">
-    </head>
+    <style>
+        .alert-floating-container {
+            position: fixed;
+            top: 25px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1060;
+        }
+
+        .alert-compacto {
+            background: #ffffff;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            border-radius: 50px;
+            padding: 10px 25px;
+            font-weight: 500;
+            color: #198754;
+        }
+    </style>
+</head>
+
 <body>
+
+    <div class="alert-floating-container">
+
+        <?php if (isset($_GET['sucesso']) || (isset($_GET['pagamento']) && $_GET['pagamento'] === 'sucesso')): ?>
+            <div class="alert alert-compacto fade show" id="sucessoAlert">
+                <i class="bi bi-check-circle-fill me-2"></i> O pagamento da fatura foi confirmado!
+            </div>
+        <?php endif; ?>
+
+        <?php if (isset($_GET['erro'])): ?>
+            <div class="alert alert-compacto fade show text-danger" id="alertaFlutuante" style="background-color: #f8d7da; color: #842029; border: 1px solid #f5c2c7; padding: 10px 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                <?= htmlspecialchars($_GET['erro']) ?>
+            </div>
+        <?php endif; ?>
+    </div>
+
     <div class="invoice-wrapper">
         <div class="invoice-card">
             <div class="invoice-header">
@@ -160,23 +247,41 @@ try {
                     </thead>
                     <tbody>
                         <tr>
-                            <td>Consumo de Água (<?= number_format($consumoM3, 1, ',', '.') ?> m³ × R$ <?= number_format($valorM3, 2, ',', '.') ?>)</td>
-                            <td class="text-end">R$ <?= number_format($valorConsumoBase, 2, ',', '.') ?></td>
+                            <td>Taxa Fixa de Disponibilidade (Obrigatória)</td>
+                            <td class="text-end">R$ <?= number_format($valorFixo, 2, ',', '.') ?></td>
+                        </tr>
+
+                        <?php foreach ($detalhesConsumo as $item): ?>
+                            <tr>
+                                <td class="ps-4 small text-muted"><?= $item['texto'] ?></td>
+                                <td class="text-end small text-muted">R$ <?= number_format($item['valor'], 2, ',', '.') ?></td>
+                            </tr>
+                        <?php endforeach; ?>
+
+                        <tr class="fw-bold border-top">
+                            <td>Total Consumo de Água</td>
+                            <td class="text-end">R$ <?= number_format($valorAguaTotal, 2, ',', '.') ?></td>
+                        </tr>
+                        <tr>
+                            <td>Taxa de Esgoto (<?= number_format($taxaEsgotoPercentual, 2, ',', '.') ?>%)</td>
+                            <td class="text-end">R$ <?= number_format($valorEsgoto, 2, ',', '.') ?></td>
+                        </tr>
+                        <tr class="fw-bold">
+                            <td>Total Variável com Esgoto</td>
+                            <td class="text-end">R$ <?= number_format($valorVariavelTotal, 2, ',', '.') ?></td>
                         </tr>
 
                         <?php if ($economiaReal > 0.01): ?>
                             <tr style="color: #059669; font-weight: 600; background-color: #f0fdf4;">
-                                <td>
-                                    Benefício: <?= htmlspecialchars($beneficio['tipo_beneficio'] ?? 'Tarifa Social') ?> (<?= (int)$beneficio['percentual_desconto'] ?>%)
-                                </td>
+                                <td>Desconto aplicado</td>
                                 <td class="text-end">- R$ <?= number_format($economiaReal, 2, ',', '.') ?></td>
                             </tr>
+                            <?php if ($detalhamentoDesconto !== ''): ?>
+                                <tr style="color: #0f5132; font-size: 0.9rem;">
+                                    <td colspan="2"><?= htmlspecialchars($detalhamentoDesconto, ENT_QUOTES, 'UTF-8') ?></td>
+                                </tr>
+                            <?php endif; ?>
                         <?php endif; ?>
-
-                        <tr>
-                            <td>Taxa de Esgoto / Disponibilidade</td>
-                            <td class="text-end">R$ <?= number_format($taxaEsgoto, 2, ',', '.') ?></td>
-                        </tr>
                     </tbody>
                 </table>
 
@@ -194,7 +299,7 @@ try {
 
                         <div class="invoice-final" style="margin-top: 10px; padding: 12px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; display: flex; justify-content: space-between; align-items: center;">
                             <span style="font-weight: 700;">TOTAL A PAGAR:</span>
-                            <span style="font-size: 1.3rem; font-weight: 800;">R$ <?= number_format($totalExibicao, 2, ',', '.') ?></span>
+                            <span style="font-size: 1.3rem; font-weight: 800;">R$ <?= number_format($valorTotalFatura, 2, ',', '.') ?></span>
                         </div>
                     </div>
                 </div>
@@ -254,7 +359,7 @@ try {
                                 <div class="text-center">
                                     <p class="mb-2 small">Linha Digitável:</p>
                                     <div class="bg-light p-2 mb-3 font-monospace small border">
-                                        23793.38128 60033.488511 14006.333481 9 968300000<?= str_replace(['.', ','], '', number_format($totalExibicao, 2)) ?>
+                                        23793.38128 60033.488511 14006.333481 9 968300000<?= str_replace(['.', ','], '', number_format($valorTotalFatura, 2)) ?>
                                     </div>
                                 </div>
                             </div>
@@ -264,7 +369,7 @@ try {
                             <form action="../controller/ConfirmarPagamento.php" method="POST">
                                 <input type="hidden" name="id_fatura" value="<?= $dadosFatura['id_fatura'] ?>">
                                 <button type="submit" class="btn btn-success w-100 fw-bold py-2 btn-confirmar">
-                                    EFETUAR PAGAMENTO: R$ <?= number_format($totalExibicao, 2, ',', '.') ?>
+                                    EFETUAR PAGAMENTO: R$ <?= number_format($valorTotalFatura, 2, ',', '.') ?>
                                 </button>
                             </form>
                         </div>
@@ -294,11 +399,35 @@ try {
 
         document.querySelector('form').onsubmit = function() {
             let btn = document.querySelector('.btn-confirmar');
-            if(btn) {
+            if (btn) {
                 btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Processando...';
                 btn.classList.add('disabled');
             }
         };
     </script>
+    <script>
+        // Função para sumir com os alertas e limpar a URL
+        window.onload = function() {
+            const alertas = document.querySelectorAll('.alert-compacto');
+
+            alertas.forEach(alerta => {
+                // Remove o alerta após 4 segundos
+                setTimeout(() => {
+                    alerta.classList.remove('show');
+                    alerta.style.display = 'none';
+                }, 4000);
+            });
+
+            // Limpa os parâmetros da URL para evitar repetir o alerta ao dar F5
+            if (typeof window.history.replaceState === 'function') {
+                const url = new URL(window.location);
+                url.searchParams.delete('pagamento');
+                url.searchParams.delete('sucesso');
+                url.searchParams.delete('erro');
+                window.history.replaceState({}, '', url);
+            }
+        };
+    </script>
 </body>
+
 </html>

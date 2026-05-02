@@ -8,7 +8,7 @@ require_once __DIR__ . '/../model/dao/Conexao.php';
 
 try {
     $conn = Conexao::getConexao();
-    
+
     $sql = "SELECT a.*, u.numero, u.bloco, COALESCE(l.data_leitura, a.data_registro) AS data_exibicao, usu.nome as morador 
             FROM anomalia a 
             LEFT JOIN leitura l ON a.id_leitura = l.id_leitura 
@@ -16,7 +16,7 @@ try {
             LEFT JOIN unidade u ON h.id_unidade = u.id_unidade 
             LEFT JOIN usuario usu ON u.id_usuario = usu.id_usuario 
             ORDER BY COALESCE(l.data_leitura, a.data_registro) DESC";
-            
+
     $stmt = $conn->prepare($sql);
     $stmt->execute();
     $notificacoes = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -30,6 +30,7 @@ try {
 
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -41,24 +42,112 @@ try {
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../assets/css/unificado.css">
     <style>
-        body { font-family: 'Inter', sans-serif; background-color: #f8f9fa; color: #1f2937; }
-        .page-header-box { border-radius: 16px; margin-top: -45px; position: relative; z-index: 10; }
-        .breadcrumb-item a { color: #0d6efd; text-decoration: none; }
-        .breadcrumb-item.active { color: #6b7280; }
-        .search-wrapper { background-color: #ffffff; border-radius: 16px; padding: 18px; border: 1px solid #e5e7eb; margin-bottom: 1.75rem; box-shadow: 0 4px 16px rgba(15, 23, 42, 0.04); }
-        .search-input-group { position: relative; max-width: 600px; margin: 0 auto; }
-        .search-input-group .form-control { border-radius: 12px; padding-left: 48px; height: 50px; border: 1px solid #d1d5db; background-color: #f8fafc; transition: all 0.2s ease; }
-        .search-input-group .form-control:focus { background-color: #ffffff; border-color: #0d6efd; box-shadow: 0 0 0 4px rgba(13, 110, 253, 0.1); }
-        .search-input-group .bi-search { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); z-index: 5; color: #94a3b8; font-size: 1.1rem; }
-        .card-notif { border-radius: 18px; border: 1px solid #e5e7eb; transition: transform .2s ease, box-shadow .2s ease; background: #ffffff; }
-        .card-notif:hover { transform: translateY(-2px); box-shadow: 0 14px 30px rgba(15, 23, 42, 0.08); }
-        .badge-unidade { background-color: #f1f5f9; color: #334155; font-weight: 600; }
-        .icon-box { width: 52px; height: 52px; border-radius: 14px; display: inline-flex; align-items: center; justify-content: center; }
-        .bg-danger-soft { background-color: #fee2e2; color: #b91c1c; }
-        .bg-warning-soft { background-color: #fef3c7; color: #92400e; }
-        .table-notif th, .table-notif td { vertical-align: middle; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8f9fa;
+            color: #1f2937;
+        }
+
+        .page-header-box {
+            border-radius: 16px;
+            margin-top: -45px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .breadcrumb-item a {
+            color: #0d6efd;
+            text-decoration: none;
+        }
+
+        .breadcrumb-item.active {
+            color: #6b7280;
+        }
+
+        .search-wrapper {
+            background-color: #ffffff;
+            border-radius: 16px;
+            padding: 18px;
+            border: 1px solid #e5e7eb;
+            margin-bottom: 1.75rem;
+            box-shadow: 0 4px 16px rgba(15, 23, 42, 0.04);
+        }
+
+        .search-input-group {
+            position: relative;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .search-input-group .form-control {
+            border-radius: 12px;
+            padding-left: 48px;
+            height: 50px;
+            border: 1px solid #d1d5db;
+            background-color: #f8fafc;
+            transition: all 0.2s ease;
+        }
+
+        .search-input-group .form-control:focus {
+            background-color: #ffffff;
+            border-color: #0d6efd;
+            box-shadow: 0 0 0 4px rgba(13, 110, 253, 0.1);
+        }
+
+        .search-input-group .bi-search {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 5;
+            color: #94a3b8;
+            font-size: 1.1rem;
+        }
+
+        .card-notif {
+            border-radius: 18px;
+            border: 1px solid #e5e7eb;
+            transition: transform .2s ease, box-shadow .2s ease;
+            background: #ffffff;
+        }
+
+        .card-notif:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 14px 30px rgba(15, 23, 42, 0.08);
+        }
+
+        .badge-unidade {
+            background-color: #f1f5f9;
+            color: #334155;
+            font-weight: 600;
+        }
+
+        .icon-box {
+            width: 52px;
+            height: 52px;
+            border-radius: 14px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .bg-danger-soft {
+            background-color: #fee2e2;
+            color: #b91c1c;
+        }
+
+        .bg-warning-soft {
+            background-color: #fef3c7;
+            color: #92400e;
+        }
+
+        .table-notif th,
+        .table-notif td {
+            vertical-align: middle;
+        }
     </style>
 </head>
+
 <body class="bg-light">
 
     <?php include_once __DIR__ . '/includes/header.php'; ?>
@@ -69,21 +158,23 @@ try {
                 <h4 class="fw-bold mb-0 text-dark">Notificações</h4>
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb mb-0" style="font-size: 0.75rem;">
-                        <li class="breadcrumb-item"><a href="admin.php" class="text-decoration-none text-muted">Admin</a></li>
+                        <li class="breadcrumb-item"><a href="admin.php" class="text-decoration-none text-primary">Admin</a></li>
                         <li class="breadcrumb-item active">Notificações</li>
                     </ol>
                 </nav>
             </div>
             <div class="d-flex gap-2 align-items-center">
                 <span class="badge bg-primary rounded-pill py-2 px-3">Total de alertas: <?= count($notificacoes) ?></span>
-                <a href="admin.php" class="btn btn-outline-secondary rounded-pill">Voltar ao Painel</a>
+                <a href="javascript:history.back()" class="btn btn-outline-secondary rounded-3 px-4 shadow-sm">
+                    Voltar
+                </a>
             </div>
         </div>
     </div>
 
     <main class="main-container container mb-5">
-                </div>
-            </div>
+        </div>
+        </div>
         </div>
 
         <div class="search-wrapper">
@@ -116,11 +207,16 @@ try {
                                 </td>
                             </tr>
                         <?php else: ?>
-                            <?php foreach ($notificacoes as $notif): 
+                            <?php foreach ($notificacoes as $notif):
                                 $isCritico = strtolower($notif['nivel']) === 'crítico' || strtolower($notif['nivel']) === 'critico';
                                 $badgeClass = $isCritico ? 'bg-danger text-white' : 'bg-warning text-dark';
                                 $searchText = implode(' ', [
-                                    $notif['tipo'], $notif['descricao'], $notif['bloco'] ?? '', $notif['numero'] ?? '', $notif['morador'] ?? '', $notif['nivel']
+                                    $notif['tipo'],
+                                    $notif['descricao'],
+                                    $notif['bloco'] ?? '',
+                                    $notif['numero'] ?? '',
+                                    $notif['morador'] ?? '',
+                                    $notif['nivel']
                                 ]);
                                 $dataExibicao = $notif['data_exibicao'] ?? $notif['data_registro'] ?? null;
                             ?>
@@ -153,7 +249,7 @@ try {
             </div>
         </div>
     </main>
-    
+
     <?php include __DIR__ . '/includes/footer.php'; ?>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
@@ -190,4 +286,5 @@ try {
         }
     </script>
 </body>
+
 </html>

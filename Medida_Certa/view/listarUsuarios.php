@@ -94,7 +94,6 @@ $listaUsuarios = $usuarioDAO->listarUsuarios();
         .alert-compacto {
             background: #ffffff;
             border: none;
-            border-left: 4px solid #198754;
             /* Verde para sucesso */
             box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
             border-radius: 50px;
@@ -117,17 +116,17 @@ $listaUsuarios = $usuarioDAO->listarUsuarios();
 <body class="bg-light">
 
     <div class="alert-floating-container">
-    <?php if (isset($_GET['msg']) && $_GET['msg'] !== 'erro'): ?>
-        <div class="alert alert-compacto fade show" id="alertaFlutuante">
-            <i class="bi bi-check-circle-fill me-2"></i> 
-            <?= htmlspecialchars($_GET['msg'] == 'sucesso' ? 'Operação realizada!' : $_GET['msg']) ?>
-        </div>
-    <?php elseif (isset($_GET['msg']) && $_GET['msg'] == 'erro'): ?>
-        <div class="alert alert-compacto alert-compacto-erro fade show" id="alertaFlutuante">
-            <i class="bi bi-exclamation-triangle-fill me-2"></i> Erro ao processar solicitação.
-        </div>
-    <?php endif; ?>
-</div>
+        <?php if (isset($_GET['msg']) && $_GET['msg'] !== 'erro'): ?>
+            <div class="alert alert-compacto fade show" id="alertaFlutuante">
+                <i class="bi bi-check-circle-fill me-2"></i>
+                <?= htmlspecialchars($_GET['msg'] == 'sucesso' ? 'Operação realizada!' : $_GET['msg']) ?>
+            </div>
+        <?php elseif (isset($_GET['msg']) && $_GET['msg'] == 'erro'): ?>
+            <div class="alert alert-compacto alert-compacto-erro fade show" id="alertaFlutuante">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i> Erro ao processar solicitação.
+            </div>
+        <?php endif; ?>
+    </div>
 
     <?php include '../view/includes/header.php'; ?>
 
@@ -137,13 +136,13 @@ $listaUsuarios = $usuarioDAO->listarUsuarios();
                 <h4 class="fw-bold mb-0 text-dark">Gestão de Usuários</h4>
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb mb-0" style="font-size: 0.75rem;">
-                        <li class="breadcrumb-item"><a href="admin.php" class="text-decoration-none text-muted">Admin</a></li>
+                        <li class="breadcrumb-item"><a href="admin.php" class="text-decoration-none text-primary">Admin</a></li>
                         <li class="breadcrumb-item active">Usuários</li>
                     </ol>
                 </nav>
             </div>
 
-            <a href="editarUsuario.php" class="btn btn-primary rounded-3 px-4 shadow-sm d-flex align-items-center fw-bold" style="height: 42px; font-size: 0.9rem;">
+            <a href="cadastrarUsuario.php" class="btn btn-primary rounded-3 px-4 shadow-sm d-flex align-items-center fw-bold" style="height: 42px; font-size: 0.9rem;">
                 <i class="bi bi-person-plus-fill me-2"></i>Novo Usuário
             </a>
         </div>
@@ -203,38 +202,38 @@ $listaUsuarios = $usuarioDAO->listarUsuarios();
                                         </span>
                                     </td>
                                     <td>
-    <?php if ($u['bloqueado'] == 1): ?>
-        <span class="badge bg-danger text-white rounded-pill px-3">
-            <i class="bi bi-lock-fill me-1"></i> Suspenso
-        </span>
-    <?php elseif ($u['ativo'] == 0): ?>
-        <span class="badge bg-warning text-dark rounded-pill px-3">
-            <i class="bi bi-clock-history me-1"></i> Pendente
-        </span>
-    <?php else: ?>
-        <span class="badge bg-success-subtle text-success rounded-pill px-3">
-            <i class="bi bi-check-circle me-1"></i> Ativo
-        </span>
-    <?php endif; ?>
-</td>
+                                        <?php if ($u['bloqueado'] == 1): ?>
+                                            <span class="badge bg-danger text-white rounded-pill px-3">
+                                                <i class="bi bi-lock-fill me-1"></i> Suspenso
+                                            </span>
+                                        <?php elseif ($u['ativo'] == 0): ?>
+                                            <span class="badge bg-warning text-dark rounded-pill px-3">
+                                                <i class="bi bi-clock-history me-1"></i> Pendente
+                                            </span>
+                                        <?php else: ?>
+                                            <span class="badge bg-success-subtle text-success rounded-pill px-3">
+                                                <i class="bi bi-check-circle me-1"></i> Ativo
+                                            </span>
+                                        <?php endif; ?>
+                                    </td>
                                     <td class="text-center pe-4">
-    <form action="../controller/StatusUsuarioControl.php" method="POST" id="formStatus<?= $u['id_usuario'] ?>" style="display:inline;">
-        <input type="hidden" name="id" value="<?= $u['id_usuario'] ?>">
-        <input type="hidden" name="status" value="<?= $u['bloqueado'] == 1 ? '0' : '1' ?>">
-        
-        <button type="button" 
-            class="btn btn-sm <?= $u['bloqueado'] == 1 ? 'btn-danger' : 'btn-outline-danger' ?> rounded-circle shadow-sm"
-            onclick="confirmarTrocaStatus(<?= $u['id_usuario'] ?>, '<?= addslashes($u['nome']) ?>', '<?= $u['bloqueado'] == 1 ? 'ativar' : 'desativar' ?>')"
-            title="<?= $u['bloqueado'] == 1 ? 'Desbloquear Usuário' : 'Suspender Usuário' ?>">
-            <i class="bi <?= $u['bloqueado'] == 1 ? 'bi-unlock-fill' : 'bi-person-x-fill' ?>"></i>
-        </button>
-    </form>
+                                        <form action="../controller/StatusUsuarioControl.php" method="POST" id="formStatus<?= $u['id_usuario'] ?>" style="display:inline;">
+                                            <input type="hidden" name="id" value="<?= $u['id_usuario'] ?>">
+                                            <input type="hidden" name="status" value="<?= $u['bloqueado'] == 1 ? '0' : '1' ?>">
 
-    <a href="editarUsuario.php?id=<?= $u['id_usuario'] ?>&modo=editar"
-        class="btn btn-sm btn-light rounded-circle shadow-sm ms-1 border" title="Editar Dados">
-        <i class="bi bi-pencil-square text-primary"></i>
-    </a>
-</td>
+                                            <button type="button"
+                                                class="btn btn-sm <?= $u['bloqueado'] == 1 ? 'btn-danger' : 'btn-outline-danger' ?> rounded-circle shadow-sm"
+                                                onclick="confirmarTrocaStatus(<?= $u['id_usuario'] ?>, '<?= addslashes($u['nome']) ?>', '<?= $u['bloqueado'] == 1 ? 'ativar' : 'desativar' ?>')"
+                                                title="<?= $u['bloqueado'] == 1 ? 'Desbloquear Usuário' : 'Suspender Usuário' ?>">
+                                                <i class="bi <?= $u['bloqueado'] == 1 ? 'bi-unlock-fill' : 'bi-person-x-fill' ?>"></i>
+                                            </button>
+                                        </form>
+
+                                        <a href="editarUsuario.php?id=<?= $u['id_usuario'] ?>&modo=editar"
+                                            class="btn btn-sm btn-light rounded-circle shadow-sm ms-1 border" title="Editar Dados">
+                                            <i class="bi bi-pencil-square text-primary"></i>
+                                        </a>
+                                    </td>
                                 </tr>
                             <?php endforeach; ?>
                         <?php endif; ?>
@@ -287,26 +286,26 @@ $listaUsuarios = $usuarioDAO->listarUsuarios();
 
         // Modal de Confirmação
         function confirmarTrocaStatus(id, nome, acao) {
-    const modal = new bootstrap.Modal(document.getElementById('modalConfirmacao'));
-    const titulo = document.getElementById('modalTitulo');
-    const mensagem = document.getElementById('modalMensagem');
-    const btnConfirmar = document.getElementById('btnConfirmarModal');
+            const modal = new bootstrap.Modal(document.getElementById('modalConfirmacao'));
+            const titulo = document.getElementById('modalTitulo');
+            const mensagem = document.getElementById('modalMensagem');
+            const btnConfirmar = document.getElementById('btnConfirmarModal');
 
-    if (acao === 'desativar') {
-        titulo.innerText = "Confirmar Suspensão";
-        mensagem.innerHTML = `Deseja realmente <strong>suspender</strong> o acesso de <strong>${nome}</strong>? O usuário não conseguirá logar no MedidaCerta.`;
-        btnConfirmar.className = "btn btn-danger rounded-3 px-4";
-        btnConfirmar.innerText = "Confirmar Bloqueio";
-    } else {
-        titulo.innerText = "Liberar Acesso";
-        mensagem.innerHTML = `Deseja <strong>restaurar</strong> o acesso de <strong>${nome}</strong>?`;
-        btnConfirmar.className = "btn btn-success rounded-3 px-4";
-        btnConfirmar.innerText = "Confirmar Liberação";
-    }
+            if (acao === 'desativar') {
+                titulo.innerText = "Confirmar Suspensão";
+                mensagem.innerHTML = `Deseja realmente <strong>suspender</strong> o acesso de <strong>${nome}</strong>? O usuário não conseguirá logar no MedidaCerta.`;
+                btnConfirmar.className = "btn btn-danger rounded-3 px-4";
+                btnConfirmar.innerText = "Confirmar Bloqueio";
+            } else {
+                titulo.innerText = "Liberar Acesso";
+                mensagem.innerHTML = `Deseja <strong>restaurar</strong> o acesso de <strong>${nome}</strong>?`;
+                btnConfirmar.className = "btn btn-success rounded-3 px-4";
+                btnConfirmar.innerText = "Confirmar Liberação";
+            }
 
-    btnConfirmar.onclick = () => document.getElementById('formStatus' + id).submit();
-    modal.show();
-}
+            btnConfirmar.onclick = () => document.getElementById('formStatus' + id).submit();
+            modal.show();
+        }
     </script>
 
     <script>

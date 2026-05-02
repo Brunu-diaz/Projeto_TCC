@@ -38,14 +38,61 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if (!$tarifa) throw new Exception("Nenhuma tarifa cadastrada no sistema.");
 
             // 4. Lógica de Valor Base (Antes dos benefícios)
-            $valor_consumo_puro = ($consumo_m3 * $tarifa['valor_m3']);
-            $taxa_esgoto = $tarifa['taxa_esgoto'];
+            $valorFixo = (float)$tarifa['valor_fixo'];
+            $taxaEsgotoPercentual = (float)$tarifa['taxa_esgoto']; // Ex: 100.00
+            $idTarifa = (int)$tarifa['id_tarifa'];
+
+            $stmtFaixas = $pdo->prepare("SELECT limite_inferior, limite_superior, valor_m3
+                                         FROM tarifa_faixas
+                                         WHERE id_tarifa = :id_tarifa
+                                         ORDER BY limite_superior ASC");
+            $stmtFaixas->execute([':id_tarifa' => $idTarifa]);
+            $faixas = $stmtFaixas->fetchAll(PDO::FETCH_ASSOC);
+
+            $consumoRestante = max(0, $consumo_m3);
+            $valorAguaTotal = 0.0;
+            $limiteAnterior = 0;
+            $ultimaTarifaM3 = (float)$tarifa['valor_m3'];
+
+            if (!empty($faixas)) {
+                foreach ($faixas as $faixa) {
+                    if ($consumoRestante <= 0) break;
+
+                    $ultimaTarifaM3 = (float)$faixa['valor_m3'];
+                    $limiteFaixa = (int)$faixa['limite_superior'] - $limiteAnterior;
+                    $consumoNestaFaixa = min($consumoRestante, $limiteFaixa);
+                    $valorNaFaixa = $consumoNestaFaixa * $ultimaTarifaM3;
+
+                    $valorAguaTotal += $valorNaFaixa;
+                    $consumoRestante -= $consumoNestaFaixa;
+                    $limiteAnterior = (int)$faixa['limite_superior'];
+                }
+            }
+
+            // Consumo excedente à última faixa
+            if ($consumoRestante > 0) {
+                $valorAguaTotal += ($consumoRestante * $ultimaTarifaM3);
+            }
+
+            // --- AJUSTE ITEM 2: CÁLCULO PRECISO DO TOTAL ---
+            // 1. Valor da Água (Soma das faixas)
+            $valorAguaTotal = round($valorAguaTotal, 2); 
             
-            // Inicializamos o valor total como o bruto
-            $valor_total = $valor_consumo_puro + $taxa_esgoto;
+            // 2. Valor do Esgoto (Calculado sobre o valor da Água)
+            $valorEsgoto = round($valorAguaTotal * ($taxaEsgotoPercentual / 100), 2);
+            
+            // 3. Valor Variável Total (Água + Esgoto)
+            $valorVariavelTotal = $valorAguaTotal + $valorEsgoto;
+            
+            // 4. Subtotal Bruto (Soma tudo: Água + Esgoto + Taxa Fixa)
+            // Para o seu caso: 53.82 + 53.82 + 11.18 = 118.82
+            $subtotalBruto = round($valorVariavelTotal + $valorFixo, 2);
+            
+            $valor_total = $subtotalBruto;
+            $descontoAplicado = 0.0;
             $detalhamento = "Tarifa Comum"; 
 
-            // --- ITEM 2: VERIFICAÇÃO DE INADIMPLÊNCIA ---
+            // --- VERIFICAÇÃO DE INADIMPLÊNCIA ---
             $sqlDivida = "SELECT COUNT(*) FROM fatura f
                           JOIN leitura l ON f.id_leitura = l.id_leitura
                           JOIN hidrometro h ON l.id_hidrometro = h.id_hidrometro
@@ -74,12 +121,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $regraSocial = $stmtS->fetch(PDO::FETCH_ASSOC);
 
                 if ($regraSocial && $consumo_m3 <= $regraSocial['limite_m3']) {
-                    // Garantimos que o percentual não seja nulo para evitar erro 1364
                     $perc = $regraSocial['percentual_desconto'] ?? 0;
-                    $fator_desconto = ($perc / 100);
-                    
-                    // CÁLCULO DEFINITIVO: Subtraímos o desconto do consumo e somamos o esgoto
-                    $valor_total = ($valor_consumo_puro * (1 - $fator_desconto)) + $taxa_esgoto;
+                    $descontoAplicado = round($valorVariavelTotal * ($perc / 100), 2);
+                    $valor_total = round($subtotalBruto - $descontoAplicado, 2);
                     $detalhamento = "Desconto Social: " . number_format($perc, 0) . "% aplicado.";
                 } 
                 // B. Verifica Bônus Economia
@@ -111,21 +155,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         ]);
                         $consumoPassado = $stmtH->fetchColumn() ?: 0;
 
-                        // Se economizou em relação ao ano passado
                         if ($consumoPassado > 0 && $consumo_m3 < $consumoPassado) {
                             $percB = $regraBonus['percentual_desconto'] ?? 0;
-                            $fator_desconto_b = ($percB / 100);
-                            
-                            // CÁLCULO DEFINITIVO PARA BÔNUS
-                            $valor_total = ($valor_consumo_puro * (1 - $fator_desconto_b)) + $taxa_esgoto;
+                            $descontoAplicado = round($valorVariavelTotal * ($percB / 100), 2);
+                            $valor_total = round($subtotalBruto - $descontoAplicado, 2);
                             $detalhamento = "Bônus Eficiência: " . number_format($percB, 0) . "% aplicado.";
                         }
                     }
                 }
             }
 
-            // 5. Insere na tabela fatura com o VALOR FINAL JÁ SUBTRAÍDO
-            // Arredondamos para 2 casas decimais para evitar problemas no banco DECIMAL(10,2)
+            // 5. Insere na tabela fatura com o VALOR FINAL CORRETO
             $valor_final_db = round($valor_total, 2);
 
             $sqlFatura = "INSERT INTO fatura (id_leitura, id_tarifa, consumo_m3, valor_total, detalhamento_desconto, data_emissao, data_vencimento, status_pagamento) 

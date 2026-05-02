@@ -71,8 +71,8 @@ try {
     $pdo->commit();
 
     // Redireciona com sucesso
-    header("Location: ../view/unidades.php?sucesso=" . urlencode("Unidade e Hidrômetro atualizados com sucesso!"));
-    exit;
+    header("Location: ../view/editar_unidade.php?id=" . $id_unidade . "&sucesso=1");
+exit;
 
 } catch (PDOException $e) {
     // Se algo der errado, desfaz tudo
@@ -80,7 +80,8 @@ try {
         $pdo->rollBack();
     }
     
-    // Log do erro (opcional) e redirecionamento
-    header("Location: ../view/unidades.php?erro=" . urlencode("Erro ao atualizar: " . $e->getMessage()));
+    // Redireciona de VOLTA para a página de EDIÇÃO mantendo o formulário preenchido
+    // Para um sistema profissional, não exiba o erro do banco ($e->getMessage()) para o admin, use um código.
+    header("Location: ../view/editar_unidade.php?id=" . $id_unidade . "&erro=db_error");
     exit;
 }

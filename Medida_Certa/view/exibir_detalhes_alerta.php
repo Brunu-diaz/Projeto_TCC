@@ -125,16 +125,16 @@ try {
                 <h4 class="fw-bold mb-0 text-dark">Detalhes da Anomalia</h4>
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb mb-0" style="font-size: 0.75rem;">
-                        <li class="breadcrumb-item"><a href="admin.php" class="text-decoration-none text-muted">Admin</a></li>
-                        <li class="breadcrumb-item"><a href="notificacoesadmin.php" class="text-decoration-none text-muted">Notificações</a></li>
+                        <li class="breadcrumb-item"><a href="admin.php" class="text-decoration-none text-primary">Admin</a></li>
+                        <li class="breadcrumb-item"><a href="notificacoesadmin.php" class="text-decoration-none text-primary">Notificações</a></li>
                         <li class="breadcrumb-item active">Detalhes</li>
                     </ol>
                 </nav>
             </div>
 
             <div class="d-flex gap-2">
-                <a href="notificacoesadmin.php" class="btn btn-outline-secondary rounded-3 px-4 shadow-sm">
-                    <i class="bi bi-arrow-left me-2"></i>Voltar
+                <a href="javascript:history.back()" class="btn btn-outline-secondary rounded-3 px-4 shadow-sm">
+                    Voltar
                 </a>
             </div>
         </div>

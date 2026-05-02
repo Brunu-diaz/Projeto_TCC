@@ -14,8 +14,9 @@ if (!$id_usuario) {
 
 // Configurações Padrão de Inicialização
 $val = [
+    'valor_fixo'           => '0.00',
     'valor_m3'             => '0.00',
-    'taxa_esgoto'          => '0',
+    'taxa_esgoto'          => '100',
     'dia_vencimento'       => '10',
     'alerta_vazamento'     => '0',
     'alerta_inadimplencia' => '0',
@@ -23,12 +24,15 @@ $val = [
     'nome_condominio'      => 'Condomínio MedidaCerta'
 ];
 
-// Mapeamento Chave Interna => Coluna 'chave' no Banco (Conforme sua imagem 7b866b.png)
+$currentTarifaId = 1;
+$faixas = [];
+
 $chavesBanco = [
-    'valor_m3'        => 'tarifa_minima_valor',
-    'taxa_esgoto'     => 'taxa_esgoto_percentual',
-    'modo_manutencao' => 'modo_manutencao',
-    'nome_condominio' => 'nome_condominio'
+    'dia_vencimento'       => 'dia_vencimento',
+    'alerta_vazamento'     => 'alerta_vazamento',
+    'alerta_inadimplencia' => 'alerta_inadimplencia',
+    'modo_manutencao'      => 'modo_manutencao',
+    'nome_condominio'      => 'nome_condominio'
 ];
 
 try {
@@ -41,7 +45,7 @@ try {
     $usuario = $stmtU->fetch(PDO::FETCH_ASSOC);
     $nomeAdmin = $usuario['nome'] ?? 'Admin';
 
-    // 2. Busca de Configurações no Banco
+    // 2. Busca de Configurações do Sistema
     $stmtC = $conn->query("SELECT chave, valor FROM configuracoes");
     $configs_db = $stmtC->fetchAll(PDO::FETCH_KEY_PAIR);
 
@@ -53,6 +57,23 @@ try {
             }
         }
     }
+
+    // 3. Busca da tarifa ativa mais recente
+    $stmtT = $conn->query("SELECT id_tarifa, valor_fixo, valor_m3, taxa_esgoto FROM tarifa ORDER BY data_vigencia DESC LIMIT 1");
+    $tarifaBase = $stmtT->fetch(PDO::FETCH_ASSOC);
+    $currentTarifaId = 1;
+
+    if ($tarifaBase) {
+        $currentTarifaId = (int)$tarifaBase['id_tarifa'];
+        $val['valor_fixo'] = $tarifaBase['valor_fixo'] ?? $val['valor_fixo'];
+        $val['valor_m3'] = $tarifaBase['valor_m3'] ?? $val['valor_m3'];
+        $val['taxa_esgoto'] = $tarifaBase['taxa_esgoto'] ?? $val['taxa_esgoto'];
+    }
+
+    // 4. Busca as faixas de consumo da tarifa ativa
+    $stmtF = $conn->prepare("SELECT * FROM tarifa_faixas WHERE id_tarifa = :id_tarifa ORDER BY limite_superior ASC");
+    $stmtF->execute([':id_tarifa' => $currentTarifaId]);
+    $faixas = $stmtF->fetchAll(PDO::FETCH_ASSOC);
 
     if (empty($_SESSION['csrf_token'])) {
         $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
@@ -126,7 +147,6 @@ try {
 
         .alert-compacto {
             background: #ffffff;
-            border-left: 4px solid #198754;
             box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
             border-radius: 50px;
             padding: 10px 25px;
@@ -154,12 +174,16 @@ try {
                 <h4 class="fw-bold mb-0 text-dark">Configurações do Sistema</h4>
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb mb-0" style="font-size: 0.75rem;">
-                        <li class="breadcrumb-item"><a href="admin.php" class="text-decoration-none text-muted">Admin</a></li>
+                        <li class="breadcrumb-item"><a href="admin.php" class="text-decoration-none text-primary">Admin</a></li>
                         <li class="breadcrumb-item active">Configurações</li>
                     </ol>
                 </nav>
             </div>
-            <i class="bi bi-sliders text-muted fs-4"></i>
+            <div class="d-flex gap-2">
+                <a href="javascript:history.back()" class="btn btn-outline-secondary rounded-3 px-4 shadow-sm">
+                Voltar
+                </a>
+            </div>
         </div>
     </div>
 
@@ -167,6 +191,7 @@ try {
 
         <form action="../controller/SalvarConfiguracoes.php" method="POST">
             <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
+            <input type="hidden" name="id_tarifa" value="<?= htmlspecialchars($currentTarifaId) ?>">
 
             <div class="card card-main shadow-sm p-4">
                 <div class="card-body">
@@ -186,25 +211,82 @@ try {
 
                     <section class="mb-5">
                         <div class="d-flex align-items-center mb-4">
-                            <div class="section-icon bg-blue-soft"><i class="bi bi-calculator"></i></div>
-                            <h5 class="fw-bold mb-0">Parâmetros de Cálculo</h5>
+                            <div class="section-icon bg-blue-soft"><i class="bi bi-bank"></i></div>
+                            <h5 class="fw-bold mb-0">Tarifa Geral</h5>
                         </div>
-                        <div class="row g-3">
+
+                        <div class="row g-3 mb-4">
                             <div class="col-md-4">
-                                <label class="form-label small fw-bold text-muted">VALOR DO M³ (R$)</label>
-                                <input type="number" step="0.01" class="form-control" name="valor_m3" value="<?= $val['valor_m3'] ?>">
+                                <label class="form-label small fw-bold text-muted">TAXA FIXA DISPONIBILIDADE (R$)</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">R$</span>
+                                    <input type="number" step="0.01" class="form-control" name="valor_fixo" value="<?= htmlspecialchars($val['valor_fixo']) ?>">
+                                </div>
+                                <div class="form-text">Cobrança fixa mensal para disponibilidade do serviço.</div>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label small fw-bold text-muted">VALOR PADRÃO POR m³ (R$)</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">R$</span>
+                                    <input type="number" step="0.01" class="form-control" name="valor_m3" value="<?= htmlspecialchars($val['valor_m3']) ?>">
+                                </div>
+                                <div class="form-text">Usado como fallback caso o consumo ultrapasse a última faixa ou quando não houver faixas.</div>
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label small fw-bold text-muted">TAXA ESGOTO (%)</label>
-                                <input type="number" class="form-control" name="taxa_esgoto" value="<?= $val['taxa_esgoto'] ?>">
+                                <input type="number" step="0.01" class="form-control" name="taxa_esgoto" value="<?= htmlspecialchars($val['taxa_esgoto']) ?>">
+                                <div class="form-text">Percentual aplicado sobre o valor da água.</div>
                             </div>
-                            <div class="col-md-4">
-                                <label class="form-label small fw-bold text-muted">VENCIMENTO PADRÃO</label>
-                                <select class="form-select" name="dia_vencimento">
-                                    <?php for ($d = 5; $d <= 25; $d += 5): ?>
-                                        <option value="<?= $d ?>" <?= $val['dia_vencimento'] == $d ? 'selected' : '' ?>>Dia <?= $d ?></option>
-                                    <?php endfor; ?>
-                                </select>
+                        </div>
+                    </section>
+
+                    <section class="mb-5">
+                        <div class="d-flex align-items-center mb-4">
+                            <div class="section-icon bg-blue-soft"><i class="bi bi-table"></i></div>
+                            <h5 class="fw-bold mb-0">Faixas de Consumo</h5>
+                        </div>
+                        <p class="small text-muted mb-4">Defina as faixas progressivas de consumo. O cálculo da água considera cada faixa na ordem e utiliza o valor padrão por m³ somente se o consumo ultrapassar a última faixa.</p>
+
+                        <label class="form-label small fw-bold text-muted">TABELA DE FAIXAS DE CONSUMO</label>
+                        <div id="container-faixas">
+                            <?php foreach ($faixas as $index => $faixa): ?>
+                                <div class="row g-2 mb-2 align-items-center faixa-row">
+                                    <div class="col-md-5">
+                                        <div class="input-group input-group-sm">
+                                            <span class="input-group-text">Até</span>
+                                            <input type="number" name="faixa_limite[]" class="form-control faixa-limite" value="<?= htmlspecialchars($faixa['limite_superior']) ?>" placeholder="m³" required>
+                                            <span class="input-group-text">m³</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-5">
+                                        <div class="input-group input-group-sm">
+                                            <span class="input-group-text">R$</span>
+                                            <input type="number" step="0.01" name="faixa_valor[]" class="form-control faixa-valor" value="<?= htmlspecialchars($faixa['valor_m3']) ?>" placeholder="Valor/m³" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <button type="button" class="btn btn-outline-danger btn-sm w-100 remove-faixa"><i class="bi bi-trash"></i></button>
+                                    </div>
+                                </div>
+                            <?php endforeach; ?>
+                        </div>
+                        <button type="button" id="btn-add-faixa" class="btn btn-outline-primary btn-sm mt-2 rounded-pill">
+                            <i class="bi bi-plus-circle me-1"></i> Adicionar Faixa
+                        </button>
+                    </section>
+
+                    <section class="mb-5">
+                        <div class="d-flex align-items-center mb-4">
+                            <div class="section-icon bg-orange-soft"><i class="bi bi-shield-lock"></i></div>
+                            <h5 class="fw-bold mb-0">Configurações do Sistema</h5>
+                        </div>
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-6">
+                                <label class="form-label small fw-bold text-muted">DIA VENCIMENTO PADRÃO</label>
+                                <div class="input-group">
+                                    <input type="number" min="1" max="31" class="form-control" name="dia_vencimento" value="<?= htmlspecialchars($val['dia_vencimento']) ?>">
+                                    <span class="input-group-text">do mês</span>
+                                </div>
                             </div>
                         </div>
                     </section>
@@ -222,6 +304,15 @@ try {
                                 </div>
                                 <div class="form-check form-switch">
                                     <input class="form-check-input" type="checkbox" name="alerta_vazamento" value="1" <?= $val['alerta_vazamento'] == '1' ? 'checked' : '' ?> style="width: 2.5em; height: 1.25em;">
+                                </div>
+                            </div>
+                            <div class="list-group-item d-flex justify-content-between align-items-center px-0 py-3 border-bottom">
+                                <div>
+                                    <h6 class="mb-0 fw-semibold">Alertas de Inadimplência</h6>
+                                    <p class="text-muted small mb-0">Notificar quando houver atrasos no pagamento.</p>
+                                </div>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" name="alerta_inadimplencia" value="1" <?= $val['alerta_inadimplencia'] == '1' ? 'checked' : '' ?> style="width: 2.5em; height: 1.25em;">
                                 </div>
                             </div>
                             <div class="list-group-item d-flex justify-content-between align-items-center px-0 py-3">
@@ -252,8 +343,7 @@ try {
                         </div>
                     </section>
 
-                    <div class="d-flex justify-content-end gap-2 border-top pt-4 mt-3">
-                        <a href="dashboardAdmin.php" class="btn btn-light rounded-pill px-4 text-muted">Voltar</a>
+                    <div class="d-flex justify-content-center gap-2 border-top pt-4 mt-3">
                         <button type="submit" class="btn btn-primary rounded-pill px-4 shadow-sm fw-bold">Aplicar Configurações</button>
                     </div>
 
@@ -267,28 +357,110 @@ try {
     <?php include '../view/includes/footer.php'; ?>
 
     <script>
-    const sucessoAlert = document.getElementById('sucessoAlert');
-    const erroAlert = document.getElementById('erroAlert');
-    const alertToRemove = sucessoAlert || erroAlert;
+        const sucessoAlert = document.getElementById('sucessoAlert');
+        const alertToRemove = sucessoAlert;
 
-    if (alertToRemove) {
-        // 1. Limpa o parâmetro da URL sem recarregar a página
-        // Isso impede que o F5 mostre a mensagem de novo
-        if (window.history.replaceState) {
-            const url = new URL(window.location);
-            url.searchParams.delete('sucesso');
-            url.searchParams.delete('erro');
-            window.history.replaceState({}, document.title, url.pathname);
+        if (alertToRemove) {
+            // 1. Limpa o parâmetro da URL sem recarregar a página
+            // Isso impede que o F5 mostre a mensagem de novo
+            if (window.history.replaceState) {
+                const url = new URL(window.location);
+                url.searchParams.delete('sucesso');
+                url.searchParams.delete('erro');
+                window.history.replaceState({}, document.title, url.pathname);
+            }
+
+            // 2. Animação de sumir o alerta após 3 segundos
+            setTimeout(() => {
+                alertToRemove.style.transition = "opacity 0.6s ease";
+                alertToRemove.style.opacity = "0";
+                setTimeout(() => alertToRemove.remove(), 600);
+            }, 3000);
         }
+    </script>
+    <script>
+        document.getElementById('btn-add-faixa').addEventListener('click', function() {
+            const container = document.getElementById('container-faixas');
+            const template = `
+        <div class="row g-2 mb-2 align-items-center faixa-row">
+            <div class="col-md-5">
+                <div class="input-group input-group-sm">
+                    <span class="input-group-text">Até</span>
+                    <input type="number" name="faixa_limite[]" class="form-control faixa-limite" placeholder="m³" required>
+                    <span class="input-group-text">m³</span>
+                </div>
+            </div>
+            <div class="col-md-5">
+                <div class="input-group input-group-sm">
+                    <span class="input-group-text">R$</span>
+                    <input type="number" step="0.01" name="faixa_valor[]" class="form-control faixa-valor" placeholder="Valor/m³" required>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <button type="button" class="btn btn-outline-danger btn-sm w-100 remove-faixa"><i class="bi bi-trash"></i></button>
+            </div>
+        </div>`;
+            container.insertAdjacentHTML('beforeend', template);
+        });
 
-        // 2. Animação de sumir o alerta após 3 segundos
-        setTimeout(() => {
-            alertToRemove.style.transition = "opacity 0.6s ease";
-            alertToRemove.style.opacity = "0";
-            setTimeout(() => alertToRemove.remove(), 600);
-        }, 3000);
-    }
-</script>
+        // Delegação de evento para remover faixas
+        document.getElementById('container-faixas').addEventListener('click', function(e) {
+            if (e.target.closest('.remove-faixa')) {
+                e.target.closest('.faixa-row').remove();
+            }
+        });
+
+        // Validação do formulário antes de enviar
+        document.querySelector('form').addEventListener('submit', function(e) {
+            const faixasContainer = document.getElementById('container-faixas');
+            const faixasRows = faixasContainer.querySelectorAll('.faixa-row');
+
+            if (faixasRows.length === 0) {
+                alert('⚠️ Aviso:\nVocê não adicionou nenhuma faixa de consumo.\nUma faixa padrão será criada automaticamente.');
+                return; // Permite enviar (criará faixa padrão no backend)
+            }
+
+            let todasValidas = true;
+            const erros = [];
+
+            faixasRows.forEach((row, index) => {
+                const inputLimite = row.querySelector('input[name="faixa_limite[]"]');
+                const inputValor = row.querySelector('input[name="faixa_valor[]"]');
+
+                const limite = parseInt(inputLimite.value) || 0;
+                const valorM3 = parseFloat(inputValor.value.toString().replace(',', '.')) || 0;
+
+                // Validação
+                if (!inputLimite.value || limite <= 0) {
+                    todasValidas = false;
+                    inputLimite.classList.add('is-invalid');
+                    inputLimite.style.borderColor = '#dc3545';
+                    erros.push(`Faixa ${index + 1}: Limite deve ser > 0`);
+                } else {
+                    inputLimite.classList.remove('is-invalid');
+                    inputLimite.style.borderColor = '';
+                }
+
+                if (!inputValor.value || valorM3 < 0.01) {
+                    todasValidas = false;
+                    inputValor.classList.add('is-invalid');
+                    inputValor.style.borderColor = '#dc3545';
+                    erros.push(`Faixa ${index + 1}: Valor deve ser ≥ R$ 0.01`);
+                } else {
+                    inputValor.classList.remove('is-invalid');
+                    inputValor.style.borderColor = '';
+                }
+            });
+
+            if (!todasValidas) {
+                e.preventDefault();
+                alert('❌ Erro de validação:\n\n' + erros.join('\n'));
+                return;
+            }
+
+            console.log('✅ Faixas validadas com sucesso. Enviando...');
+        });
+    </script>
 </body>
 
 </html>

@@ -5,18 +5,20 @@ require_once __DIR__ . '/../model/dao/Conexao.php';
 
 try {
     $pdo = Conexao::getConexao();
-    
+
     // INNER JOIN para buscar os dados da Unidade + o Código do Hidrômetro vinculado
     $sqlUnidades = "SELECT 
                         u.id_unidade, 
                         u.numero, 
-                        u.bloco, 
+                        u.bloco,
+                        usr.nome AS responsavel,
                         h.id_hidrometro,
                         h.codigo AS codigo_hidrometro 
                     FROM unidade u
                     INNER JOIN hidrometro h ON u.id_unidade = h.id_unidade
+                    LEFT JOIN usuario usr ON u.id_usuario = usr.id_usuario
                     ORDER BY u.bloco, u.numero";
-                    
+
     $listaUnidades = $pdo->query($sqlUnidades)->fetchAll(PDO::FETCH_ASSOC);
 } catch (Exception $e) {
     // Para debug: echo "Erro: " . $e->getMessage(); 
@@ -39,15 +41,71 @@ try {
     <link rel="stylesheet" href="../assets/css/unificado.css">
 
     <style>
-        :root { --primary-color: #0d6efd; --bg-light: #f8f9fa; }
-        body { font-family: 'Inter', sans-serif; background-color: var(--bg-light); }
-        .card { border-radius: 20px; border: none; }
-        .form-control, .form-select { border: 1px solid #e0e0e0; padding: 0.75rem 1rem; transition: all 0.2s ease; font-size: 0.95rem; }
-        .form-control:focus, .form-select:focus { border-color: var(--primary-color); box-shadow: 0 0 0 4px rgba(13, 110, 253, 0.1); }
-        .icon-square { transition: transform 0.3s ease; }
-        .card:hover .icon-square { transform: scale(1.05); }
-        .btn-lg { padding: 1rem; font-size: 1rem; transition: all 0.3s ease; border-radius: 12px; }
-        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 15px rgba(13, 110, 253, 0.25); }
+        :root {
+            --primary-color: #0d6efd;
+            --bg-light: #f8f9fa;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-light);
+        }
+
+        .card {
+            border-radius: 20px;
+            border: none;
+        }
+
+        .form-control,
+        .form-select {
+            border: 1px solid #e0e0e0;
+            padding: 0.75rem 1rem;
+            transition: all 0.2s ease;
+            font-size: 0.95rem;
+        }
+
+        .form-control:focus,
+        .form-select:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 4px rgba(13, 110, 253, 0.1);
+        }
+
+        .icon-square {
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover .icon-square {
+            transform: scale(1.05);
+        }
+
+        .btn-lg {
+            padding: 1rem;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            border-radius: 12px;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 15px rgba(13, 110, 253, 0.25);
+        }
+
+        .alert-floating-container {
+            position: fixed;
+            top: 25px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1060;
+        }
+
+        .alert-compacto {
+            background: #ffffff;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            border-radius: 50px;
+            padding: 10px 25px;
+            font-weight: 500;
+            color: #198754;
+        }
     </style>
 </head>
 
@@ -55,43 +113,51 @@ try {
 
     <?php include '../view/includes/header.php'; ?>
 
+    <div class="alert-floating-container">
+        <?php if (isset($_GET['sucesso'])): ?>
+            <div class="alert alert-compacto fade show" id="sucessoAlert">
+                <i class="bi bi-check-circle-fill me-2"></i> Leitura cadastrada com sucesso!
+            </div>
+        <?php endif; ?>
+        <?php if (isset($_GET['erro'])): ?>
+        <div class="alert alert-compacto fade show text-danger" id="alertaFlutuante" style="color: #dc3545; border-color: #f8d7da;">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i> 
+            <?= htmlspecialchars($_GET['erro']) ?>
+        </div>
+    <?php endif; ?>
+    </div>
+
     <div class="container page-header-box mb-4">
         <div class="bg-white py-3 px-4 shadow-sm d-flex justify-content-between align-items-center" style="border-radius: 16px; border: 1px solid #f1f5f9;">
             <div>
                 <h4 class="fw-bold mb-0 text-dark">Lançar Nova Leitura</h4>
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb mb-0" style="font-size: 0.75rem;">
-                        <li class="breadcrumb-item"><a href="admin.php" class="text-decoration-none text-muted">Admin</a></li>
-                        <li class="breadcrumb-item"><a href="leituras.php" class="text-decoration-none text-muted">Leituras</a></li>
+                        <li class="breadcrumb-item"><a href="admin.php" class="text-decoration-none text-primary">Admin</a></li>
+                        <li class="breadcrumb-item"><a href="listarLeituras.php" class="text-decoration-none text-primary">Leituras</a></li>
                         <li class="breadcrumb-item active">Cadastrar</li>
                     </ol>
                 </nav>
             </div>
-            <a href="admin.php" class="btn btn-outline-secondary rounded-3 px-4 shadow-sm">
-                <i class="bi bi-arrow-left me-2"></i>Voltar
-            </a>
+            <div class="d-flex gap-2">
+                <a href="javascript:history.back()" class="btn btn-outline-secondary rounded-3 px-4 shadow-sm">
+                Voltar
+                </a>
+            </div>
         </div>
     </div>
 
     <main class="main-container container mb-5">
 
-        <?php if (isset($_GET['sucesso'])): ?>
-            <div class="alert alert-success border-0 shadow-sm mb-4 alert-dismissible fade show" role="alert">
-                <i class="bi bi-check-circle-fill me-2"></i>
-                <strong>Sucesso!</strong> Leitura registrada com sucesso.
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        <?php endif; ?>
-
         <?php if (isset($_GET['erro'])): ?>
             <div class="alert alert-danger border-0 shadow-sm mb-4 alert-dismissible fade show" role="alert">
                 <i class="bi bi-exclamation-triangle-fill me-2"></i>
-                <strong>Erro:</strong> 
-                <?php 
-                    if($_GET['erro'] == 'db_error') echo "Falha ao salvar no banco de dados.";
-                    elseif($_GET['erro'] == 'campos_vazios') echo "Preencha todos os campos corretamente.";
-                    elseif($_GET['erro'] == 'leitura_menor') echo "O valor informado é menor que a última leitura cadastrada.";
-                    else echo "Não foi possível processar a leitura.";
+                <strong>Erro:</strong>
+                <?php
+                if ($_GET['erro'] == 'db_error') echo "Falha ao salvar no banco de dados.";
+                elseif ($_GET['erro'] == 'campos_vazios') echo "Preencha todos os campos corretamente.";
+                elseif ($_GET['erro'] == 'leitura_menor') echo "O valor informado é menor que a última leitura cadastrada.";
+                else echo "Não foi possível processar a leitura.";
                 ?>
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
@@ -121,7 +187,7 @@ try {
                                             <option value="">Escolha a unidade...</option>
                                             <?php foreach ($listaUnidades as $u): ?>
                                                 <option value="<?= $u['id_hidrometro'] ?>">
-                                                    Bloco <?= $u['bloco'] ?> - Apto <?= $u['numero'] ?> (S/N: <?= $u['codigo_hidrometro'] ?>)
+                                                    <?= htmlspecialchars($u['responsavel'] ?? 'Sem Responsável') ?> - Bloco <?= $u['bloco'] ?> - Apto <?= $u['numero'] ?> (S/N: <?= $u['codigo_hidrometro'] ?>)
                                                 </option>
                                             <?php endforeach; ?>
                                         </select>
@@ -163,7 +229,7 @@ try {
                                     </button>
                                 </div>
                                 <div class="col-md-6">
-                                    <a href="admin.php" class="btn btn-light btn-lg w-100 text-muted border">
+                                    <a href="javascript:history.back()" class="btn btn-light btn-lg w-100 text-muted border">
                                         Cancelar
                                     </a>
                                 </div>
@@ -193,5 +259,28 @@ try {
             })
         })()
     </script>
+    <script>
+        const sucessoAlert = document.getElementById('sucessoAlert');
+        const alertToRemove = sucessoAlert;
+
+        if (alertToRemove) {
+            // 1. Limpa o parâmetro da URL sem recarregar a página
+            // Isso impede que o F5 mostre a mensagem de novo
+            if (window.history.replaceState) {
+                const url = new URL(window.location);
+                url.searchParams.delete('sucesso');
+                url.searchParams.delete('erro');
+                window.history.replaceState({}, document.title, url.pathname);
+            }
+
+            // 2. Animação de sumir o alerta após 3 segundos
+            setTimeout(() => {
+                alertToRemove.style.transition = "opacity 0.6s ease";
+                alertToRemove.style.opacity = "0";
+                setTimeout(() => alertToRemove.remove(), 600);
+            }, 3000);
+        }
+    </script>
 </body>
+
 </html>
