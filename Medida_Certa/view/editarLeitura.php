@@ -67,6 +67,12 @@ try {
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
     <link rel="stylesheet" href="../assets/css/unificado.css">
     <style>
+        .btn-lg {
+            padding: 1rem;
+            font-size: 1rem;
+            font-weight: bold;
+        }
+
         .form-card {
             background: #fff;
             border-radius: 20px;
@@ -124,7 +130,7 @@ try {
                             </div>
                             <div class="col">
                                 <small class="text-muted d-block text-uppercase fw-bold" style="font-size: 0.65rem;">Responsável pela Unidade</small>
-                                <span class="fw-bold text-dark"><?= $leitura['responsavel'] ?></span>
+                                <span class="text-muted"><?= $leitura['responsavel'] ?></span>
                                 <span class="text-muted ms-2">| Bloco <?= $leitura['bloco'] ?> - Apt <?= $leitura['numero'] ?></span>
                             </div>
                         </div>
@@ -136,7 +142,7 @@ try {
                         <div class="row g-4">
                             <!-- Data da Leitura -->
                             <div class="col-md-6">
-                                <label class="form-label fw-semibold text-muted small">Data da Medição</label>
+                                <label class="form-label text-muted small">Data da Medição</label>
                                 <div class="input-group">
                                     <span class="input-group-text bg-white border-end-0 text-muted"><i class="bi bi-calendar3"></i></span>
                                     <input type="date" name="data_leitura" class="form-control border-start-0 ps-0"
@@ -146,7 +152,7 @@ try {
 
                             <!-- Período de Referência -->
                             <div class="col-md-6">
-                                <label class="form-label fw-semibold text-muted small">Mês/Ano Referência</label>
+                                <label class="form-label text-muted small">Mês/Ano Referência</label>
                                 <div class="input-group">
                                     <span class="input-group-text bg-white border-end-0 text-muted"><i class="bi bi-info-circle"></i></span>
                                     <input type="text" class="form-control border-start-0 ps-0 bg-light"
@@ -156,12 +162,12 @@ try {
 
                             <!-- Campo Valor Medido Atual -->
                             <div class="col-md-6">
-                                <label class="form-label fw-semibold text-dark">Valor Medido Atual (m³)</label>
+                                <label class="form-label text-dark">Valor Medido Atual (m³)</label>
                                 <div class="input-group">
                                     <span class="input-group-text bg-primary text-white border-0"><i class="bi bi-speedometer2"></i></span>
                                     <!-- Adicionamos oninput para garantir compatibilidade total -->
                                     <input type="number" step="0.01" name="valor_medido" id="valor_medido"
-                                        class="form-control form-control-lg fw-bold"
+                                        class="form-control form-control-lg"
                                         value="<?= $leitura['valor_medido'] ?>" required>
                                 </div>
                                 <small class="text-muted">Insira o valor exato que aparece no visor do hidrômetro.</small>
@@ -169,7 +175,7 @@ try {
 
                             <!-- Campo Consumo Calculado -->
                             <div class="col-md-6">
-                                <label class="form-label fw-semibold text-muted small">Consumo Calculado (m³)</label>
+                                <label class="form-label text-muted small">Consumo Calculado (m³)</label>
                                 <div class="input-group">
                                     <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-droplet"></i></span>
                                     <input type="number" step="0.01" name="consumo_calculado" id="consumo_calculado"
@@ -179,9 +185,11 @@ try {
                                 <small class="text-muted">Calculado automaticamente com base na leitura anterior (<?= number_format($valorAnterior, 2, ',', '.') ?> m³).</small>
                             </div>
 
-                            <div class="col-12 mt-5">
-                                <div class="d-flex justify-content-center align-items-center">
-                                    <button type="submit" class="btn btn-primary rounded-3 px-5 fw-bold shadow-sm">
+                            <hr class="my-4 opacity-25">
+
+                            <div class="row g-3 pt-2">
+                                <div class="col-md-6 mx-auto">
+                                    <button type="submit" class="btn btn-primary btn-lg w-100 shadow-sm rounded-3 py-3">
                                         Salvar Alterações
                                     </button>
                                 </div>

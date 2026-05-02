@@ -16,6 +16,12 @@ require_once __DIR__ . '/../controller/TravaAdmin.php';
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../assets/css/unificado.css">
     <style>
+        .btn-lg {
+            padding: 1rem;
+            font-size: 1rem;
+            font-weight: bold;
+        }
+
         .alert-floating-container {
             position: fixed;
             top: 25px;
@@ -59,15 +65,15 @@ require_once __DIR__ . '/../controller/TravaAdmin.php';
                 <h4 class="fw-bold mb-0 text-dark">Novo Usuário</h4>
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb mb-0" style="font-size: 0.75rem;">
-                        <li class="breadcrumb-item"><a href="admin.php" class="text-decoration-none text-muted">Admin</a></li>
-                        <li class="breadcrumb-item"><a href="usuarios.php" class="text-decoration-none text-muted">Usuários</a></li>
+                        <li class="breadcrumb-item"><a href="admin.php" class="text-decoration-none text-primary">Admin</a></li>
+                        <li class="breadcrumb-item"><a href="usuarios.php" class="text-decoration-none text-primary">Usuários</a></li>
                         <li class="breadcrumb-item active">Cadastrar</li>
                     </ol>
                 </nav>
             </div>
             <div class="d-flex gap-2">
                 <a href="javascript:history.back()" class="btn btn-outline-secondary rounded-3 px-4 shadow-sm">
-                    Voltar
+                    Cancelar
                 </a>
 
             </div>
@@ -76,7 +82,7 @@ require_once __DIR__ . '/../controller/TravaAdmin.php';
 
     <main class="main-container container mb-5">
         <div class="row justify-content-center">
-            <div class="col-lg-10 col-xl-8">
+            <div class="col-lg-8">
                 <div class="card p-4 p-md-5 shadow-sm border-0" style="border-radius: 20px;">
 
                     <form action="../controller/CadastroUsuarioControl.php" method="POST">
@@ -94,28 +100,28 @@ require_once __DIR__ . '/../controller/TravaAdmin.php';
 
                             <div class="row g-3">
                                 <div class="col-md-12">
-                                    <label class="form-label fw-bold text-dark small">Nome Completo</label>
+                                    <label class="form-label text-dark small">Nome Completo</label>
                                     <div class="input-group">
                                         <span class="input-group-text bg-white border-end-0 rounded-start-3"><i class="bi bi-person"></i></span>
                                         <input type="text" name="nome" class="form-control form-control-lg rounded-end-3" placeholder="Ex: João Silva" required>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
-                                    <label class="form-label fw-bold text-dark small">E-mail</label>
+                                    <label class="form-label text-dark small">E-mail</label>
                                     <div class="input-group">
                                         <span class="input-group-text bg-white border-end-0 rounded-start-3"><i class="bi bi-envelope"></i></span>
                                         <input type="email" name="email" class="form-control form-control-lg rounded-end-3" placeholder="joao@email.com" required>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
-                                    <label class="form-label fw-bold text-dark small">Telefone / WhatsApp</label>
+                                    <label class="form-label text-dark small">Telefone / WhatsApp</label>
                                     <div class="input-group">
                                         <span class="input-group-text bg-white border-end-0 rounded-start-3"><i class="bi bi-whatsapp"></i></span>
                                         <input type="text" name="telefone" class="form-control form-control-lg rounded-end-3" placeholder="(00) 00000-0000">
                                     </div>
                                 </div>
                                 <div class="col-md-12">
-                                    <label class="form-label fw-bold text-dark small">CPF ou CNPJ</label>
+                                    <label class="form-label text-dark small">CPF ou CNPJ</label>
                                     <div class="input-group">
                                         <span class="input-group-text bg-white border-end-0 rounded-start-3"><i class="bi bi-card-text"></i></span>
                                         <input type="text" name="cpf_cnpj" class="form-control form-control-lg rounded-end-3" placeholder="000.000.000-00">
@@ -130,11 +136,11 @@ require_once __DIR__ . '/../controller/TravaAdmin.php';
                             </h6>
                             <div class="row g-3">
                                 <div class="col-md-6">
-                                    <label class="form-label fw-bold text-dark small">Username (Login)</label>
+                                    <label class="form-label text-dark small">Username (Login)</label>
                                     <input type="text" name="username" class="form-control form-control-lg rounded-3" placeholder="ex: joao.silva" required>
                                 </div>
                                 <div class="col-md-6">
-                                    <label class="form-label fw-bold text-dark small">Senha Provisória</label>
+                                    <label class="form-label text-dark small">Senha Provisória</label>
                                     <div class="input-group">
                                         <input type="password" name="senha_provisoria" id="senha_provisoria" class="form-control form-control-lg rounded-start-3" required>
                                         <button class="btn btn-outline-secondary border-start-0" type="button" id="btnGerarSenha" title="Gerar Senha Aleatória">
@@ -146,7 +152,7 @@ require_once __DIR__ . '/../controller/TravaAdmin.php';
                                     </div>
                                 </div>
                                 <div class="col-md-12">
-                                    <label class="form-label fw-bold text-dark small">Perfil de Acesso</label>
+                                    <label class="form-label text-dark small">Perfil de Acesso</label>
                                     <div class="input-group">
                                         <span class="input-group-text bg-white border-end-0 rounded-start-3"><i class="bi bi-layers text-secondary"></i></span>
                                         <select name="perfil" class="form-select form-control-lg rounded-end-3">
@@ -158,16 +164,16 @@ require_once __DIR__ . '/../controller/TravaAdmin.php';
                             </div>
                         </div>
                         <hr class="my-4 opacity-25">
-                        <div class="row g-3">
+                        <div class="row g-3 pt-2">
                             <div class="col-md-6">
-                                <button type="submit" class="btn btn-primary btn-lg w-100 shadow-sm fw-bold">
-                                    <i class="bi bi-cloud-check me-2"></i>Finalizar Cadastro
+                                <button type="submit" class="btn btn-primary btn-lg w-100 rounded-3 shadow-sm py-3">
+                                    Finalizar Cadastro
                                 </button>
                             </div>
                             <div class="col-md-6">
-                                <a href="unidades.php" class="btn btn-light btn-lg w-100 text-muted border">
-                                    Cancelar
-                                </a>
+                                <button type="reset" class="btn btn-light btn-lg w-100 rounded-3 py-3">
+                                    Limpar Dados
+                                </button>
                             </div>
                         </div>
                 </div>

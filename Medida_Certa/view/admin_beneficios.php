@@ -194,125 +194,132 @@ try {
     <main class="container main-content flex-grow-1 pt-0 pb-4">
 
         <div class="row g-3 mb-4 justify-content-center">
-            <div class="col-md-4">
-                <div class="card stat-card shadow-sm h-100 border-0 border-start border-4 border-primary">
-                    <div class="card-body">
-                        <small class="text-primary fw-bold text-uppercase">Benefícios Ativos</small>
-                        <h3 class="fw-bold mt-1 mb-0"><span class="counter"><?= $totalBeneficiosAtivos ?></span></h3>
-                        <div class="mt-2 text-primary small"><i class="bi bi-patch-check"></i> Monitoramento via tarifa_social</div>
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <div class="card stat-card shadow-sm h-100 border-0 border-start border-4 border-primary">
+                        <div class="card-body">
+                            <small class="text-primary fw-bold text-uppercase">Benefícios Ativos</small>
+                            <h3 class="fw-bold mt-1 mb-0">
+                                <span class="counter" data-target="<?= $totalBeneficiosAtivos ?>"><?= $totalBeneficiosAtivos ?></span>
+                            </h3>
+                            <div class="mt-2 text-primary small"><i class="bi bi-patch-check"></i> Monitoramento via tarifa_social</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="card stat-card shadow-sm h-100 border-0 border-start border-4 border-danger">
+                        <div class="card-body">
+                            <small class="text-danger fw-bold text-uppercase">Inadimplentes</small>
+                            <h3 class="fw-bold mt-1 mb-0">
+                                <span class="counter" data-target="<?= $totalInadimplentes ?>"><?= $totalInadimplentes ?></span>
+                            </h3>
+                            <div class="mt-2 small text-muted">Unidades com faturas vencidas</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="card stat-card shadow-sm h-100 border-0 border-start border-4 border-info">
+                        <div class="card-body">
+                            <small class="text-info fw-bold text-uppercase">Regra do Rateio</small>
+                            <h3 class="fw-bold mt-1 mb-0">
+                                <span class="counter" data-target="30">30</span> m³
+                            </h3>
+                            <div class="mt-2 small text-muted">Limite para Tarifa Social</div>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <div class="col-md-4">
-                <div class="card stat-card shadow-sm h-100 border-0 border-start border-4 border-danger">
-                    <div class="card-body">
-                        <small class="text-danger fw-bold text-uppercase">Inadimplentes</small>
-                        <h3 class="fw-bold mt-1 mb-0"><span class="counter"><?= $totalInadimplentes ?></span></h3>
-                        <div class="mt-2 small text-muted">Unidades com faturas vencidas</div>
-                    </div>
+            <div class="search-wrapper">
+                <div class="search-input-group">
+                    <i class="bi bi-search"></i>
+                    <input type="text" id="inputPesquisa" class="form-control"
+                        placeholder="Pesquisar por nome, bloco ou unidade...">
                 </div>
             </div>
 
-            <div class="col-md-4">
-                <div class="card stat-card shadow-sm h-100 border-0 border-start border-4 border-info">
-                    <div class="card-body">
-                        <small class="text-info fw-bold text-uppercase">Regra do Rateio</small>
-                        <h3 class="fw-bold mt-1 mb-0">30 m³</h3>
-                        <div class="mt-2 small text-muted">Limite para Tarifa Social</div>
-                    </div>
-                </div>
-            </div>
-        </div>
+            <div class="row">
+                <div class="col-12">
+                    <div class="card shadow-sm border-0 table-card">
+                        <div class="card-header bg-white p-4 border-0 d-flex justify-content-between align-items-center">
+                            <h6 class="fw-bold mb-0"><i class="bi bi-people me-2"></i>Controle de Unidades e Aptidão</h6>
+                            <span class="badge bg-light text-dark border">Atualizado agora</span>
+                        </div>
 
-        <div class="search-wrapper">
-            <div class="search-input-group">
-                <i class="bi bi-search"></i>
-                <input type="text" id="inputPesquisa" class="form-control"
-                    placeholder="Pesquisar por nome, bloco ou unidade...">
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="col-12">
-                <div class="card shadow-sm border-0 table-card">
-                    <div class="card-header bg-white p-4 border-0 d-flex justify-content-between align-items-center">
-                        <h6 class="fw-bold mb-0"><i class="bi bi-people me-2"></i>Controle de Unidades e Aptidão</h6>
-                        <span class="badge bg-light text-dark border">Atualizado agora</span>
-                    </div>
-
-                    <div class="table-responsive p-3">
-                        <table class="table table-hover align-middle">
-                            <thead class="table-light">
-                                <tr class="small text-uppercase text-muted">
-                                    <th>Unidade</th>
-                                    <th>Morador</th>
-                                    <th>Último Consumo</th>
-                                    <th>Financeiro</th>
-                                    <th>Aptidão</th>
-                                    <th class="text-center">Ações</th>
-                                </tr>
-                            </thead>
-                            <tbody id="tabelaMoradores"> <?php if (empty($listaMoradores)): ?>
-                                    <tr class="sem-dados">
-                                        <td colspan="6" class="text-center py-5 text-muted">
-                                            <i class="bi bi-people fs-1 d-block mb-2"></i>
-                                            Nenhum registro encontrado.
-                                        </td>
+                        <div class="table-responsive p-3">
+                            <table class="table table-hover align-middle">
+                                <thead class="table-light">
+                                    <tr class="small text-uppercase text-muted">
+                                        <th>Unidade</th>
+                                        <th>Morador</th>
+                                        <th>Último Consumo</th>
+                                        <th>Financeiro</th>
+                                        <th>Aptidão</th>
+                                        <th class="text-center">Ações</th>
                                     </tr>
-                                <?php else: ?>
-                                    <?php foreach ($listaMoradores as $m):
-                                                                    $ultimoConsumo = isset($m['ultimo_consumo']) ? (float) $m['ultimo_consumo'] : 0.0;
-                                                                    $isApto = ($ultimoConsumo > 0 && $ultimoConsumo <= 30 && $m['qtd_debitos'] == 0);
-                                    ?>
-                                        <tr class="morador-row">
-                                            <td><span class="fw-bold">Bl. <?= $m['bloco'] ?> - <?= $m['numero'] ?></span></td>
-                                            <td class="nome-alvo"><?= htmlspecialchars($m['nome']) ?></td>
-                                            <td><?= $ultimoConsumo > 0 ? number_format($ultimoConsumo, 2, ',', '.') . ' m³' : '<span class="text-muted">Sem leitura</span>' ?></td>
-                                            <td>
-                                                <?php if ($m['qtd_debitos'] > 0): ?>
-                                                    <span class="badge status-badge-inapto"><i class="bi bi-x-circle me-1"></i> Inadimplente</span>
-                                                <?php else: ?>
-                                                    <span class="badge status-badge-apto"><i class="bi bi-check-circle me-1"></i> Em dia</span>
-                                                <?php endif; ?>
-                                            </td>
-                                            <td>
-                                                <?php if ($m['status_beneficio'] == 'Ativo'): ?>
-                                                    <span class="text-success small fw-bold">Ativo</span>
-                                                <?php elseif ($isApto): ?>
-                                                    <span class="text-primary small fw-bold">Apto</span>
-                                                <?php else: ?>
-                                                    <span class="text-muted small">Não cumpre requisitos</span>
-                                                <?php endif; ?>
-                                            </td>
-                                            <td class="text-center">
-                                                <form method="POST" action="../controller/ProcessarBeneficio.php">
-                                                    <input type="hidden" name="id_usuario" value="<?= $m['id_usuario'] ?>">
-                                                    <?php if ($m['status_beneficio'] === 'Ativo'): ?>
-                                                        <button type="submit" name="acao" value="suspender" class="btn btn-sm btn-outline-danger rounded-pill px-3">Suspender</button>
-                                                    <?php elseif ($isApto): ?>
-                                                        <button type="submit" name="acao" value="ativar" class="btn btn-sm btn-primary rounded-pill px-3">Ativar</button>
-                                                    <?php else: ?>
-                                                        <button type="button" class="btn btn-sm btn-light rounded-pill px-3 text-muted" disabled>Bloqueado</button>
-                                                    <?php endif; ?>
-                                                </form>
+                                </thead>
+                                <tbody id="tabelaMoradores"> <?php if (empty($listaMoradores)): ?>
+                                        <tr class="sem-dados">
+                                            <td colspan="6" class="text-center py-5 text-muted">
+                                                <i class="bi bi-people fs-1 d-block mb-2"></i>
+                                                Nenhum registro encontrado.
                                             </td>
                                         </tr>
-                                    <?php endforeach; ?>
-                                <?php endif; ?>
+                                    <?php else: ?>
+                                        <?php foreach ($listaMoradores as $m):
+                                                                        $ultimoConsumo = isset($m['ultimo_consumo']) ? (float) $m['ultimo_consumo'] : 0.0;
+                                                                        $isApto = ($ultimoConsumo > 0 && $ultimoConsumo <= 30 && $m['qtd_debitos'] == 0);
+                                        ?>
+                                            <tr class="morador-row">
+                                                <td><span class="fw-bold">Bl. <?= $m['bloco'] ?> - <?= $m['numero'] ?></span></td>
+                                                <td class="nome-alvo"><?= htmlspecialchars($m['nome']) ?></td>
+                                                <td><?= $ultimoConsumo > 0 ? number_format($ultimoConsumo, 2, ',', '.') . ' m³' : '<span class="text-muted">Sem leitura</span>' ?></td>
+                                                <td>
+                                                    <?php if ($m['qtd_debitos'] > 0): ?>
+                                                        <span class="badge status-badge-inapto"><i class="bi bi-x-circle me-1"></i> Inadimplente</span>
+                                                    <?php else: ?>
+                                                        <span class="badge status-badge-apto"><i class="bi bi-check-circle me-1"></i> Em dia</span>
+                                                    <?php endif; ?>
+                                                </td>
+                                                <td>
+                                                    <?php if ($m['status_beneficio'] == 'Ativo'): ?>
+                                                        <span class="text-success small fw-bold">Ativo</span>
+                                                    <?php elseif ($isApto): ?>
+                                                        <span class="text-primary small fw-bold">Apto</span>
+                                                    <?php else: ?>
+                                                        <span class="text-muted small">Não cumpre requisitos</span>
+                                                    <?php endif; ?>
+                                                </td>
+                                                <td class="text-center">
+                                                    <form method="POST" action="../controller/ProcessarBeneficio.php">
+                                                        <input type="hidden" name="id_usuario" value="<?= $m['id_usuario'] ?>">
+                                                        <?php if ($m['status_beneficio'] === 'Ativo'): ?>
+                                                            <button type="submit" name="acao" value="suspender" class="btn btn-sm btn-outline-danger rounded-pill px-3">Suspender</button>
+                                                        <?php elseif ($isApto): ?>
+                                                            <button type="submit" name="acao" value="ativar" class="btn btn-sm btn-primary rounded-pill px-3">Ativar</button>
+                                                        <?php else: ?>
+                                                            <button type="button" class="btn btn-sm btn-light rounded-pill px-3 text-muted" disabled>Bloqueado</button>
+                                                        <?php endif; ?>
+                                                    </form>
+                                                </td>
+                                            </tr>
+                                        <?php endforeach; ?>
+                                    <?php endif; ?>
 
-                                <tr id="avisoVazio" class="d-none">
-                                    <td colspan="6" class="text-center py-5">
-                                        <i class="bi bi-search fs-2 text-muted d-block mb-2"></i>
-                                        <span class="text-muted">Nenhum morador encontrado para esta busca.</span>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
+                                    <tr id="avisoVazio" class="d-none">
+                                        <td colspan="6" class="text-center py-5">
+                                            <i class="bi bi-search fs-2 text-muted d-block mb-2"></i>
+                                            <span class="text-muted">Nenhum morador encontrado para esta busca.</span>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
     </main>
 
     <?php include '../view/includes/footer.php'; ?>
@@ -369,6 +376,43 @@ try {
                 setTimeout(() => alertToRemove.remove(), 600);
             }, 3000);
         }
+    </script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const counters = document.querySelectorAll('.counter');
+
+            counters.forEach(counter => {
+                counter.innerText = '0';
+
+                const updateCount = () => {
+                    const target = parseFloat(counter.getAttribute('data-target'));
+                    const currentText = counter.innerText.replace(/\./g, '').replace(',', '.');
+                    const count = parseFloat(currentText);
+
+                    // Ajuste de velocidade
+                    const increment = target / 40;
+
+                    if (count < target) {
+                        const nextValue = count + increment;
+
+                        counter.innerText = nextValue.toLocaleString('pt-BR', {
+                            minimumFractionDigits: 0, // FORÇA pelo menos uma casa (ex: 10,0)
+                            maximumFractionDigits: 2
+                        });
+
+                        setTimeout(updateCount, 20);
+                    } else {
+                        // VALOR FINAL: Força a formatação exata
+                        counter.innerText = target.toLocaleString('pt-BR', {
+                            minimumFractionDigits: 0, // Garante que a vírgula apareça no final
+                            maximumFractionDigits: 2
+                        });
+                    }
+                };
+
+                updateCount();
+            });
+        });
     </script>
 </body>
 

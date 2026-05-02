@@ -81,8 +81,7 @@ try {
         .btn-lg {
             padding: 1rem;
             font-size: 1rem;
-            transition: all 0.3s ease;
-            border-radius: 12px;
+            font-weight: bold;
         }
 
         .btn-primary:hover {
@@ -141,7 +140,7 @@ try {
             </div>
             <div class="d-flex gap-2">
                 <a href="javascript:history.back()" class="btn btn-outline-secondary rounded-3 px-4 shadow-sm">
-                Voltar
+                Cancelar
                 </a>
             </div>
         </div>
@@ -182,7 +181,7 @@ try {
 
                                 <div class="row g-3">
                                     <div class="col-md-12">
-                                        <label for="unidade" class="form-label fw-bold small">Selecione a Unidade / Hidrômetro</label>
+                                        <label for="unidade" class="form-label small">Selecione a Unidade / Hidrômetro</label>
                                         <select id="unidade" name="id_hidrometro" class="form-select rounded-3 py-2" required>
                                             <option value="">Escolha a unidade...</option>
                                             <?php foreach ($listaUnidades as $u): ?>
@@ -194,7 +193,7 @@ try {
                                     </div>
 
                                     <div class="col-md-6">
-                                        <label for="mes" class="form-label fw-bold small">Mês de Referência</label>
+                                        <label for="mes" class="form-label small">Mês de Referência</label>
                                         <select id="mes" name="mes_referencia" class="form-select rounded-3 py-2" required>
                                             <?php
                                             $meses = [1 => 'Janeiro', 2 => 'Fevereiro', 3 => 'Março', 4 => 'Abril', 5 => 'Maio', 6 => 'Junho', 7 => 'Julho', 8 => 'Agosto', 9 => 'Setembro', 10 => 'Outubro', 11 => 'Novembro', 12 => 'Dezembro'];
@@ -205,15 +204,15 @@ try {
                                     </div>
 
                                     <div class="col-md-6">
-                                        <label for="ano" class="form-label fw-bold small">Ano de Referência</label>
+                                        <label for="ano" class="form-label small">Ano de Referência</label>
                                         <input id="ano" type="number" name="ano_referencia" class="form-control rounded-3 py-2" value="<?= date('Y') ?>" required>
                                     </div>
 
                                     <div class="col-md-12">
-                                        <label for="valor" class="form-label fw-bold small">Valor Medido (m³)</label>
+                                        <label for="valor" class="form-label small">Valor Medido (m³)</label>
                                         <div class="input-group">
                                             <span class="input-group-text bg-light border-end-0"><i class="bi bi-speedometer2"></i></span>
-                                            <input id="valor" type="number" step="0.01" name="valor_medido" class="form-control rounded-end-3 py-2 fw-bold text-primary" placeholder="0.00" style="font-size: 1.2rem;" required>
+                                            <input id="valor" type="number" step="0.01" name="valor_medido" class="form-control rounded-end-3 py-2 text-primary" placeholder="0.00" style="font-size: 1.2rem;" required>
                                         </div>
                                         <div class="form-text mt-2">Insira exatamente o valor que aparece no visor do hidrômetro.</div>
                                     </div>
@@ -222,17 +221,17 @@ try {
 
                             <hr class="my-4 opacity-25">
 
-                            <div class="row g-3">
+                            <div class="row g-3 pt-2">
                                 <div class="col-md-6">
-                                    <button type="submit" class="btn btn-primary btn-lg w-100 shadow-sm fw-bold">
-                                        <i class="bi bi-save me-2"></i>Registrar Leitura
+                                    <button type="submit" class="btn btn-primary btn-lg w-100 shadow-sm rounded-3 py-3">
+                                        Finalizar Cadastro
                                     </button>
                                 </div>
                                 <div class="col-md-6">
-                                    <a href="javascript:history.back()" class="btn btn-light btn-lg w-100 text-muted border">
-                                        Cancelar
-                                    </a>
-                                </div>
+                                <button type="reset" class="btn btn-light btn-lg w-100 rounded-3 py-3">
+                                    Limpar Dados
+                                </button>
+                            </div>
                             </div>
                         </form>
                     </div>

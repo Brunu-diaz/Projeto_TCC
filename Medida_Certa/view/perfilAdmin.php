@@ -209,6 +209,12 @@ if (empty($_SESSION['csrf_token'])) {
         .form-control:focus {
             box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, .15);
         }
+
+        .btn-lg {
+            padding: 1rem;
+            font-size: 1rem;
+            font-weight: bold;
+        }
     </style>
 </head>
 
@@ -226,7 +232,7 @@ if (empty($_SESSION['csrf_token'])) {
                         <li class="breadcrumb-item active">Editar</li>
                     </ol>
                 </nav>
-                
+
             </div>
             <div class="d-flex gap-2">
                 <a href="javascript:history.back()" class="btn btn-outline-secondary rounded-3 px-4 shadow-sm">
@@ -237,107 +243,108 @@ if (empty($_SESSION['csrf_token'])) {
     </div>
 
     <main class="main-container container mb-5">
-        <div class="profile-container">
-            <?php if (isset($_GET['sucesso'])): ?>
-                <div class="alert alert-success alert-dismissible fade show rounded-pill px-4 shadow-sm" role="alert">
-                    <i class="bi bi-check-circle-fill me-2"></i> Perfil atualizado com sucesso!
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            <?php endif; ?>
+        <?php if (isset($_GET['sucesso'])): ?>
+            <div class="alert alert-success alert-dismissible fade show rounded-pill px-4 shadow-sm" role="alert">
+                <i class="bi bi-check-circle-fill me-2"></i> Perfil atualizado com sucesso!
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        <?php endif; ?>
 
-            <?php if (isset($_GET['erro'])): ?>
-                <div class="alert alert-danger alert-dismissible fade show rounded-pill px-4 shadow-sm" role="alert">
-                    <i class="bi bi-exclamation-triangle-fill me-2"></i> Erro ao processar solicitação.
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            <?php endif; ?>
+        <?php if (isset($_GET['erro'])): ?>
+            <div class="alert alert-danger alert-dismissible fade show rounded-pill px-4 shadow-sm" role="alert">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i> Erro ao processar solicitação.
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        <?php endif; ?>
 
-            <div class="row justify-content-center">
-                <div class="col-lg-10">
-                    <div class="card card-profile shadow-sm">
-                        <div class="card-body">
-                            <form action="../controller/PerfilControl.php" method="POST" enctype="multipart/form-data">
-                                <input type="hidden" name="id" value="<?= htmlspecialchars($id_usuario, ENT_QUOTES, 'UTF-8') ?>">
-                                <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'], ENT_QUOTES, 'UTF-8') ?>">
-                                <input type="hidden" name="remover_foto" id="removerFotoInput" value="0">
-                                <input type="hidden" name="redirect" value="perfilAdmin.php">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="card card-profile shadow-sm">
+                    <div class="card-body">
+                        <form action="../controller/PerfilControl.php" method="POST" enctype="multipart/form-data">
+                            <input type="hidden" name="id" value="<?= htmlspecialchars($id_usuario, ENT_QUOTES, 'UTF-8') ?>">
+                            <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'], ENT_QUOTES, 'UTF-8') ?>">
+                            <input type="hidden" name="remover_foto" id="removerFotoInput" value="0">
+                            <input type="hidden" name="redirect" value="perfilAdmin.php">
 
-                                <div class="row gy-4">
-                                    <div class="col-md-4 text-center border-end-md">
-                                        <div class="profile-upload-container mb-3">
-                                            <div id="avatarContainer" class="position-relative d-inline-block">
-                                                <?php if ($tem_foto): ?>
-                                                    <img id="imgPreview" src="<?= htmlspecialchars($foto_perfil_url, ENT_QUOTES, 'UTF-8') ?>" alt="Foto de Perfil">
-                                                    <div id="initialsCircle" class="profile-initials-large d-none"><?= htmlspecialchars($iniciais, ENT_QUOTES, 'UTF-8') ?></div>
-                                                    <button type="button" id="btnRemovePhoto" class="btn-remove-photo shadow-sm" onclick="removeImage()">
-                                                        <i class="bi bi-trash3-fill"></i>
-                                                    </button>
-                                                <?php else: ?>
-                                                    <img id="imgPreview" src="" alt="Foto de Perfil" style="display: none;">
-                                                    <div id="initialsCircle" class="profile-initials-large"><?= htmlspecialchars($iniciais, ENT_QUOTES, 'UTF-8') ?></div>
-                                                    <button type="button" id="btnRemovePhoto" class="btn-remove-photo shadow-sm d-none" onclick="removeImage()">
-                                                        <i class="bi bi-trash3-fill"></i>
-                                                    </button>
-                                                <?php endif; ?>
-                                            </div>
-
-                                            <label for="fotoInput" class="btn-camera shadow-sm">
-                                                <i class="bi bi-camera-fill"></i>
-                                            </label>
-                                            <input type="file" name="foto" id="fotoInput" accept="image/*" class="d-none" onchange="previewImage(this)">
+                            <div class="row gy-4">
+                                <div class="col-md-4 text-center border-end-md">
+                                    <div class="profile-upload-container mb-3">
+                                        <div id="avatarContainer" class="position-relative d-inline-block">
+                                            <?php if ($tem_foto): ?>
+                                                <img id="imgPreview" src="<?= htmlspecialchars($foto_perfil_url, ENT_QUOTES, 'UTF-8') ?>" alt="Foto de Perfil">
+                                                <div id="initialsCircle" class="profile-initials-large d-none"><?= htmlspecialchars($iniciais, ENT_QUOTES, 'UTF-8') ?></div>
+                                                <button type="button" id="btnRemovePhoto" class="btn-remove-photo shadow-sm" onclick="removeImage()">
+                                                    <i class="bi bi-trash3-fill"></i>
+                                                </button>
+                                            <?php else: ?>
+                                                <img id="imgPreview" src="" alt="Foto de Perfil" style="display: none;">
+                                                <div id="initialsCircle" class="profile-initials-large"><?= htmlspecialchars($iniciais, ENT_QUOTES, 'UTF-8') ?></div>
+                                                <button type="button" id="btnRemovePhoto" class="btn-remove-photo shadow-sm d-none" onclick="removeImage()">
+                                                    <i class="bi bi-trash3-fill"></i>
+                                                </button>
+                                            <?php endif; ?>
                                         </div>
 
-                                        <h5 class="mt-3 fw-bold mb-1"><?= htmlspecialchars($nomeAdmin, ENT_QUOTES, 'UTF-8') ?></h5>
-                                        <p class="text-muted small">Administrador MedidaCerta</p>
+                                        <label for="fotoInput" class="btn-camera shadow-sm">
+                                            <i class="bi bi-camera-fill"></i>
+                                        </label>
+                                        <input type="file" name="foto" id="fotoInput" accept="image/*" class="d-none" onchange="previewImage(this)">
                                     </div>
 
-                                    <div class="col-md-8">
-                                        <div class="row gy-3">
-                                            <div class="col-12">
-                                                <label class="form-label">Nome Completo</label>
-                                                <input type="text" name="nome" class="form-control" value="<?= htmlspecialchars($nomeAdmin, ENT_QUOTES, 'UTF-8') ?>" required>
-                                            </div>
+                                    <h5 class="mt-3 fw-bold mb-1"><?= htmlspecialchars($nomeAdmin, ENT_QUOTES, 'UTF-8') ?></h5>
+                                    <p class="text-muted small">Administrador MedidaCerta</p>
+                                </div>
 
-                                            <div class="col-md-6">
-                                                <label class="form-label">E-mail</label>
-                                                <input type="email" name="email" class="form-control" value="<?= htmlspecialchars($emailAdmin, ENT_QUOTES, 'UTF-8') ?>" required>
-                                            </div>
+                                <div class="col-md-8">
+                                    <div class="row gy-3">
+                                        <div class="col-12">
+                                            <label class="form-label">Nome Completo</label>
+                                            <input type="text" name="nome" class="form-control" value="<?= htmlspecialchars($nomeAdmin, ENT_QUOTES, 'UTF-8') ?>" required>
+                                        </div>
 
-                                            <div class="col-md-6">
-                                                <label class="form-label">Telefone</label>
-                                                <input type="text" name="telefone" id="telefone" class="form-control" value="<?= htmlspecialchars($telefone, ENT_QUOTES, 'UTF-8') ?>" placeholder="(00) 00000-0000">
-                                            </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label">E-mail</label>
+                                            <input type="email" name="email" class="form-control" value="<?= htmlspecialchars($emailAdmin, ENT_QUOTES, 'UTF-8') ?>" required>
+                                        </div>
 
-                                            <div class="col-12">
-                                                <label class="form-label">CPF / CNPJ</label>
-                                                <div class="input-group">
-                                                    <span class="input-group-text bg-light border-end-0"><i class="bi bi-lock-fill text-muted"></i></span>
-                                                    <input type="text" class="form-control border-start-0 ps-0" value="<?= htmlspecialchars($cpf_cnpj, ENT_QUOTES, 'UTF-8') ?>" readonly>
-                                                </div>
-                                            </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label">Telefone</label>
+                                            <input type="text" name="telefone" id="telefone" class="form-control" value="<?= htmlspecialchars($telefone, ENT_QUOTES, 'UTF-8') ?>" placeholder="(00) 00000-0000">
+                                        </div>
 
-                                            <div class="col-12">
-                                                <div class="p-3 rounded-4 bg-light border">
-                                                    <div class="d-flex justify-content-between align-items-center">
-                                                        <div>
-                                                            <h6 class="mb-1 fw-bold">Segurança da Conta</h6>
-                                                            <p class="small text-muted mb-0">Altere sua senha sempre que necessário.</p>
-                                                        </div>
-                                                        <button type="button" class="btn btn-outline-primary btn-sm rounded-pill px-4" data-bs-toggle="modal" data-bs-target="#modalSenha">
-                                                            Alterar Senha
-                                                        </button>
-                                                    </div>
-                                                </div>
+                                        <div class="col-12">
+                                            <label class="form-label">CPF / CNPJ</label>
+                                            <div class="input-group">
+                                                <span class="input-group-text bg-light border-end-0"><i class="bi bi-lock-fill text-muted"></i></span>
+                                                <input type="text" class="form-control border-start-0 ps-0" value="<?= htmlspecialchars($cpf_cnpj, ENT_QUOTES, 'UTF-8') ?>" readonly>
                                             </div>
                                         </div>
 
-                                        <div class="d-flex flex-column flex-md-row justify-content-center gap-2 mt-4">
-                                            <button type="submit" class="btn btn-primary rounded-pill px-5 fw-bold">Salvar Alterações</button>
+                                        <div class="col-12">
+                                            <div class="p-3 rounded-4 bg-light border">
+                                                <div class="d-flex justify-content-between align-items-center">
+                                                    <div>
+                                                        <h6 class="mb-1 fw-bold">Segurança da Conta</h6>
+                                                        <p class="small text-muted mb-0">Altere sua senha sempre que necessário.</p>
+                                                    </div>
+                                                    <button type="button" class="btn btn-outline-primary btn-sm rounded-pill px-4" data-bs-toggle="modal" data-bs-target="#modalSenha">
+                                                        Alterar Senha
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row g-3 pt-2 justify-content-center">
+                                        <div class="col-md-6">
+                                            <button type="submit" class="btn btn-primary btn-lg w-100 shadow-sm rounded-3 py-3 mt-4">
+                                                Salvar Alterações
+                                            </button>
                                         </div>
                                     </div>
                                 </div>
-                            </form>
-                        </div>
+                            </div>
+                        </form>
                     </div>
                 </div>
             </div>

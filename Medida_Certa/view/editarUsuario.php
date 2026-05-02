@@ -35,7 +35,7 @@ if (!$u) {
     <style>
         /* Padronização visual conforme image_b62442.png */
         .card-arredondado {
-            border-radius: 15px !important;
+            border-radius: 20px !important;
             border: 1px solid #f0f0f0;
         }
 
@@ -68,24 +68,25 @@ if (!$u) {
         }
 
         .form-label {
-            font-weight: 600;
             color: #495057;
-            font-size: 0.9rem;
-            margin-bottom: 8px;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.2px;
+            font-size: 0.875rem;
         }
 
         /* Inputs limpos e modernos */
         .form-control,
         .form-select {
-            border-radius: 8px !important;
-            border: 1px solid #dee2e6;
-            padding: 10px 15px;
-            background-color: #fff;
+            border: 1px solid #e0e0e0 !important;
+            padding: 0.75rem 1rem;
+            transition: all 0.2s ease;
+            font-size: 0.95rem !important;
         }
 
         .form-control:focus {
-            border-color: #0d6efd;
-            box-shadow: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 4px rgba(13, 110, 253, 0.1);
+            background-color: #fff;
         }
 
         /* Grupos de entrada (Username e Senha) */
@@ -98,6 +99,12 @@ if (!$u) {
 
         .group-end {
             border-radius: 0 8px 8px 0 !important;
+        }
+
+        .btn-lg {
+            padding: 1rem;
+            font-size: 1rem;
+            font-weight: bold;
         }
 
         .alert-floating-container {
@@ -137,7 +144,7 @@ if (!$u) {
         <?php endif; ?>
     </div>
 
-    <main class="container">
+    <main class="main-container container mb-5">
 
         <div class="page-header-box mb-4">
             <div class="bg-white py-3 px-4 shadow-sm d-flex justify-content-between align-items-center" style="border-radius: 16px; border: 1px solid #f1f5f9;">
@@ -160,10 +167,10 @@ if (!$u) {
         </div>
 
         <div class="row justify-content-center">
-            <div class="col-md-10">
+            <div class="col-md-8">
 
                 <div class="card border-0 shadow-sm card-arredondado">
-                    <div class="card-body p-5">
+                    <div class="card-body p-4 p-md-5">
                         <form action="../controller/EditarUsuarioControl.php" method="POST">
                             <input type="hidden" name="id_usuario" value="<?= $u['id_usuario'] ?>">
 
@@ -175,7 +182,7 @@ if (!$u) {
                                 </div>
                             </div>
 
-                            <div class="row g-3 mb-5">
+                            <div class="row g-3">
                                 <div class="col-md-8">
                                     <label class="form-label">Nome Completo / Razão Social</label>
                                     <input type="text" name="nome" class="form-control" value="<?= htmlspecialchars($u['nome']) ?>" required>
@@ -229,10 +236,14 @@ if (!$u) {
                                 </div>
                             </div>
 
-                            <div class="mt-5 d-flex justify-content-center border-top pt-4">
-                                <button type="submit" class="btn btn-primary rounded-3 px-5 shadow-sm fw-bold py-2">
-                                    Salvar Alterações <i class="bi bi-check2-all ms-1"></i>
-                                </button>
+                            <hr class="my-4 opacity-25">
+
+                            <div class="row g-3 pt-2">
+                                <div class="col-md-6 mx-auto">
+                                    <button type="submit" class="btn btn-primary btn-lg w-100 rounded-3 shadow-sm py-3 fw-bold">
+                                        Salvar Alterações
+                                    </button>
+                                </div>
                             </div>
                         </form>
                     </div>

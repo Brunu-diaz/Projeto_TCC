@@ -60,9 +60,9 @@ try {
     <link rel="stylesheet" href="../assets/css/unificado.css">
     <style>
         :root {
-        --primary-color: #0d6efd;
-        --bg-light: #f8f9fa;
-    }
+            --primary-color: #0d6efd;
+            --bg-light: #f8f9fa;
+        }
 
         body {
             font-family: 'Inter', sans-serif;
@@ -70,10 +70,10 @@ try {
         }
 
         .card {
-        border-radius: 20px;
-        border: none;
-        box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075) !important;
-    }
+            border-radius: 20px;
+            border: none;
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075) !important;
+        }
 
         /* Melhoria nos inputs para ficarem iguais à página de cadastro */
         .form-control,
@@ -99,19 +99,19 @@ try {
         }
 
         .icon-square {
-        width: 45px;
-        height: 45px;
-        border-radius: 12px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
+            width: 45px;
+            height: 45px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
 
-    .btn-lg {
-        padding: 1rem;
-        font-size: 1rem;
-        font-weight: bold;
-    }
+        .btn-lg {
+            padding: 1rem;
+            font-size: 1rem;
+            font-weight: bold;
+        }
 
         .alert-floating-container {
             position: fixed;
@@ -170,59 +170,59 @@ try {
         </div>
     </div>
 
-    <main class="container mb-5">
+    <main class="main-container container mb-5">
         <div class="row justify-content-center">
             <div class="col-lg-8">
-                <div class="card p-4 p-md-5 shadow-sm border-0" style="border-radius: 20px;">
-                    <div class="card-body p-0">
+                <div class="card border-0 shadow-sm overflow-hidden">
+                    <div class="card-body p-4 p-md-5">
 
                         <div class="mb-5 d-flex align-items-center justify-content-between">
                             <div class="d-flex align-items-center">
-                                <div class="icon-square bg-primary-subtle rounded-3 me-3 p-3">
+                                <div class="icon-square me-3" style="background: #e6f1fe; width: 45px; height: 45px; border-radius: 12px; display: flex; align-items: center; justify-content: center;">
                                     <i class="bi bi-pencil-square text-primary fs-4"></i>
                                 </div>
                                 <div>
-                                    <h5 class="fw-bold text-dark mb-1">Informações Gerais</h5>
+                                    <h5 class="fw-bold mb-0 text-dark">Informações da Unidade</h5>
                                     <p class="text-muted small mb-0">Unidade <?= $unidade['numero'] ?> - Bloco <?= $unidade['bloco'] ?></p>
                                 </div>
                             </div>
 
                             <div class="text-end">
-                                <span class="badge <?= $unidade['ultima_comunicacao'] ? 'bg-success-subtle text-success' : 'bg-secondary-subtle text-secondary' ?> rounded-pill px-3">
+                                <span class="badge <?= $unidade['ultima_comunicacao'] ? 'bg-success-subtle text-success' : 'bg-secondary-subtle text-secondary' ?> rounded-pill px-3 py-2" style="font-weight: 500;">
                                     <i class="bi bi-broadcast me-1"></i>
-                                    <?= $unidade['ultima_comunicacao'] ? 'Última Leitura: ' . date('d/m/Y H:i', strtotime($unidade['ultima_comunicacao'])) : 'Sem leituras registradas' ?>
+                                    <?= $unidade['ultima_comunicacao'] ? 'Última Leitura: ' . date('d/m/Y H:i', strtotime($unidade['ultima_comunicacao'])) : 'Sem leituras' ?>
                                 </span>
                             </div>
                         </div>
 
-                        <form id="formEditarUnidade" action="../controller/EdicaoUnidadeControl.php" method="POST">
+                        <form id="formEditarUnidade" action="../controller/EdicaoUnidadeControl.php" method="POST" class="needs-validation" novalidate autocomplete="off">
                             <input type="hidden" name="id_unidade" value="<?= $id_unidade ?>">
                             <input type="hidden" id="morador_original" value="<?= $unidade['id_usuario'] ?>">
 
-                            <div class="row g-4">
+                            <div class="row g-3">
                                 <div class="col-md-12">
-                                    <label class="form-label fw-bold text-dark small">Endereço Completo</label>
-                                    <input type="text" name="endereco" class="form-control rounded-3" value="<?= htmlspecialchars($unidade['endereco']) ?>" required>
+                                    <label class="form-label small">Endereço Completo</label>
+                                    <input type="text" name="endereco" class="form-control rounded-3 py-2" value="<?= htmlspecialchars($unidade['endereco']) ?>" required>
                                 </div>
 
                                 <div class="col-md-4">
-                                    <label class="form-label fw-bold text-dark small">Número / Apto</label>
-                                    <input type="text" name="numero" class="form-control rounded-3" value="<?= htmlspecialchars($unidade['numero']) ?>" required>
+                                    <label class="form-label small">Número / Apto</label>
+                                    <input type="text" name="numero" class="form-control rounded-3 py-2" value="<?= htmlspecialchars($unidade['numero']) ?>" required>
                                 </div>
 
                                 <div class="col-md-4">
-                                    <label class="form-label fw-bold text-dark small">Bloco / Torre</label>
-                                    <input type="text" name="bloco" class="form-control rounded-3" value="<?= htmlspecialchars($unidade['bloco']) ?>">
+                                    <label class="form-label small">Bloco / Torre</label>
+                                    <input type="text" name="bloco" class="form-control rounded-3 py-2" value="<?= htmlspecialchars($unidade['bloco']) ?>">
                                 </div>
 
                                 <div class="col-md-4">
-                                    <label class="form-label fw-bold text-dark small">Complemento</label>
-                                    <input type="text" name="complemento" class="form-control rounded-3" value="<?= htmlspecialchars($unidade['complemento']) ?>">
+                                    <label class="form-label small">Complemento</label>
+                                    <input type="text" name="complemento" class="form-control rounded-3 py-2" value="<?= htmlspecialchars($unidade['complemento']) ?>">
                                 </div>
 
                                 <div class="col-md-12">
-                                    <label class="form-label fw-bold text-dark small">Proprietário Responsável</label>
-                                    <select name="id_usuario" id="id_usuario" class="form-select rounded-3" required>
+                                    <label class="form-label small">Proprietário Responsável</label>
+                                    <select name="id_usuario" id="id_usuario" class="form-select rounded-3 py-2" required>
                                         <option value="">Selecione um morador...</option>
                                         <?php foreach ($usuarios as $user): ?>
                                             <option value="<?= $user['id_usuario'] ?>" <?= ($user['id_usuario'] == $unidade['id_usuario']) ? 'selected' : '' ?>>
@@ -230,64 +230,67 @@ try {
                                             </option>
                                         <?php endforeach; ?>
                                     </select>
-                                    <div id="avisoMorador" class="alert alert-warning mt-2 d-none" style="font-size: 0.8rem;">
+                                    <div id="avisoMorador" class="alert alert-warning mt-3 d-none border-0 shadow-sm" style="border-radius: 12px; font-size: 0.85rem;">
                                         <i class="bi bi-exclamation-triangle-fill me-2"></i>
-                                        Atenção: Alterar o proprietário moverá as faturas futuras para este novo usuário.
+                                        Atenção: Alterar o proprietário afetará as faturas futuras.
+                                    </div>
+                                </div>
+                            </div>
+
+                            <hr class="my-5 opacity-25">
+
+                            <div class="mb-5">
+                                <div class="d-flex align-items-center mb-4">
+                                    <div class="icon-square me-3" style="background: #fffaf0; width: 45px; height: 45px; border-radius: 12px; display: flex; align-items: center; justify-content: center;">
+                                        <i class="bi bi-gear-fill text-warning fs-4"></i>
+                                    </div>
+                                    <div>
+                                        <h5 class="fw-bold mb-0 text-dark">Configuração do Dispositivo</h5>
+                                        <p class="text-muted small mb-0">Dados técnicos do hidrômetro vinculado</p>
                                     </div>
                                 </div>
 
-                                <div class="col-md-12 mt-4">
-                                    <div class="p-4 bg-light rounded-4 border border-dashed">
-                                        <h6 class="fw-bold mb-3 text-secondary"><i class="bi bi-gear-fill me-2"></i>Configuração do Dispositivo</h6>
-                                        <div class="row g-3">
-                                            <div class="col-md-12">
-                                                <label class="form-label fw-bold text-dark small">Código Serial (Hidrômetro)</label>
-                                                <div class="input-group">
-                                                    <span class="input-group-text bg-white border-end-0 rounded-start-3"><i class="bi bi-upc-scan"></i></span>
-                                                    <input type="text" name="codigo_hidrometro" class="form-control rounded-end-3 text-uppercase" value="<?= htmlspecialchars($unidade['h_serial'] ?? '') ?>" placeholder="Ex: MC-2026-XXXX" required>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <label class="form-label fw-bold text-dark small">Modelo do Dispositivo</label>
-                                                <div class="input-group">
-                                                    <span class="input-group-text bg-white border-end-0 rounded-start-3"><i class="bi bi-cpu"></i></span>
-                                                    <input list="listaModelos" name="modelo_hidrometro" class="form-control rounded-end-3" value="<?= htmlspecialchars($unidade['modelo'] ?? 'Digital v2.0') ?>" placeholder="Selecione ou digite...">
-                                                </div>
-                                                <datalist id="listaModelos">
-                                                    <?php foreach ($modelosCadastrados as $mod): ?>
-                                                        <option value="<?= htmlspecialchars($mod['modelo']) ?>">
-                                                        <?php endforeach; ?>
-                                                </datalist>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <label class="form-label fw-bold text-dark small">Status de Operação</label>
-                                                <div class="input-group">
-                                                    <span class="input-group-text bg-white border-end-0 rounded-start-3">
-                                                        <i class="bi bi-activity text-secondary"></i>
-                                                    </span>
-                                                    <select name="status_hidrometro" class="form-select rounded-end-3">
-                                                        <option value="Ativo" <?= ($unidade['h_status'] == 'Ativo') ? 'selected' : '' ?>>Ativo</option>
-                                                        <option value="Inativo" <?= ($unidade['h_status'] == 'Inativo') ? 'selected' : '' ?>>Inativo</option>
-                                                    </select>
-                                                </div>
-                                            </div>
+                                <div class="row g-3">
+                                    <div class="col-md-12">
+                                        <label class="form-label small">Código Serial</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text bg-light border-end-0"><i class="bi bi-upc-scan"></i></span>
+                                            <input type="text" name="codigo_hidrometro" class="form-control rounded-end-3 py-2 text-uppercase" value="<?= htmlspecialchars($unidade['h_serial'] ?? '') ?>" placeholder="Ex: MC-2026-XXXX" required>
                                         </div>
                                     </div>
+
+                                    <div class="col-md-6">
+                                        <label class="form-label small">Modelo</label>
+                                        <input list="listaModelos" name="modelo_hidrometro" class="form-control rounded-3 py-2" value="<?= htmlspecialchars($unidade['modelo'] ?? 'Digital v2.0') ?>">
+                                        <datalist id="listaModelos">
+                                            <?php foreach ($modelosCadastrados as $mod): ?>
+                                                <option value="<?= htmlspecialchars($mod['modelo']) ?>">
+                                                <?php endforeach; ?>
+                                        </datalist>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label class="form-label small">Status de Operação</label>
+                                        <select name="status_hidrometro" class="form-select rounded-3 py-2">
+                                            <option value="Ativo" <?= ($unidade['h_status'] == 'Ativo') ? 'selected' : '' ?>>Ativo</option>
+                                            <option value="Inativo" <?= ($unidade['h_status'] == 'Inativo') ? 'selected' : '' ?>>Inativo</option>
+                                        </select>
+                                    </div>
                                 </div>
+                            </div>
 
-                                <hr class="my-4 opacity-25">
+                            <hr class="my-4 opacity-25">
 
-                                <div class="row g-3 pt-3">
-                                    <div class="col-md-8">
-                                        <button type="submit" class="btn btn-primary btn-lg w-100 rounded-3 shadow-sm py-3 fw-bold">
-                                            Salvar Alterações
-                                        </button>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <button type="button" class="btn btn-outline-danger btn-lg w-100 rounded-3 py-3" data-bs-toggle="modal" data-bs-target="#modalExcluir">
-                                            <i class="bi bi-trash me-2"></i>Excluir
-                                        </button>
-                                    </div>
+                            <div class="row g-3 pt-2">
+                                <div class="col-md-6">
+                                    <button type="submit" class="btn btn-primary btn-lg w-100 rounded-3 shadow-sm py-3">
+                                        Salvar Alterações
+                                    </button>
+                                </div>
+                                <div class="col-md-6">
+                                    <button type="button" class="btn btn-outline-danger btn-lg w-100 rounded-3 py-3" data-bs-toggle="modal" data-bs-target="#modalExcluir">
+                                        Excluir Unidade
+                                    </button>
                                 </div>
                             </div>
                         </form>
@@ -301,9 +304,7 @@ try {
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content border-0 shadow-lg rounded-4">
                 <div class="modal-body p-4 text-center">
-                    <div class="bg-danger-subtle text-danger rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
-                        <i class="bi bi-exclamation-octagon fs-2"></i>
-                    </div>
+                    <i class="bi bi-exclamation-triangle text-danger fs-1 mb-3"></i>
                     <h5 class="fw-bold">Confirmar Exclusão?</h5>
                     <p class="text-muted small">Você está prestes a remover a unidade <strong><?= $unidade['numero'] ?></strong>. Esta ação não poderá ser desfeita.</p>
                     <div class="d-flex gap-2 mt-4">

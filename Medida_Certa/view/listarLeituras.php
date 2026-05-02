@@ -245,7 +245,7 @@ try {
                         </div>
                         <div class="d-flex gap-2 mt-4">
                             <button type="button" class="btn btn-light flex-grow-1 rounded-3 fw-bold" data-bs-dismiss="modal">Cancelar</button>
-                            <button type="button" id="btnConfirmarModal" class="btn btn-danger flex-grow-1 rounded-3 fw-bold">Excluir</button>
+                            <button type="button" id="btnConfirmarModal" class="btn btn-danger flex-grow-1 rounded-3 fw-bold">Sim, Excluir</button>
                         </div>
                     </div>
                 </div>
@@ -321,7 +321,7 @@ try {
 
             const btnConfirmar = document.getElementById('btnConfirmarModal');
             btnConfirmar.classList.replace('btn-primary', 'btn-danger'); // Deixa o botão vermelho
-            btnConfirmar.innerText = "Excluir";
+            btnConfirmar.innerText = "Sim, Excluir";
 
             btnConfirmar.onclick = () => {
                 window.location.href = `../controller/ExcluirLeituraControl.php?id=${id}`;

@@ -29,7 +29,6 @@ require_once __DIR__ . '/../model/dao/Conexao.php';
         }
 
         body { 
-            background-color: var(--bg-body); 
             color: var(--text-main);
         }
 
@@ -157,7 +156,7 @@ require_once __DIR__ . '/../model/dao/Conexao.php';
         </div>
 
         <div class="row justify-content-center">
-            <div class="col-lg-10">
+            <div class="col-lg-8">
                 <div class="form-container">
                     <div class="d-flex align-items-center mb-4">
                         <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px; color: white;">

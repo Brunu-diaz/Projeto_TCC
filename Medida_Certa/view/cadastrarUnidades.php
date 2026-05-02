@@ -96,6 +96,7 @@ require_once __DIR__ . '/../controller/TravaAdmin.php';
             padding: 1rem;
             font-size: 1rem;
             transition: all 0.3s ease;
+            font-weight: bold;
         }
 
         .btn-primary:hover {
@@ -200,7 +201,7 @@ require_once __DIR__ . '/../controller/TravaAdmin.php';
                 </nav>
             </div>
             <a href="javascript:history.back()" class="btn btn-outline-secondary rounded-3 px-4 shadow-sm">
-            Voltar
+                Cancelar
             </a>
         </div>
     </div>
@@ -226,11 +227,11 @@ require_once __DIR__ . '/../controller/TravaAdmin.php';
 
                                 <div class="row g-3">
                                     <div class="col-md-8">
-                                        <label class="form-label fw-bold small">Nome Completo / Razão Social</label>
+                                        <label class="form-label">Nome Completo / Razão Social</label>
                                         <input type="text" name="nome" class="form-control rounded-3 py-2" placeholder="Ex: João ou Loja de Conveniência" required>
                                     </div>
                                     <div class="col-md-4">
-                                        <label class="form-label fw-bold small">CPF / CNPJ</label>
+                                        <label class="form-label small">CPF / CNPJ</label>
                                         <input type="text" id="cpf_cnpj" name="cpf_cnpj" class="form-control rounded-3 py-2" placeholder="000.000.000-00" required>
                                     </div>
                                     <div class="col-md-6">
@@ -242,12 +243,12 @@ require_once __DIR__ . '/../controller/TravaAdmin.php';
                                         <input type="text" id="telefone" name="telefone" class="form-control rounded-3 py-2" placeholder="(61) 99999-9999" required>
                                     </div>
                                     <div class="col-md-6">
-                                    <label class="form-label fw-bold small" for="id_perfil">Tipo de Usuário</label>
-                                    <select class="form-control rounded-3 py-2" name="id_perfil" required>
-                                        <option value="">Selecione o perfil...</option>
-                                        <option value="1">Administrador</option>
-                                        <option value="2">Cliente</option>
-                                    </select>
+                                        <label class="form-label fw-bold small" for="id_perfil">Tipo de Usuário</label>
+                                        <select class="form-control rounded-3 py-2" name="id_perfil" required>
+                                            <option value="">Selecione o perfil...</option>
+                                            <option value="1">Administrador</option>
+                                            <option value="2">Cliente</option>
+                                        </select>
                                     </div>
                                 </div>
                             </div>
@@ -332,17 +333,17 @@ require_once __DIR__ . '/../controller/TravaAdmin.php';
                             </div>
 
                             <hr class="my-4 opacity-25">
-                            
+
                             <div class="row g-3 pt-3">
                                 <div class="col-md-6">
                                     <button type="submit" class="btn btn-primary btn-lg w-100 rounded-3 shadow-sm py-3 fw-bold">
-                                    Finalizar Cadastro
+                                        Finalizar Cadastro
                                     </button>
                                 </div>
                                 <div class="col-md-6">
-                                    <a href="javascript:history.back()" class="btn btn-light btn-lg w-100 rounded-3 py-3 text-muted border">
-                                        Cancelar
-                                    </a>
+                                    <button type="reset" class="btn btn-light btn-lg w-100 rounded-3 py-3">
+                                        Limpar Dados
+                                    </button>
                                 </div>
                             </div>
                         </form>

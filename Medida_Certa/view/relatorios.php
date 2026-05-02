@@ -172,7 +172,6 @@ function calcularTarifa($consumo)
             /* Faz a caixa subir sobre o fundo escuro */
             position: relative;
             z-index: 10;
-
         }
 
         .stat-card {
@@ -207,7 +206,7 @@ function calcularTarifa($consumo)
                     <h4 class="fw-bold mb-0 text-dark">Painel de Auditoria</h4>
                     <nav aria-label="breadcrumb">
                         <ol class="breadcrumb mb-0" style="font-size: 0.75rem;">
-                            <li class="breadcrumb-item"><a href="admin.php" class="text-decoration-none text-muted">Admin</a></li>
+                            <li class="breadcrumb-item"><a href="admin.php" class="text-decoration-none text-primary">Admin</a></li>
                             <li class="breadcrumb-item active">Relatórios</li>
                         </ol>
                     </nav>
@@ -252,31 +251,42 @@ function calcularTarifa($consumo)
 
         <div class="row g-3 mb-4">
             <div class="col-md-3">
-                <div class="card stat-card shadow-sm p-4 h-100 bg-white border-primary">
+                <div class="card stat-card shadow-sm p-4 h-100 bg-white border-0 border-start border-primary border-4" style="border-left: 5px solid;">
                     <small class="text-muted fw-bold text-uppercase" style="font-size: 0.65rem;">Média Geral</small>
-                    <h3 class="fw-bold mb-0 mt-1"><?= number_format($mediaHistorica, 1, ',', '.') ?> m³</h3>
+                    <h3 class="fw-bold mb-0 mt-1">
+                        <span class="counter" data-target="<?= $mediaHistorica ?>"><?= number_format($mediaHistorica, 1, ',', '.') ?></span> m³
+                    </h3>
                     <div class="text-primary mt-2 small"><i class="bi bi-info-circle me-1"></i>Histórico total</div>
                 </div>
             </div>
+
             <div class="col-md-3">
-                <div class="card stat-card shadow-sm p-4 h-100 bg-white border-info">
+                <div class="card stat-card shadow-sm p-4 h-100 bg-white border-0 border-start border-info border-4" style="border-left: 5px solid;">
                     <small class="text-muted fw-bold text-uppercase" style="font-size: 0.65rem;">Total do Mês</small>
                     <?php $consumoTotalMes = array_sum(array_column($dadosRelatorio, 'consumo')); ?>
-                    <h3 class="fw-bold mb-0 mt-1"><?= number_format($consumoTotalMes, 1, ',', '.') ?> m³</h3>
+                    <h3 class="fw-bold mb-0 mt-1">
+                        <span class="counter" data-target="<?= $consumoTotalMes ?>"><?= number_format($consumoTotalMes, 1, ',', '.') ?></span> m³
+                    </h3>
                     <div class="text-info mt-2 small"><i class="bi bi-reception-4 me-1"></i>Soma das leituras</div>
                 </div>
             </div>
+
             <div class="col-md-3">
-                <div class="card stat-card shadow-sm p-4 h-100 bg-white border-success">
+                <div class="card stat-card shadow-sm p-4 h-100 bg-white border-0 border-start border-success border-4" style="border-left: 5px solid;">
                     <small class="text-muted fw-bold text-uppercase" style="font-size: 0.65rem;">Faturamento Est.</small>
-                    <h3 class="fw-bold mb-0 mt-1">R$ <?= number_format($totalFaturamentoMes, 2, ',', '.') ?></h3>
+                    <h3 class="fw-bold mb-0 mt-1">
+                        R$ <span class="counter" data-target="<?= $totalFaturamentoMes ?>"><?= number_format($totalFaturamentoMes, 2, ',', '.') ?></span>
+                    </h3>
                     <div class="text-success mt-2 small">Referente ao mês <?= $mesSelecionado ?></div>
                 </div>
             </div>
+
             <div class="col-md-3">
-                <div class="card stat-card shadow-sm p-4 h-100 bg-white border-warning">
+                <div class="card stat-card shadow-sm p-4 h-100 bg-white border-0 border-start border-warning border-4" style="border-left: 5px solid;">
                     <small class="text-muted fw-bold text-uppercase" style="font-size: 0.65rem;">Unidade Econômica</small>
-                    <h3 class="fw-bold  mb-0 mt-1"><?= number_format($unidadeEconomica['consumo'], 1, ',', '.') ?> m³</h3>
+                    <h3 class="fw-bold mb-0 mt-1">
+                        <span class="counter" data-target="<?= $unidadeEconomica['consumo'] ?>"><?= number_format($unidadeEconomica['consumo'], 1, ',', '.') ?></span> m³
+                    </h3>
                     <div class="mt-2 small fw-bold text-warning">Apt <?= htmlspecialchars($unidadeEconomica['numero']) ?></div>
                 </div>
             </div>
@@ -415,6 +425,43 @@ function calcularTarifa($consumo)
                     }
                 }
             }
+        });
+    </script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const counters = document.querySelectorAll('.counter');
+
+            counters.forEach(counter => {
+                counter.innerText = '0';
+
+                const updateCount = () => {
+                    const target = parseFloat(counter.getAttribute('data-target'));
+                    const currentText = counter.innerText.replace(/\./g, '').replace(',', '.');
+                    const count = parseFloat(currentText);
+
+                    // Ajuste de velocidade
+                    const increment = target / 40;
+
+                    if (count < target) {
+                        const nextValue = count + increment;
+
+                        counter.innerText = nextValue.toLocaleString('pt-BR', {
+                            minimumFractionDigits: 1, // FORÇA pelo menos uma casa (ex: 10,0)
+                            maximumFractionDigits: 2
+                        });
+
+                        setTimeout(updateCount, 20);
+                    } else {
+                        // VALOR FINAL: Força a formatação exata
+                        counter.innerText = target.toLocaleString('pt-BR', {
+                            minimumFractionDigits: 2, // Garante que a vírgula apareça no final
+                            maximumFractionDigits: 2
+                        });
+                    }
+                };
+
+                updateCount();
+            });
         });
     </script>
 </body>

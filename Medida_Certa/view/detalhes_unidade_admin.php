@@ -177,8 +177,8 @@ try {
                     </nav>
                 </div>
                 <div class="d-flex gap-2">
-                    <a href="editar_unidade.php?id=<?= $id_unidade ?>" class="btn btn-primary rounded-3 shadow-sm d-flex align-items-center px-3">
-                        <i class="bi bi-pencil me-2"></i>Editar
+                    <a href="editar_unidade.php?id=<?= $id_unidade ?>" class="btn btn-primary rounded-3 shadow-sm d-flex align-items-center px-4">
+                        Editar
                     </a>
                     <a href="javascript:history.back()" class="btn btn-outline-secondary rounded-3 px-4 shadow-sm"> Voltar
                     </a>

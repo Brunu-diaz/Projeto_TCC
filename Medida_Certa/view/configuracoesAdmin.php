@@ -153,6 +153,12 @@ try {
             font-weight: 500;
             color: #198754;
         }
+
+        .btn-lg {
+            padding: 1rem;
+            font-size: 1rem;
+            font-weight: bold;
+        }
     </style>
 </head>
 
@@ -181,7 +187,7 @@ try {
             </div>
             <div class="d-flex gap-2">
                 <a href="javascript:history.back()" class="btn btn-outline-secondary rounded-3 px-4 shadow-sm">
-                Voltar
+                    Cancelar
                 </a>
             </div>
         </div>
@@ -343,10 +349,13 @@ try {
                         </div>
                     </section>
 
-                    <div class="d-flex justify-content-center gap-2 border-top pt-4 mt-3">
-                        <button type="submit" class="btn btn-primary rounded-pill px-4 shadow-sm fw-bold">Aplicar Configurações</button>
+                    <div class="row g-3 pt-2 justify-content-center">
+                        <div class="col-md-6">
+                            <button type="submit" class="btn btn-primary btn-lg w-100 rounded-3 shadow-sm py-3">
+                                Salvar Alterações
+                            </button>
+                        </div>
                     </div>
-
                 </div>
             </div>
         </form>
