@@ -110,7 +110,8 @@ html body .navbar-nav .nav-link.active {
    1. GLOBAL & ESTRUTURA
    ========================================================================== */
 body { 
-    font-family: 'Inter', sans-serif;  
+    font-family: 'Inter', sans-serif;
+
 }
 
 .main-content { 

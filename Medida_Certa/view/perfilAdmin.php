@@ -82,6 +82,7 @@ if (empty($_SESSION['csrf_token'])) {
     <title>Meu Perfil | MedidaCerta</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><path fill='%230d6efd' d='M8 16a6 6 0 0 0 6-6c0-1.65-1.35-4-6-10-4.65 6-6 8.35-6 10a6 6 0 0 0 6 6z'/></svg>">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
@@ -215,12 +216,60 @@ if (empty($_SESSION['csrf_token'])) {
             font-size: 1rem;
             font-weight: bold;
         }
+
+        /* Remove o efeito azul de foco do botão do olhinho para não poluir o visual */
+        .input-group .btn:focus {
+            box-shadow: none;
+        }
+
+        /* Garante que o input mantenha o arredondamento correto no grupo */
+        .input-group .form-control {
+            border-top-left-radius: 10px;
+            border-bottom-left-radius: 10px;
+        }
+
+        .input-group .btn {
+            border-top-right-radius: 10px;
+            border-bottom-right-radius: 10px;
+            color: #6c757d;
+        }
+
+        .alert-floating-container {
+            position: fixed;
+            top: 25px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1060;
+        }
+
+        .alert-compacto {
+            background: #ffffff;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            border-radius: 50px;
+            padding: 10px 25px;
+            font-weight: 500;
+            color: #198754;
+        }
     </style>
 </head>
 
 <body>
 
     <?php include __DIR__ . '/includes/header.php'; ?>
+
+    <div class="alert-floating-container">
+        <?php if (isset($_GET['sucesso'])): ?>
+            <div class="alert alert-compacto fade show" id="sucessoAlert">
+                <i class="bi bi-check-circle-fill me-2"></i> Perfil atualizado com sucesso!
+            </div>
+        <?php endif; ?>
+        <?php if (isset($_GET['erro'])): ?>
+            <div class="alert alert-compacto fade show text-danger" id="alertaFlutuante" style="color: #dc3545; border-color: #f8d7da;">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                <?= htmlspecialchars($_GET['erro']) ?>
+            </div>
+        <?php endif; ?>
+    </div>
 
     <div class="container page-header-box mb-4">
         <div class="bg-white py-3 px-4 shadow-sm d-flex justify-content-between align-items-center" style="border-radius: 16px; border: 1px solid #f1f5f9;">
@@ -243,19 +292,6 @@ if (empty($_SESSION['csrf_token'])) {
     </div>
 
     <main class="main-container container mb-5">
-        <?php if (isset($_GET['sucesso'])): ?>
-            <div class="alert alert-success alert-dismissible fade show rounded-pill px-4 shadow-sm" role="alert">
-                <i class="bi bi-check-circle-fill me-2"></i> Perfil atualizado com sucesso!
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        <?php endif; ?>
-
-        <?php if (isset($_GET['erro'])): ?>
-            <div class="alert alert-danger alert-dismissible fade show rounded-pill px-4 shadow-sm" role="alert">
-                <i class="bi bi-exclamation-triangle-fill me-2"></i> Erro ao processar solicitação.
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        <?php endif; ?>
 
         <div class="row justify-content-center">
             <div class="col-lg-8">
@@ -361,17 +397,35 @@ if (empty($_SESSION['csrf_token'])) {
                 <form action="../controller/SenhaControl.php" method="POST">
                     <div class="modal-body px-4">
                         <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'], ENT_QUOTES, 'UTF-8') ?>">
+
                         <div class="mb-3">
                             <label class="form-label">Senha Atual</label>
-                            <input type="password" name="senha_atual" class="form-control" required>
+                            <div class="input-group">
+                                <input type="password" name="senha_atual" class="form-control border-end-0" required>
+                                <button class="btn btn-outline-secondary border-start-0" type="button" onclick="togglePassword(this)">
+                                    <i class="bi bi-eye"></i>
+                                </button>
+                            </div>
                         </div>
+
                         <div class="mb-3">
                             <label class="form-label">Nova Senha</label>
-                            <input type="password" name="nova_senha" class="form-control" required minlength="6">
+                            <div class="input-group">
+                                <input type="password" name="nova_senha" class="form-control border-end-0" required minlength="6">
+                                <button class="btn btn-outline-secondary border-start-0" type="button" onclick="togglePassword(this)">
+                                    <i class="bi bi-eye"></i>
+                                </button>
+                            </div>
                         </div>
+
                         <div class="mb-3">
                             <label class="form-label">Confirmar Nova Senha</label>
-                            <input type="password" name="confirma_senha" class="form-control" required>
+                            <div class="input-group">
+                                <input type="password" name="confirma_senha" class="form-control border-end-0" required>
+                                <button class="btn btn-outline-secondary border-start-0" type="button" onclick="togglePassword(this)">
+                                    <i class="bi bi-eye"></i>
+                                </button>
+                            </div>
                         </div>
                     </div>
                     <div class="modal-footer border-top-0 pb-4 px-4">
@@ -458,6 +512,45 @@ if (empty($_SESSION['csrf_token'])) {
                 if (value.length > 7) formatted += '-' + value.slice(7, 11);
                 e.target.value = formatted;
             });
+        }
+    </script>
+
+    <script>
+        const sucessoAlert = document.getElementById('sucessoAlert');
+        const alertToRemove = sucessoAlert;
+
+        if (alertToRemove) {
+            // 1. Limpa o parâmetro da URL sem recarregar a página
+            // Isso impede que o F5 mostre a mensagem de novo
+            if (window.history.replaceState) {
+                const url = new URL(window.location);
+                url.searchParams.delete('sucesso');
+                url.searchParams.delete('erro');
+                window.history.replaceState({}, document.title, url.pathname);
+            }
+
+            // 2. Animação de sumir o alerta após 3 segundos
+            setTimeout(() => {
+                alertToRemove.style.transition = "opacity 0.6s ease";
+                alertToRemove.style.opacity = "0";
+                setTimeout(() => alertToRemove.remove(), 600);
+            }, 3000);
+        }
+    </script>
+
+    <script>
+        function togglePassword(button) {
+            // Encontra o input que está no mesmo grupo do botão clicado
+            const input = button.parentElement.querySelector('input');
+            const icon = button.querySelector('i');
+
+            if (input.type === "password") {
+                input.type = "text";
+                icon.classList.replace('bi-eye', 'bi-eye-slash');
+            } else {
+                input.type = "password";
+                icon.classList.replace('bi-eye-slash', 'bi-eye');
+            }
         }
     </script>
 </body>

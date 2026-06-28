@@ -37,16 +37,51 @@ try {
     $dadosUsuario = $usuarioDAO->buscarUsuarioPorId($id_usuario);
     $nome = $dadosUsuario['nome'] ?? 'Cliente';
 
+    // --- NOVA LÓGICA DE UNIDADE SELECIONADA ---
+    $idUnidadeUrl = isset($_GET['id_unidade']) ? (int)$_GET['id_unidade'] : null;
+    $filtroUnidade = ""; 
+    $dadosUni = null;
+
+    if ($idUnidadeUrl) {
+        // 1. Busca a unidade específica da URL
+        $sqlCheckUni = "SELECT id_unidade, endereco, bloco, numero FROM unidade WHERE id_unidade = :id_uni AND id_usuario = :id_user";
+        $stmtCheck = $pdo->prepare($sqlCheckUni);
+        $stmtCheck->execute([':id_uni' => $idUnidadeUrl, ':id_user' => $id_usuario]);
+        $dadosUni = $stmtCheck->fetch(PDO::FETCH_ASSOC);
+    }
+
+    // 2. SE não veio ID na URL ou o ID é inválido, busca a PRIMEIRA unidade do cliente
+    if (!$dadosUni) {
+        $sqlFirstUni = "SELECT id_unidade, endereco, bloco, numero FROM unidade WHERE id_usuario = :id_user ORDER BY id_unidade ASC LIMIT 1";
+        $stmtFirst = $pdo->prepare($sqlFirstUni);
+        $stmtFirst->execute([':id_user' => $id_usuario]);
+        $dadosUni = $stmtFirst->fetch(PDO::FETCH_ASSOC);
+        
+        // Se encontramos uma unidade padrão, configuramos o ID para os filtros seguintes
+        if ($dadosUni) {
+            $idUnidadeUrl = $dadosUni['id_unidade'];
+        }
+    }
+
+    // 3. Define o rótulo da pílula e o filtro SQL para as outras queries
+    if ($dadosUni) {
+        $unidadeIdentificada = "Bloco " . ($dadosUni['bloco'] ?? 'S/B') . " - Unidade " . ($dadosUni['numero'] ?? '000');
+        $filtroUnidade = " AND u.id_unidade = :id_unidade ";
+    } else {
+        $unidadeIdentificada = "Nenhuma Unidade Vinculada";
+    }
+
     // 1. BUSCA AS ÚLTIMAS 4 LEITURAS (A atual + 3 para média de anomalia)
     $sqlAnalise = "SELECT l.id_leitura, l.consumo_calculado, l.mes_referencia, l.ano_referencia, l.data_leitura
                    FROM leitura l
                    JOIN hidrometro h ON l.id_hidrometro = h.id_hidrometro
                    JOIN unidade u ON h.id_unidade = u.id_unidade
-                   WHERE u.id_usuario = :id_usuario
+                   WHERE u.id_usuario = :id_usuario" . $filtroUnidade . "
                    ORDER BY l.ano_referencia DESC, l.mes_referencia DESC LIMIT 4";
 
     $stmtAnalise = $pdo->prepare($sqlAnalise);
     $stmtAnalise->bindValue(':id_usuario', $id_usuario, PDO::PARAM_INT);
+    if ($idUnidadeUrl) $stmtAnalise->bindValue(':id_unidade', $idUnidadeUrl, PDO::PARAM_INT);
     $stmtAnalise->execute();
     $leiturasRecentes = $stmtAnalise->fetchAll(PDO::FETCH_ASSOC);
 
@@ -65,11 +100,13 @@ try {
                   JOIN leitura l ON f.id_leitura = l.id_leitura
                   JOIN hidrometro h ON l.id_hidrometro = h.id_hidrometro
                   JOIN unidade u ON h.id_unidade = u.id_unidade
-                  WHERE u.id_usuario = :id 
+                  WHERE u.id_usuario = :id" . $filtroUnidade . "
                   AND f.status_pagamento IN ('Pendente', 'Atrasado')
                   AND f.data_vencimento < CURDATE()";
     $stmtD = $pdo->prepare($sqlDivida);
-    $stmtD->execute([':id' => $id_usuario]);
+    $stmtD->bindValue(':id', $id_usuario, PDO::PARAM_INT);
+    if ($idUnidadeUrl) $stmtD->bindValue(':id_unidade', $idUnidadeUrl, PDO::PARAM_INT);
+    $stmtD->execute();
     $isInadimplente = $stmtD->fetchColumn() > 0;
 
     // 1. Verificar se o usuário já possui benefício ATIVO
@@ -86,15 +123,15 @@ try {
     $sqlAnt = "SELECT consumo_calculado FROM leitura l 
                JOIN hidrometro h ON l.id_hidrometro = h.id_hidrometro
                JOIN unidade u ON h.id_unidade = u.id_unidade
-               WHERE u.id_usuario = :id AND l.mes_referencia = :mes AND l.ano_referencia = :ano_ant";
+               WHERE u.id_usuario = :id" . $filtroUnidade . " AND l.mes_referencia = :mes AND l.ano_referencia = :ano_ant";
 
     $stmtAnt = $pdo->prepare($sqlAnt);
-    $stmtAnt->execute([
-        ':id' => $id_usuario, 
-        ':mes' => $mesRef, 
-        ':ano_ant' => $anoAnterior
-    ]);
-    $consumoAnoPassado = $stmtAnt->fetchColumn() ?: 0; // Corrige linha 71
+    $stmtAnt->bindValue(':id', $id_usuario, PDO::PARAM_INT);
+    $stmtAnt->bindValue(':mes', $mesRef, PDO::PARAM_INT);
+    $stmtAnt->bindValue(':ano_ant', $anoAnterior, PDO::PARAM_INT);
+    if ($idUnidadeUrl) $stmtAnt->bindValue(':id_unidade', $idUnidadeUrl, PDO::PARAM_INT);
+    $stmtAnt->execute();
+    $consumoAnoPassado = $stmtAnt->fetchColumn() ?: 0;
 
     // Apto se houve consumo ano passado e o atual é menor
     $aptoBonus = (!$isInadimplente && $consumoAnoPassado > 0 && $ultimoConsumo < $consumoAnoPassado);
@@ -151,11 +188,12 @@ try {
                  JOIN hidrometro h ON l.id_hidrometro = h.id_hidrometro
                  JOIN unidade u ON h.id_unidade = u.id_unidade
                  LEFT JOIN fatura f ON l.id_leitura = f.id_leitura
-                 WHERE u.id_usuario = :id_usuario
+                 WHERE u.id_usuario = :id_usuario" . $filtroUnidade . "
                  ORDER BY l.ano_referencia DESC, l.mes_referencia DESC";
 
     $stmtLeituras = $pdo->prepare($sqlHistorico);
     $stmtLeituras->bindValue(':id_usuario', $id_usuario, PDO::PARAM_INT);
+    if ($idUnidadeUrl) $stmtLeituras->bindValue(':id_unidade', $idUnidadeUrl, PDO::PARAM_INT);
     $stmtLeituras->execute();
     $historicoLeituras = $stmtLeituras->fetchAll(PDO::FETCH_ASSOC);
 
@@ -165,13 +203,14 @@ try {
                          FROM leitura l
                          JOIN hidrometro h ON l.id_hidrometro = h.id_hidrometro
                          JOIN unidade u ON h.id_unidade = u.id_unidade
-                         WHERE u.id_usuario = :id_usuario
+                         WHERE u.id_usuario = :id_usuario" . $filtroUnidade . "
                          ORDER BY l.ano_referencia DESC, l.mes_referencia DESC LIMIT 6) sub
                    GROUP BY ano_referencia, mes_referencia
                    ORDER BY ano_referencia ASC, mes_referencia ASC";
 
     $stmtGrafico = $pdo->prepare($sqlGrafico);
     $stmtGrafico->bindValue(':id_usuario', $id_usuario, PDO::PARAM_INT);
+    if ($idUnidadeUrl) $stmtGrafico->bindValue(':id_unidade', $idUnidadeUrl, PDO::PARAM_INT);
     $stmtGrafico->execute();
     $resGrafico = $stmtGrafico->fetchAll(PDO::FETCH_ASSOC);
 
@@ -206,6 +245,7 @@ try {
     <title>MedidaCerta - Meu Painel</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><path fill='%230d6efd' d='M8 16a6 6 0 0 0 6-6c0-1.65-1.35-4-6-10-4.65 6-6 8.35-6 10a6 6 0 0 0 6 6z'/></svg>">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
@@ -414,17 +454,29 @@ try {
     <main class="container py-5">
 
         <!-- Cards -->
-        <div class="row mb-4">
-            <div class="col-md-8">
-                <h4 class="fw-bold text-dark">Bem-vindo, <?= htmlspecialchars($nome) ?></h4>
-                <p class="text-muted">Dados baseados no último fechamento realizado.</p>
-            </div>
-            <div class="col-md-4 text-md-end">
-                <span class="badge bg-white text-primary shadow-sm p-2 px-3 rounded-pill border">
-                    <i class="bi bi-calendar3 me-2"></i> Ref: <?= $periodoReferencia ?>
+        <div class="row mb-4 align-items-start">
+    <div class="col-md-7">
+        <h4 class="fw-bold text-dark mb-1">Bem-vindo, <?= htmlspecialchars($nome) ?></h4>
+        <p class="text-muted mb-0 small">Dados baseados no último fechamento realizado.</p>
+    </div>
+
+    <div class="col-md-5 text-md-end mt-1">
+        <div class="d-inline-flex align-items-center bg-white border shadow-sm px-3 py-2 rounded-pill">
+            <div class="text-start me-3">
+                <span class="d-block text-muted fw-bold text-uppercase" style="font-size: 0.65rem; line-height: 1.2;">Identificação</span>
+                <span class="text-dark fw-bold small">
+                    Bloco <?= htmlspecialchars($dadosUni['bloco'] ?? 'N/A') ?> - Unidade <?= htmlspecialchars($dadosUni['numero'] ?? 'N/A') ?>
                 </span>
             </div>
+            <div class="bg-primary text-white d-flex align-items-center justify-content-center rounded-circle" 
+                 style="width: 35px; height: 35px; box-shadow: 0 4px 12px rgba(13, 110, 253, 0.4);">
+                <i class="bi bi-geo-alt-fill" style="font-size: 0.9rem;"></i>
+            </div>
         </div>
+    </div>
+</div>
+
+
 
         <div class="row g-4 mb-5">
             <div class="col-md-3">
@@ -435,7 +487,7 @@ try {
                         </div>
                         <div>
                             <p class="text-muted mb-0 small text-uppercase fw-bold">Último Consumo</p>
-                            <h3 class="fw-bold mb-0 text-primary"><?= number_format($consumoExibir, 1, ',', '.') ?> <small class="fs-6 text-primary">m³</small></h3>
+                            <h3 class="fw-bold mb-0 text-primary text-nowrap"><?= number_format($consumoExibir, 1, ',', '.') ?> <small class="fs-6 text-primary">m³</small></h3>
                         </div>
                     </div>
                 </div>
@@ -448,7 +500,7 @@ try {
                         </div>
                         <div>
                             <p class="text-muted mb-0 small text-uppercase fw-bold">Última Fatura</p>
-                            <h3 class="fw-bold mb-0 text-success">R$ <?= number_format($valorFatura, 2, ',', '.') ?></h3>
+                            <h3 class="fw-bold mb-0 text-success text-nowrap">R$ <?= number_format($valorFatura, 2, ',', '.') ?></h3>
                         </div>
                     </div>
                 </div>
@@ -462,7 +514,7 @@ try {
                         </div>
                         <div>
                             <p class="text-muted mb-0 small text-uppercase fw-bold">Pendências</p>
-                            <h3 class="fw-bold mb-0 text-danger">
+                            <h3 class="fw-bold mb-0 text-danger text-nowrap">
                                 <?php
                                 $pendentes = array_filter($historicoLeituras, function ($item) {
                                     return ($item['status_pagamento'] === 'Pendente' || $item['status_pagamento'] === 'Atrasado');

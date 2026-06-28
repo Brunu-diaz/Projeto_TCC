@@ -19,8 +19,8 @@ if (!$id_unidade) {
 try {
     $pdo = Conexao::getConexao();
 
-    // 1. Busca Unidade + Hidrômetro + Última Leitura (Item 2)
-    $sqlUnidade = "SELECT u.*, h.modelo, h.status as h_status, h.codigo as h_serial,
+    // 1. Busca Unidade + Hidrômetro + Dados de Leitura
+    $sqlUnidade = "SELECT u.*, h.modelo, h.status as h_status, h.codigo as h_serial, h.leitura_inicial,
                    (SELECT MAX(data_leitura) FROM leitura l WHERE l.id_hidrometro = h.id_hidrometro) as ultima_comunicacao
                    FROM unidade u 
                    LEFT JOIN hidrometro h ON u.id_unidade = h.id_unidade 
@@ -35,8 +35,8 @@ try {
         exit;
     }
 
-    // 2. Busca Usuários
-    $usuarios = $pdo->query("SELECT id_usuario, nome FROM usuario ORDER BY nome ASC")->fetchAll(PDO::FETCH_ASSOC);
+    // 2. Busca Usuários (Com CPF para o filtro)
+    $usuarios = $pdo->query("SELECT id_usuario, nome, cpf_cnpj FROM usuario ORDER BY nome ASC")->fetchAll(PDO::FETCH_ASSOC);
 
     // 3. Busca Modelos Únicos (Datalist)
     $modelosCadastrados = $pdo->query("SELECT DISTINCT modelo FROM hidrometro WHERE modelo IS NOT NULL ORDER BY modelo ASC")->fetchAll(PDO::FETCH_ASSOC);
@@ -54,9 +54,11 @@ try {
     <title>MedidaCerta - Editar Unidade</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><path fill='%230d6efd' d='M8 16a6 6 0 0 0 6-6c0-1.65-1.35-4-6-10-4.65 6-6 8.35-6 10a6 6 0 0 0 6 6z'/></svg>">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/css/tom-select.bootstrap5.min.css" rel="stylesheet">
     <link rel="stylesheet" href="../assets/css/unificado.css">
     <style>
         :root {
@@ -222,14 +224,17 @@ try {
 
                                 <div class="col-md-12">
                                     <label class="form-label small">Proprietário Responsável</label>
-                                    <select name="id_usuario" id="id_usuario" class="form-select rounded-3 py-2" required>
-                                        <option value="">Selecione um morador...</option>
+                                    <select id="busca-usuario" name="id_usuario" placeholder="Digite o nome ou CPF para buscar..." required>
+                                        <option value=""></option>
                                         <?php foreach ($usuarios as $user): ?>
-                                            <option value="<?= $user['id_usuario'] ?>" <?= ($user['id_usuario'] == $unidade['id_usuario']) ? 'selected' : '' ?>>
-                                                <?= htmlspecialchars($user['nome']) ?>
+                                            <option value="<?= $user['id_usuario'] ?>" <?= (isset($unidade) && $user['id_usuario'] == $unidade['id_usuario']) ? 'selected' : '' ?>>
+                                                <?= htmlspecialchars($user['nome']) ?> (<?= htmlspecialchars($user['cpf_cnpj']) ?>)
                                             </option>
                                         <?php endforeach; ?>
                                     </select>
+                                    <div class="invalid-feedback">Selecione um responsável cadastrado.</div>
+
+                                    <!-- Alerta de alteração (opcional, mantido do seu código anterior) -->
                                     <div id="avisoMorador" class="alert alert-warning mt-3 d-none border-0 shadow-sm" style="border-radius: 12px; font-size: 0.85rem;">
                                         <i class="bi bi-exclamation-triangle-fill me-2"></i>
                                         Atenção: Alterar o proprietário afetará as faturas futuras.
@@ -319,6 +324,43 @@ try {
     <?php include '../view/includes/footer.php'; ?>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Dependência JS do TomSelect -->
+    <script src="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/js/tom-select.complete.min.js"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Inicializa o TomSelect para o usuário
+            const tsUsuario = new TomSelect("#busca-usuario", {
+                create: false,
+                sortField: {
+                    field: "text",
+                    order: "asc"
+                },
+                render: {
+                    no_results: function(data, escape) {
+                        return '<div class="no-results py-2 px-3 text-muted">Nenhum morador encontrado...</div>';
+                    },
+                    option: function(data, escape) {
+                        return '<div class="py-2 px-3">' + escape(data.text) + '</div>';
+                    }
+                }
+            });
+
+            // Lógica para mostrar o aviso caso o usuário seja alterado
+            const idOriginal = "<?= $unidade['id_usuario'] ?? '' ?>";
+            tsUsuario.on('change', function(value) {
+                const aviso = document.getElementById('avisoMorador');
+                if (aviso) {
+                    if (value !== idOriginal && idOriginal !== "") {
+                        aviso.classList.remove('d-none');
+                    } else {
+                        aviso.classList.add('d-none');
+                    }
+                }
+            });
+        });
+    </script>
 
     <script>
         // Item 1: Lógica de Auditoria e Aviso de Troca de Morador

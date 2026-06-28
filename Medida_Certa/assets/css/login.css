@@ -105,10 +105,6 @@ body {
     color: #0d6efd;
 }
 
-.nav-link.active {
-    border-bottom: 2px solid #fff;
-}
-
 /* Responsividade */
 @media (max-width: 576px) {
     .login-card { padding: 1.5rem !important; }

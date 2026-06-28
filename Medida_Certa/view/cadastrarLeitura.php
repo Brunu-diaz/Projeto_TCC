@@ -8,16 +8,17 @@ try {
 
     // INNER JOIN para buscar os dados da Unidade + o Código do Hidrômetro vinculado
     $sqlUnidades = "SELECT 
-                        u.id_unidade, 
-                        u.numero, 
-                        u.bloco,
-                        usr.nome AS responsavel,
-                        h.id_hidrometro,
-                        h.codigo AS codigo_hidrometro 
-                    FROM unidade u
-                    INNER JOIN hidrometro h ON u.id_unidade = h.id_unidade
-                    LEFT JOIN usuario usr ON u.id_usuario = usr.id_usuario
-                    ORDER BY u.bloco, u.numero";
+                    u.id_unidade, 
+                    u.numero, 
+                    u.bloco,
+                    usr.nome AS responsavel,
+                    h.id_hidrometro,
+                    h.codigo AS codigo_hidrometro,
+                    h.leitura_inicial 
+                FROM unidade u
+                INNER JOIN hidrometro h ON u.id_unidade = h.id_unidade
+                LEFT JOIN usuario usr ON u.id_usuario = usr.id_usuario
+                ORDER BY u.bloco, u.numero";
 
     $listaUnidades = $pdo->query($sqlUnidades)->fetchAll(PDO::FETCH_ASSOC);
 } catch (Exception $e) {
@@ -35,9 +36,11 @@ try {
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><path fill='%230d6efd' d='M8 16a6 6 0 0 0 6-6c0-1.65-1.35-4-6-10-4.65 6-6 8.35-6 10a6 6 0 0 0 6 6z'/></svg>">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/css/tom-select.bootstrap5.min.css" rel="stylesheet">
     <link rel="stylesheet" href="../assets/css/unificado.css">
 
     <style>
@@ -105,6 +108,16 @@ try {
             font-weight: 500;
             color: #198754;
         }
+
+        /* Garante que o campo de busca siga o arredondamento (rounded-3) do seu código original */
+        .ts-control {
+            border-radius: 0.5rem !important;
+        }
+
+        .ts-wrapper.single .ts-control {
+            background-image: none !important;
+            /* Remove seta duplicada se houver */
+        }
     </style>
 </head>
 
@@ -119,11 +132,11 @@ try {
             </div>
         <?php endif; ?>
         <?php if (isset($_GET['erro'])): ?>
-        <div class="alert alert-compacto fade show text-danger" id="alertaFlutuante" style="color: #dc3545; border-color: #f8d7da;">
-            <i class="bi bi-exclamation-triangle-fill me-2"></i> 
-            <?= htmlspecialchars($_GET['erro']) ?>
-        </div>
-    <?php endif; ?>
+            <div class="alert alert-compacto fade show text-danger" id="alertaFlutuante" style="color: #dc3545; border-color: #f8d7da;">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                <?= htmlspecialchars($_GET['erro']) ?>
+            </div>
+        <?php endif; ?>
     </div>
 
     <div class="container page-header-box mb-4">
@@ -140,7 +153,7 @@ try {
             </div>
             <div class="d-flex gap-2">
                 <a href="javascript:history.back()" class="btn btn-outline-secondary rounded-3 px-4 shadow-sm">
-                Cancelar
+                    Cancelar
                 </a>
             </div>
         </div>
@@ -182,12 +195,15 @@ try {
                                 <div class="row g-3">
                                     <div class="col-md-12">
                                         <label for="unidade" class="form-label small">Selecione a Unidade / Hidrômetro</label>
+                                        <!-- Mantive as classes form-select, rounded-3 e py-2 conforme seu código original -->
                                         <select id="unidade" name="id_hidrometro" class="form-select rounded-3 py-2" required>
                                             <option value="">Escolha a unidade...</option>
                                             <?php foreach ($listaUnidades as $u): ?>
-                                                <option value="<?= $u['id_hidrometro'] ?>">
-                                                    <?= htmlspecialchars($u['responsavel'] ?? 'Sem Responsável') ?> - Bloco <?= $u['bloco'] ?> - Apto <?= $u['numero'] ?> (S/N: <?= $u['codigo_hidrometro'] ?>)
-                                                </option>
+                                                <?php if (!empty($u['id_hidrometro'])): ?>
+                                                    <option value="<?= $u['id_hidrometro'] ?>">
+                                                        <?= htmlspecialchars($u['responsavel'] ?? 'Sem Responsável') ?> - Bloco <?= $u['bloco'] ?> - Apto <?= $u['numero'] ?> (S/N: <?= $u['codigo_hidrometro'] ?>)
+                                                    </option>
+                                                <?php endif; ?>
                                             <?php endforeach; ?>
                                         </select>
                                     </div>
@@ -228,10 +244,10 @@ try {
                                     </button>
                                 </div>
                                 <div class="col-md-6">
-                                <button type="reset" class="btn btn-light btn-lg w-100 rounded-3 py-3">
-                                    Limpar Dados
-                                </button>
-                            </div>
+                                    <button type="reset" class="btn btn-light btn-lg w-100 rounded-3 py-3">
+                                        Limpar Dados
+                                    </button>
+                                </div>
                             </div>
                         </form>
                     </div>
@@ -243,6 +259,29 @@ try {
     <?php include '../view/includes/footer.php'; ?>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Tom Select JS -->
+    <script src="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/js/tom-select.complete.min.js"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            new TomSelect("#unidade", {
+                create: false,
+                sortField: {
+                    field: "text",
+                    order: "asc"
+                },
+                // Traduções para Português
+                render: {
+                    no_results: function(data, escape) {
+                        return '<div class="no-results py-2 px-3 text-muted">Nenhuma unidade encontrada...</div>';
+                    },
+                    option: function(data, escape) {
+                        return '<div class="py-2 px-3">' + escape(data.text) + '</div>';
+                    }
+                }
+            });
+        });
+    </script>
     <script>
         (() => {
             'use strict'

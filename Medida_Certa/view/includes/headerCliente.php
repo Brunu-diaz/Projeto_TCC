@@ -257,7 +257,7 @@ if (!empty($id_usuario)) {
                             <?php if ($totalNovas > 0): ?>
                                 <?php foreach ($listaNotificacoes as $notif): ?>
                                     <li>
-                                        <a class="dropdown-item p-3 border-bottom d-flex align-items-start gap-3" href="unidadesCliente.php">
+                                        <a class="dropdown-item p-3 border-bottom d-flex align-items-start gap-3" href="notificacoes.php">
                                             <div class="bg-danger-subtle text-danger rounded-circle d-flex align-items-center justify-content-center" style="width: 35px; height: 35px; flex-shrink: 0;">
                                                 <i class="bi bi-exclamation-triangle-fill"></i>
                                             </div>
@@ -317,7 +317,7 @@ if (!empty($id_usuario)) {
                             </li>
                             <li>
                                 <a class="dropdown-item" href="ajuda.php">
-                                    <i class="bi bi-question-circle me-3"></i>Central de Ajuda
+                                    <i class="bi bi-question-circle me-3 text-muted"></i>Central de Ajuda
                                 </a>
                             </li>
                             <li>

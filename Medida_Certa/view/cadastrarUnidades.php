@@ -1,8 +1,17 @@
 <?php
-
 // 1. A trava de segurança DEVE ser a primeira coisa
 require_once __DIR__ . '/../controller/TravaAdmin.php';
+require_once __DIR__ . '/../model/dao/Conexao.php';
 
+try {
+    $pdo = Conexao::getConexao();
+
+    // Busca apenas os usuários que podem ser responsáveis
+    $sqlUsuarios = "SELECT id_usuario, nome, cpf_cnpj FROM usuario ORDER BY nome ASC";
+    $usuarios = $pdo->query($sqlUsuarios)->fetchAll(PDO::FETCH_ASSOC);
+} catch (Exception $e) {
+    $usuarios = [];
+}
 ?>
 <!DOCTYPE html>
 <html lang="pt-br">
@@ -10,16 +19,18 @@ require_once __DIR__ . '/../controller/TravaAdmin.php';
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MedidaCerta - Cadastrar Unidade e Cliente</title>
+    <title>MedidaCerta - Cadastrar Unidade</title>
 
+    <!-- CSS Externo -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
-
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><path fill='%230d6efd' d='M8 16a6 6 0 0 0 6-6c0-1.65-1.35-4-6-10-4.65 6-6 8.35-6 10a6 6 0 0 0 6 6z'/></svg>">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-
     <link rel="stylesheet" href="../assets/css/unificado.css">
+    <!-- Tom Select (Filtro de busca) -->
+    <link href="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/css/tom-select.bootstrap5.min.css" rel="stylesheet">
 
     <style>
         :root {
@@ -32,123 +43,59 @@ require_once __DIR__ . '/../controller/TravaAdmin.php';
             background-color: var(--bg-light);
         }
 
-        /* Estilização dos Cards e Seções */
+        /* Identidade Visual Mantida */
         .card {
             border-radius: 20px;
             border: none;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
         }
 
-        .page-header-box div[style*="border-radius: 16px"] {
-            border: none !important;
-            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075) !important;
+        .form-control,
+        .form-select,
+        .ts-control {
+            border: 1px solid #e0e0e0 !important;
+            padding: 0.75rem 1rem !important;
+            border-radius: 12px !important;
+            box-shadow: none !important;
         }
 
-        /* Melhoria nos inputs */
-        .form-control {
-            border: 1px solid #e0e0e0;
-            padding: 0.75rem 1rem;
-            transition: all 0.2s ease;
-            font-size: 0.95rem;
+        /* Estilo específico para o filtro de busca Tom Select */
+        .ts-wrapper.focus .ts-control {
+            border-color: var(--primary-color) !important;
         }
 
-        .form-control:focus {
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 4px rgba(13, 110, 253, 0.1);
-            background-color: #fff;
+        .ts-dropdown {
+            border-radius: 12px;
+            margin-top: 5px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
         }
 
         .form-label {
             color: #495057;
-            margin-bottom: 0.5rem;
-            letter-spacing: -0.2px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            text-transform: uppercase;
         }
 
-        /* Estilização do Grupo de Botões (Tipo de Unidade) */
-        .btn-check:checked+.btn-outline-primary {
-            background-color: var(--primary-color);
-            color: white;
-            box-shadow: 0 4px 12px rgba(13, 110, 253, 0.2);
-        }
-
-        .btn-outline-primary {
-            border-color: #e0e0e0;
-            color: #6c757d;
-            background: #fff;
-        }
-
-        .btn-outline-primary:hover {
-            background-color: #f1f7ff;
-            border-color: var(--primary-color);
-            color: var(--primary-color);
-        }
-
-        /* Ícones decorativos */
         .icon-square {
-            transition: transform 0.3s ease;
+            background: #e6f1fe;
+            width: 45px;
+            height: 45px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        .card:hover .icon-square {
-            transform: scale(1.05);
-        }
-
-        /* Botões de Ação */
-        .btn-lg {
-            padding: 1rem;
-            font-size: 1rem;
+        /* Funcionalidade: Feedback visual no botão */
+        .btn-primary {
             transition: all 0.3s ease;
-            font-weight: bold;
+            border-radius: 12px;
         }
 
         .btn-primary:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 15px rgba(13, 110, 253, 0.25);
-        }
-
-        /* --- REMOÇÃO DAS BORDAS AZUIS NOS BOTÕES DE GRUPO --- */
-        .input-group .btn:focus,
-        .input-group .btn:active,
-        .input-group .btn:focus-visible {
-            box-shadow: none !important;
-            outline: none !important;
-            border-color: #e0e0e0 !important;
-            background-color: #fff !important;
-        }
-
-        .input-group .btn-outline-secondary {
-            border-color: #e0e0e0;
-            background-color: #fff;
-            color: #6c757d;
-        }
-
-        .input-group:focus-within .btn-outline-secondary {
-            border-color: var(--primary-color) !important;
-        }
-
-        /* Ajuste específico para o campo de senha não quebrar a borda */
-        #senha {
-            border-right: none;
-        }
-
-        /* Responsividade */
-        @media (max-width: 768px) {
-            .card-body {
-                padding: 1.5rem !important;
-            }
-        }
-
-        /* Faz com que a borda de validação envolva os botões adjacentes */
-        .was-validated .input-group:has(#senha:invalid) .btn-outline-secondary {
-            border-color: #dc3545 !important;
-        }
-
-        .was-validated .input-group:has(#senha:valid) .btn-outline-secondary {
-            border-color: #198754 !important;
-        }
-
-        /* Garante que o ícone de exclamação do Bootstrap não sobreponha o texto */
-        .was-validated #senha.form-control {
-            padding-right: 2rem;
-            background-position: right 0.5rem center;
+            box-shadow: 0 5px 15px rgba(13, 110, 253, 0.3);
         }
 
         .alert-floating-container {
@@ -176,10 +123,11 @@ require_once __DIR__ . '/../controller/TravaAdmin.php';
 
     <div class="alert-floating-container">
         <?php if (isset($_GET['sucesso'])): ?>
-            <div class="alert alert-compacto fade show" id="sucessoAlert">
+            <div class="alert alert-compacto fade show" id="alertaFlutuante">
                 <i class="bi bi-check-circle-fill me-2"></i> Unidade cadastrada com sucesso!
             </div>
         <?php endif; ?>
+
         <?php if (isset($_GET['erro'])): ?>
             <div class="alert alert-compacto fade show text-danger" id="alertaFlutuante" style="color: #dc3545; border-color: #f8d7da;">
                 <i class="bi bi-exclamation-triangle-fill me-2"></i>
@@ -188,155 +136,91 @@ require_once __DIR__ . '/../controller/TravaAdmin.php';
         <?php endif; ?>
     </div>
 
-    <div class="container page-header-box mb-4">
-        <div class="bg-white py-3 px-4 shadow-sm d-flex justify-content-between align-items-center" style="border-radius: 16px; border: 1px solid #f1f5f9;">
-            <div>
-                <h4 class="fw-bold mb-0 text-dark">Cadastrar Nova Unidade</h4>
-                <nav aria-label="breadcrumb">
-                    <ol class="breadcrumb mb-0" style="font-size: 0.75rem;">
-                        <li class="breadcrumb-item"><a href="admin.php" class="text-decoration-none text-primary">Admin</a></li>
-                        <li class="breadcrumb-item"><a href="unidades.php" class="text-decoration-none text-primary">Unidades</a></li>
-                        <li class="breadcrumb-item active">Cadastrar</li>
-                    </ol>
-                </nav>
+    <div class="container mb-5">
+        <!-- CABEÇALHO/BREADCRUMB -->
+        <div class="container page-header-box mb-4">
+            <div class="bg-white py-3 px-4 shadow-sm d-flex justify-content-between align-items-center" style="border-radius: 16px; border: 1px solid #f1f5f9;">
+                <div>
+                    <h4 class="fw-bold mb-0 text-dark">Cadastrar Unidade</h4>
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb mb-0" style="font-size: 0.75rem;">
+                            <li class="breadcrumb-item"><a href="admin.php" class="text-decoration-none text-primary">Admin</a></li>
+                            <li class="breadcrumb-item"><a href="unidades.php" class="text-decoration-none text-primary">Unidades</a></li>
+                            <li class="breadcrumb-item active">Cadastrar</li>
+                        </ol>
+                    </nav>
+                </div>
+                <div class="d-flex gap-2">
+                    <a href="javascript:history.back()" class="btn btn-outline-secondary rounded-3 px-4 shadow-sm">
+                        Cancelar
+                    </a>
+                </div>
             </div>
-            <a href="javascript:history.back()" class="btn btn-outline-secondary rounded-3 px-4 shadow-sm">
-                Cancelar
-            </a>
         </div>
-    </div>
-
-    <main class="main-container container mb-5">
 
         <div class="row justify-content-center">
             <div class="col-lg-8">
-                <div class="card border-0 shadow-sm overflow-hidden">
+                <div class="card border-0 shadow-sm">
                     <div class="card-body p-4 p-md-5">
-                        <form action="../controller/CadastroUnidadeControl.php" method="POST" id="formCadastro" class="needs-validation" novalidate autocomplete="off">
 
-                            <div class="mb-5">
-                                <div class="d-flex align-items-center mb-4">
-                                    <div class="icon-square me-3" style="background: #e6f1fe; width: 45px; height: 45px; border-radius: 12px; display: flex; align-items: center; justify-content: center;">
-                                        <i class="bi bi-person-plus-fill text-primary fs-4"></i>
-                                    </div>
-                                    <div>
-                                        <h5 class="fw-bold mb-0 text-dark">Dados do Cliente</h5>
-                                        <p class="text-muted small mb-0">Informações para a tabela `usuario`</p>
-                                    </div>
+                        <form action="../controller/CadastroUnidadeControl.php" method="POST" class="needs-validation" id="formCadastro" novalidate>
+
+                            <div class="d-flex align-items-center mb-4">
+                                <div class="icon-square me-3">
+                                    <i class="bi bi-building-add text-primary fs-4"></i>
+                                </div>
+                                <div>
+                                    <h5 class="fw-bold mb-0 text-dark">Informações da Unidade</h5>
+                                    <p class="text-muted small mb-0">Associe o proprietário à localização física</p>
+                                </div>
+                            </div>
+
+                            <div class="row g-3">
+                                <!-- FUNCIONALIDADE: SELECT COM BUSCA (Filtro) -->
+                                <div class="col-md-12">
+                                    <label class="form-label">Proprietário / Responsável</label>
+                                    <select id="busca-usuario" name="id_usuario" placeholder="Digite o nome ou CPF para buscar..." required>
+                                        <option value=""></option>
+                                        <?php foreach ($usuarios as $user): ?>
+                                            <option value="<?= $user['id_usuario'] ?>">
+                                                <?= htmlspecialchars($user['nome']) ?> (<?= htmlspecialchars($user['cpf_cnpj']) ?>)
+                                            </option>
+                                        <?php endforeach; ?>
+                                    </select>
+                                    <div class="invalid-feedback">Selecione um responsável cadastrado.</div>
                                 </div>
 
-                                <div class="row g-3">
-                                    <div class="col-md-8">
-                                        <label class="form-label">Nome Completo / Razão Social</label>
-                                        <input type="text" name="nome" class="form-control rounded-3 py-2" placeholder="Ex: João ou Loja de Conveniência" required>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <label class="form-label small">CPF / CNPJ</label>
-                                        <input type="text" id="cpf_cnpj" name="cpf_cnpj" class="form-control rounded-3 py-2" placeholder="000.000.000-00" required>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label class="form-label fw-bold small">E-mail</label>
-                                        <input type="email" name="email" class="form-control rounded-3 py-2" placeholder="cliente@email.com" required>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label class="form-label fw-bold small">Telefone / WhatsApp</label>
-                                        <input type="text" id="telefone" name="telefone" class="form-control rounded-3 py-2" placeholder="(61) 99999-9999" required>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label class="form-label fw-bold small" for="id_perfil">Tipo de Usuário</label>
-                                        <select class="form-control rounded-3 py-2" name="id_perfil" required>
-                                            <option value="">Selecione o perfil...</option>
-                                            <option value="1">Administrador</option>
-                                            <option value="2">Cliente</option>
+                                <div class="col-md-12">
+                                    <label class="form-label">Endereço (Logradouro)</label>
+                                    <input type="text" name="endereco" class="form-control" placeholder="Ex: Av. Central, Lote 12" required>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <label class="form-label">Número / Apto</label>
+                                    <input type="text" name="numero" class="form-control" placeholder="402" required>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">Bloco / Torre</label>
+                                    <!-- FUNCIONALIDADE: Transformação em maiúsculas via CSS/JS -->
+                                    <input type="text" name="bloco" class="form-control text-uppercase" placeholder="Ex: B">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">Tipo de Unidade</label>
+                                    <div class="input-group">
+                                        <select name="complemento" class="form-select border-start-0" style="border-radius: 0 12px 12px 0;" required>
+                                            <option value="" selected disabled>Selecione...</option>
+                                            <option value="Residencial">Residencial</option>
+                                            <option value="Comercial">Comercial</option>
                                         </select>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <hr class="my-5 opacity-25">
-
-                            <div class="mb-5">
-                                <div class="d-flex align-items-center mb-4">
-                                    <div class="icon-square me-3" style="background: #fffaf0; width: 45px; height: 45px; border-radius: 12px; display: flex; align-items: center; justify-content: center;">
-                                        <i class="bi bi-shield-lock-fill text-warning fs-4"></i>
-                                    </div>
-                                    <div>
-                                        <h5 class="fw-bold mb-0 text-dark">Credenciais Provisórias</h5>
-                                        <p class="text-muted small mb-0">Dados para a tabela `login` (Alteração obrigatória no 1º acesso)</p>
-                                    </div>
-                                </div>
-
-                                <div class="row g-3">
-                                    <div class="col-md-6">
-                                        <label class="form-label fw-bold small">Username (Login)</label>
-                                        <div class="input-group">
-                                            <span class="input-group-text bg-light border-end-0"><i class="bi bi-at"></i></span>
-                                            <input type="text" id="username" name="username" class="form-control rounded-end-3 py-2" placeholder="ex: bruno.dias" required>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label class="form-label fw-bold small">Senha Temporária</label>
-                                        <div class="input-group">
-                                            <input type="password" id="senha" name="senha_provisoria" class="form-control py-2" required>
-                                            <button class="btn btn-outline-secondary border-start-0" type="button" onclick="gerarSenha()" title="Gerar Senha">
-                                                <i class="bi bi-magic"></i>
-                                            </button>
-                                            <button class="btn btn-outline-secondary border-start-0" type="button" onclick="toggleSenha()">
-                                                <i class="bi bi-eye" id="toggleIcon"></i>
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <hr class="my-5 opacity-25">
-
-                            <div class="mb-5">
-                                <div class="d-flex align-items-center mb-4">
-                                    <div class="icon-square me-3" style="background: #e6fffa; width: 45px; height: 45px; border-radius: 12px; display: flex; align-items: center; justify-content: center;">
-                                        <i class="bi bi-building-up text-success fs-4"></i>
-                                    </div>
-                                    <div>
-                                        <h5 class="fw-bold mb-0 text-dark">Configuração da Unidade</h5>
-                                        <p class="text-muted small mb-0">Endereço e Hidrômetro vinculado</p>
-                                    </div>
-                                </div>
-
-                                <div class="row g-3">
-                                    <div class="col-md-12 mb-2">
-                                        <label class="form-label fw-bold small d-block">Tipo de Unidade</label>
-                                        <div class="btn-group w-100" role="group">
-                                            <input type="radio" class="btn-check" name="tipo_unidade" id="residencial" value="Residencial" checked>
-                                            <label class="btn btn-outline-primary py-2" for="residencial"><i class="bi bi-house-door me-2"></i>Apartamento</label>
-
-                                            <input type="radio" class="btn-check" name="tipo_unidade" id="comercial" value="Comercial">
-                                            <label class="btn btn-outline-primary py-2" for="comercial"><i class="bi bi-shop me-2"></i>Loja Comercial</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-12">
-                                        <label class="form-label fw-bold small">Endereço da Unidade</label>
-                                        <input type="text" name="endereco" class="form-control rounded-3 py-2" placeholder="Ex: Av. Central, Lote 12" required>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <label class="form-label fw-bold small">Número / Apto</label>
-                                        <input type="text" name="numero" class="form-control rounded-3 py-2" placeholder="402" required>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <label class="form-label fw-bold small">Bloco / Torre</label>
-                                        <input type="text" name="bloco" class="form-control rounded-3 py-2" placeholder="Bloco B" required>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <label class="form-label fw-bold small">Serial do Hidrômetro</label>
-                                        <input type="text" name="codigo_hidrometro" class="form-control rounded-3 py-2 fw-bold" placeholder="00000000" required>
                                     </div>
                                 </div>
                             </div>
 
                             <hr class="my-4 opacity-25">
 
-                            <div class="row g-3 pt-3">
+                            <div class="row g-3 pt-2">
                                 <div class="col-md-6">
-                                    <button type="submit" class="btn btn-primary btn-lg w-100 rounded-3 shadow-sm py-3 fw-bold">
+                                    <button type="submit" class="btn btn-primary btn-lg w-100 shadow-sm rounded-3 py-3">
                                         Finalizar Cadastro
                                     </button>
                                 </div>
@@ -347,100 +231,62 @@ require_once __DIR__ . '/../controller/TravaAdmin.php';
                                 </div>
                             </div>
                         </form>
+
                     </div>
                 </div>
             </div>
         </div>
-    </main>
+    </div>
 
     <?php include '../view/includes/footer.php'; ?>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-masker/1.2.0/vanilla-masker.min.js"></script>
+    <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/js/tom-select.complete.min.js"></script>
 
     <script>
-        // Seleção de elementos
-        const inputTel = document.querySelector("#telefone");
-        const inputCpfCnpj = document.querySelector("#cpf_cnpj");
-        const inputUser = document.querySelector("#username");
-        const inputSenha = document.querySelector("#senha");
-
-        // 1. Máscaras (Telefone e CPF/CNPJ)
-        inputTel.addEventListener('input', () => {
-            const value = inputTel.value.replace(/\D/g, "");
-            const mask = value.length > 10 ? "(99) 99999-9999" : "(99) 9999-9999";
-            VMasker(inputTel).maskPattern(mask);
-        });
-
-        inputCpfCnpj.addEventListener('input', () => {
-            const value = inputCpfCnpj.value.replace(/\D/g, "");
-            const mask = value.length <= 11 ? "999.999.999-99" : "99.999.999/9999-99";
-            VMasker(inputCpfCnpj).maskPattern(mask);
-        });
-
-        // 2. Tratamento de Username
-        inputUser.addEventListener('input', function(e) {
-            e.target.value = e.target.value.toLowerCase().replace(/\s/g, '');
-        });
-
-        // 3. Funções de Senha
-        function toggleSenha() {
-            const icon = document.getElementById('toggleIcon');
-            if (inputSenha.type === 'password') {
-                inputSenha.type = 'text';
-                icon.classList.replace('bi-eye', 'bi-eye-slash');
-            } else {
-                inputSenha.type = 'password';
-                icon.classList.replace('bi-eye-slash', 'bi-eye');
+        // 1. Inicializa o Filtro de Busca (Tom Select)
+        new TomSelect("#busca-usuario", {
+            create: false,
+            sortField: {
+                field: "text",
+                direction: "asc"
             }
-        }
+        });
 
-        function gerarSenha() {
-            const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%&*";
-            let novaSenha = "";
-            for (let i = 0; i < 10; i++) {
-                novaSenha += charset.charAt(Math.floor(Math.random() * charset.length));
-            }
-            inputSenha.value = novaSenha;
-            inputSenha.type = 'text';
-            document.getElementById('toggleIcon').classList.replace('bi-eye', 'bi-eye-slash');
-
-            // Feedback visual
-            inputSenha.style.backgroundColor = "#e6fffa";
-            setTimeout(() => inputSenha.style.backgroundColor = "#fff", 500);
-        }
-
-        // 4. Validação Bootstrap
+        // 2. Validação Bootstrap e Feedback de Carregamento
         (() => {
             'use strict'
-            const forms = document.querySelectorAll('.needs-validation')
-            Array.from(forms).forEach(form => {
-                form.addEventListener('submit', event => {
-                    if (!form.checkValidity()) {
-                        event.preventDefault()
-                        event.stopPropagation()
-                    }
-                    form.classList.add('was-validated')
-                }, false)
-            })
-        })()
+            const form = document.getElementById('formCadastro');
+            const btn = document.getElementById('btnSalvar');
+
+            form.addEventListener('submit', event => {
+                if (!form.checkValidity()) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                } else {
+                    // Se for válido, mostra o carregamento
+                    btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Salvando...';
+                    btn.classList.add('disabled');
+                }
+                form.classList.add('was-validated');
+            }, false);
+        })();
+
+        // 3. Funcionalidade: Atalho Ctrl + Enter para salvar
+        document.addEventListener('keydown', e => {
+            if (e.ctrlKey && e.key === 'Enter') {
+                document.getElementById('formCadastro').requestSubmit();
+            }
+        });
     </script>
 
     <script>
-        // Seleciona todos os alertas e faz eles sumirem após 4 segundos
-        setTimeout(function() {
-            let alertas = document.querySelectorAll('div[style*="padding: 15px"]');
-            alertas.forEach(a => a.style.display = 'none');
-        }, 4000);
-    </script>
+        // Seleciona o alerta independente de ser sucesso ou erro
+        const alerta = document.getElementById('alertaFlutuante');
 
-    <script>
-        const sucessoAlert = document.getElementById('sucessoAlert');
-        const alertToRemove = sucessoAlert;
-
-        if (alertToRemove) {
-            // 1. Limpa o parâmetro da URL sem recarregar a página
-            // Isso impede que o F5 mostre a mensagem de novo
+        if (alerta) {
+            // 1. Limpa os parâmetros da URL sem recarregar (Melhora a UX)
             if (window.history.replaceState) {
                 const url = new URL(window.location);
                 url.searchParams.delete('sucesso');
@@ -448,11 +294,12 @@ require_once __DIR__ . '/../controller/TravaAdmin.php';
                 window.history.replaceState({}, document.title, url.pathname);
             }
 
-            // 2. Animação de sumir o alerta após 3 segundos
+            // 2. Animação para sumir após 3 segundos
             setTimeout(() => {
-                alertToRemove.style.transition = "opacity 0.6s ease";
-                alertToRemove.style.opacity = "0";
-                setTimeout(() => alertToRemove.remove(), 600);
+                alerta.style.transition = "all 0.6s ease";
+                alerta.style.opacity = "0";
+                alerta.style.transform = "translateX(20px)"; // Efeito suave de saída
+                setTimeout(() => alerta.remove(), 600);
             }, 3000);
         }
     </script>

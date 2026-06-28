@@ -120,6 +120,30 @@ try {
         border-radius: 50%;
         border: 2px solid rgba(255, 255, 255, 0.8);
     }
+    .dropdown-menu {
+        border-radius: 12px !important;
+        padding: 0.5rem;
+        min-width: 200px;
+        border: none;
+        box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1) !important;
+        margin-top: 10px !important;
+    }
+
+    .dropdown-item {
+        border-radius: 8px;
+        padding: 0.6rem 1rem;
+        font-size: 0.9rem;
+        transition: all 0.2s;
+    }
+
+    .dropdown-item:hover {
+        background-color: #f8f9fa;
+        color: #0d6efd;
+    }
+
+    .dropdown-item i {
+        font-size: 1.1rem;
+    }
 </style>
 
 <header class="header-gradient pb-5">
@@ -147,26 +171,26 @@ try {
                     </li>
 
                     <li class="nav-item me-2">
-                        <a class="nav-link d-flex align-items-center <?php echo ($pagina_atual == 'unidades.php') ? 'active' : ''; ?>" href="unidades.php">
-                            <i class="bi bi-building me-1"></i> Unidades
-                        </a>
-                    </li>
-
-                    <li class="nav-item me-2">
                         <a class="nav-link d-flex align-items-center <?php echo ($pagina_atual == 'listarUsuarios.php') ? 'active' : ''; ?>" href="listarUsuarios.php">
                             <i class="bi bi-person-fill me-1"></i> Usuários
                         </a>
                     </li>
 
                     <li class="nav-item me-2">
-                        <a class="nav-link d-flex align-items-center <?php echo ($pagina_atual == 'listarLeituras.php') ? 'active' : ''; ?>" href="listarLeituras.php">
-                            <i class="bi bi-clock-history me-1"></i> Leituras
+                        <a class="nav-link d-flex align-items-center <?php echo ($pagina_atual == 'unidades.php') ? 'active' : ''; ?>" href="unidades.php">
+                            <i class="bi bi-building me-1"></i> Unidades
                         </a>
                     </li>
 
                     <li class="nav-item me-2">
                         <a class="nav-link d-flex align-items-center <?php echo ($pagina_atual == 'listarHidrometros.php') ? 'active' : ''; ?>" href="listarHidrometros.php">
                             <i class="bi bi-speedometer2 me-1"></i> Hidrômetros
+                        </a>
+                    </li>
+
+                    <li class="nav-item me-2">
+                        <a class="nav-link d-flex align-items-center <?php echo ($pagina_atual == 'listarLeituras.php') ? 'active' : ''; ?>" href="listarLeituras.php">
+                            <i class="bi bi-clock-history me-1"></i> Leituras
                         </a>
                     </li>
 
@@ -228,63 +252,42 @@ try {
                                 <?php endif; ?>
                             </div>
                         </a>
-                        <ul class="dropdown-menu dropdown-menu-end shadow border-0 mt-3 p-2" style="border-radius: 12px; min-width: 240px;">
-                            <li class="px-3 py-2 mb-1">
-                                <span class="d-block fw-bold text-dark" style="font-size: 0.9rem;">Administrador</span>
-                                <span class="text-muted" style="font-size: 0.75rem;">Gestão MedidaCerta</span>
-                            </li>
-                            <li>
-                                <hr class="dropdown-divider">
+                        <ul class="dropdown-menu dropdown-menu-end shadow border-0 mt-3 animate slideIn" style="border-radius: 12px;">
+                            <li class="px-3 py-2 d-md-none border-bottom mb-2">
+                                <span class="fw-bold text-primary"><?= htmlspecialchars($nome_header) ?></span>
                             </li>
 
                             <li>
-                                <a class="dropdown-item d-flex align-items-center py-2" href="perfilAdmin.php">
-                                    <i class="bi bi-person-circle me-3 text-primary"></i>
-                                    <div>
-                                        <span class="d-block">Meu Perfil</span>
-                                        <small class="text-muted" style="font-size: 0.7rem;">Dados da conta</small>
-                                    </div>
+                                <a class="dropdown-item" href="perfilAdmin.php">
+                                    <i class="bi bi-person-vcard me-3 text-muted"></i>Meu Perfil
                                 </a>
                             </li>
 
                             <li>
-                                <a class="dropdown-item d-flex align-items-center py-2" href="admin_beneficios.php">
-                                    <i class="bi bi-patch-check me-3 text-primary"></i>
-                                    <div>
-                                        <span class="d-block">Benefícios</span>
-                                        <small class="text-muted" style="font-size: 0.7rem;">Prêmios e vantagens</small>
-                                    </div>
+                                <a class="dropdown-item" href="admin_beneficios.php">
+                                    <i class="bi bi-patch-check me-3 text-muted"></i>Benefícios
                                 </a>
                             </li>
 
                             <li>
-                                <a class="dropdown-item d-flex align-items-center py-2" href="configuracoesAdmin.php">
-                                    <i class="bi bi-sliders me-3 text-primary"></i>
-                                    <div>
-                                        <span class="d-block">Configurações</span>
-                                        <small class="text-muted" style="font-size: 0.7rem;">Tarifas e parâmetros</small>
-                                    </div>
+                                <a class="dropdown-item" href="configuracoesAdmin.php">
+                                    <i class="bi bi-gear me-3 text-muted"></i>Configurações
                                 </a>
                             </li>
 
                             <li>
-                                <a class="dropdown-item d-flex align-items-center py-2" href="suporte.php">
-                                    <i class="bi bi-headset me-3 text-primary"></i>
-                                    <div>
-                                        <span class="d-block">Suporte Técnico</span>
-                                        <small class="text-muted" style="font-size: 0.7rem;">Documentação e ajuda</small>
-                                    </div>
+                                <a class="dropdown-item" href="suporte.php">
+                                    <i class="bi bi-headset me-3 text-muted"></i>Suporte Técnico
                                 </a>
                             </li>
 
                             <li>
-                                <hr class="dropdown-divider">
+                                <hr class="dropdown-divider opacity-50">
                             </li>
 
                             <li>
-                                <a class="dropdown-item d-flex align-items-center py-2 text-danger" href="../controller/logout.php">
-                                    <i class="bi bi-box-arrow-right me-3"></i>
-                                    <span class="fw-bold">Sair do Sistema</span>
+                                <a class="dropdown-item text-danger" href="../controller/logout.php">
+                                    <i class="bi bi-box-arrow-right me-3"></i>Sair
                                 </a>
                             </li>
                         </ul>

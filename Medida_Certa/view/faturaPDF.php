@@ -1,8 +1,6 @@
 <?php
-// Define que o cookie de sessão vale para a raiz do servidor
-session_set_cookie_params(['path' => '/']);
-
 if (session_status() === PHP_SESSION_NONE) {
+    session_set_cookie_params(['path' => '/']);
     session_start();
 }
 
@@ -141,9 +139,20 @@ try {
     $valorEsgoto = round($valorAguaTotal * ($taxaEsgotoPercentual / 100), 2);
     $valorVariavelTotal = $valorAguaTotal + $valorEsgoto;
     $subtotalBruto = round($valorFixo + $valorVariavelTotal, 2);
-    $valorTotalFatura = $subtotalBruto;
-    $economiaReal = max(0.0, $subtotalBruto - $valorTotalFatura);
-    $detalhamentoDesconto = trim($dadosFatura['detalhamento_desconto'] ?? '');
+
+    // 6. BENEFÍCIO SOCIAL
+    $beneficio = null;
+    $stmtBeneficio = $pdo->prepare(
+        "SELECT percentual_desconto, tipo_beneficio FROM tarifa_social WHERE id_usuario = :id AND status_beneficio = 'Ativo' LIMIT 1"
+    );
+    $stmtBeneficio->execute([':id' => $dadosFatura['dono_unidade']]);
+    $beneficio = $stmtBeneficio->fetch(PDO::FETCH_ASSOC);
+
+    $percentualDesconto = $beneficio ? (float)$beneficio['percentual_desconto'] : 0.0;
+    $valorDesconto = $beneficio ? round($subtotalBruto * ($percentualDesconto / 100), 2) : 0.0;
+    $valorTotalFatura = round($subtotalBruto - $valorDesconto, 2);
+    $economiaReal = $valorDesconto;
+    $detalhamentoDesconto = $beneficio ? "Tarifa Social ativa: {$percentualDesconto}% de desconto sobre o subtotal bruto" : '';
 } catch (Exception $e) {
     die("Erro técnico: " . $e->getMessage());
 }
@@ -157,6 +166,7 @@ try {
     <title>Fatura - MedidaCerta</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><path fill='%230d6efd' d='M8 16a6 6 0 0 0 6-6c0-1.65-1.35-4-6-10-4.65 6-6 8.35-6 10a6 6 0 0 0 6 6z'/></svg>">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
@@ -273,14 +283,19 @@ try {
 
                         <?php if ($economiaReal > 0.01): ?>
                             <tr style="color: #059669; font-weight: 600; background-color: #f0fdf4;">
-                                <td>Desconto aplicado</td>
+                                <td>
+                                    Desconto Tarifa Social (<?= number_format($percentualDesconto, 0) ?>%)
+                                    <span class="badge bg-success ms-2" style="font-size:0.7rem;">Benefício Ativo</span>
+                                </td>
                                 <td class="text-end">- R$ <?= number_format($economiaReal, 2, ',', '.') ?></td>
                             </tr>
-                            <?php if ($detalhamentoDesconto !== ''): ?>
-                                <tr style="color: #0f5132; font-size: 0.9rem;">
-                                    <td colspan="2"><?= htmlspecialchars($detalhamentoDesconto, ENT_QUOTES, 'UTF-8') ?></td>
-                                </tr>
-                            <?php endif; ?>
+                            <tr style="color: #0f5132; font-size: 0.82rem; background-color: #f0fdf4;">
+                                <td colspan="2" class="ps-4 text-muted">
+                                    <?= number_format($percentualDesconto, 0) ?>% × Subtotal Bruto
+                                    (R$ <?= number_format($subtotalBruto, 2, ',', '.') ?>)
+                                    = - R$ <?= number_format($economiaReal, 2, ',', '.') ?>
+                                </td>
+                            </tr>
                         <?php endif; ?>
                     </tbody>
                 </table>

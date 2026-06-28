@@ -60,6 +60,14 @@ class UsuarioDAO
         }
     }
 
+    public function contarAdminsAtivos()
+    {
+        $sql = "SELECT COUNT(*) as total FROM usuarios WHERE id_perfil = 1 AND bloqueado = 0";
+        $stmt = $this->db->query($sql); // Ajuste o $this->db para a sua variável de conexão PDO
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $row['total'];
+    }
+
     /**
      * NOVO MÉTODO: Cadastra apenas a pessoa e o login.
      * Ideal para o fluxo onde o morador ainda não tem uma unidade vinculada.
@@ -284,44 +292,44 @@ class UsuarioDAO
     }
 
     public function editarUsuarioAdministrador(UsuarioDTO $usuario, $id_usuario)
-{
-    try {
-        $this->pdo->beginTransaction();
+    {
+        try {
+            $this->pdo->beginTransaction();
 
-        // 1. Atualiza a tabela 'usuario'
-        $sqlUser = "UPDATE usuario SET nome = ?, email = ?, cpf_cnpj = ?, telefone = ?, id_perfil = ? WHERE id_usuario = ?";
-        $stmtUser = $this->pdo->prepare($sqlUser);
-        $stmtUser->execute([
-            $usuario->getNome(),
-            $usuario->getEmail(),
-            $usuario->getCpfCnpj(),
-            $usuario->getTelefone(),
-            $usuario->getIdPerfil(),
-            $id_usuario
-        ]);
+            // 1. Atualiza a tabela 'usuario'
+            $sqlUser = "UPDATE usuario SET nome = ?, email = ?, cpf_cnpj = ?, telefone = ?, id_perfil = ? WHERE id_usuario = ?";
+            $stmtUser = $this->pdo->prepare($sqlUser);
+            $stmtUser->execute([
+                $usuario->getNome(),
+                $usuario->getEmail(),
+                $usuario->getCpfCnpj(),
+                $usuario->getTelefone(),
+                $usuario->getIdPerfil(),
+                $id_usuario
+            ]);
 
-        // 2. Atualiza a tabela 'login' (username)
-        $sqlLogin = "UPDATE login SET username = :user";
-        $paramsLogin = [':user' => $usuario->getUsername(), ':id' => $id_usuario];
+            // 2. Atualiza a tabela 'login' (username)
+            $sqlLogin = "UPDATE login SET username = :user";
+            $paramsLogin = [':user' => $usuario->getUsername(), ':id' => $id_usuario];
 
-        // Só atualiza a senha se ela não estiver vazia
-        if ($usuario->getSenha() != null) {
-            $sqlLogin .= ", senha_hash = :senha";
-            $paramsLogin[':senha'] = $usuario->getSenha();
+            // Só atualiza a senha se ela não estiver vazia
+            if ($usuario->getSenha() != null) {
+                $sqlLogin .= ", senha_hash = :senha";
+                $paramsLogin[':senha'] = $usuario->getSenha();
+            }
+
+            $sqlLogin .= " WHERE id_usuario = :id";
+            $stmtLogin = $this->pdo->prepare($sqlLogin);
+            $stmtLogin->execute($paramsLogin);
+
+            $this->pdo->commit();
+            return true;
+        } catch (PDOException $e) {
+            if ($this->pdo->inTransaction()) {
+                $this->pdo->rollBack();
+            }
+            error_log("Erro ao editar usuário: " . $e->getMessage());
+            return false;
         }
-
-        $sqlLogin .= " WHERE id_usuario = :id";
-        $stmtLogin = $this->pdo->prepare($sqlLogin);
-        $stmtLogin->execute($paramsLogin);
-
-        $this->pdo->commit();
-        return true;
-    } catch (PDOException $e) {
-        if ($this->pdo->inTransaction()) {
-            $this->pdo->rollBack();
-        }
-        error_log("Erro ao editar usuário: " . $e->getMessage());
-        return false;
     }
-}
 }

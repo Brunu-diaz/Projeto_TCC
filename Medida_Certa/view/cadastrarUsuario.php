@@ -11,6 +11,7 @@ require_once __DIR__ . '/../controller/TravaAdmin.php';
     <title>MedidaCerta - Cadastrar Usuário</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><path fill='%230d6efd' d='M8 16a6 6 0 0 0 6-6c0-1.65-1.35-4-6-10-4.65 6-6 8.35-6 10a6 6 0 0 0 6 6z'/></svg>">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
@@ -85,7 +86,7 @@ require_once __DIR__ . '/../controller/TravaAdmin.php';
             <div class="col-lg-8">
                 <div class="card p-4 p-md-5 shadow-sm border-0" style="border-radius: 20px;">
 
-                    <form action="../controller/CadastroUsuarioControl.php" method="POST">
+                    <form action="../controller/CadastroUsuarioControl.php" method="POST" autocomplete="off">
 
                         <div class="mb-5">
                             <div class="d-flex align-items-center mb-4">
@@ -100,31 +101,31 @@ require_once __DIR__ . '/../controller/TravaAdmin.php';
 
                             <div class="row g-3">
                                 <div class="col-md-12">
-                                    <label class="form-label text-dark small">Nome Completo</label>
+                                    <label class="form-label text-dark small" for="nome">Nome Completo</label>
                                     <div class="input-group">
                                         <span class="input-group-text bg-white border-end-0 rounded-start-3"><i class="bi bi-person"></i></span>
-                                        <input type="text" name="nome" class="form-control form-control-lg rounded-end-3" placeholder="Ex: João Silva" required>
+                                        <input type="text" name="nome" id="nome" class="form-control form-control-lg rounded-end-3" placeholder="Ex: João Silva" required>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
-                                    <label class="form-label text-dark small">E-mail</label>
+                                    <label class="form-label text-dark small" for="email">E-mail</label>
                                     <div class="input-group">
                                         <span class="input-group-text bg-white border-end-0 rounded-start-3"><i class="bi bi-envelope"></i></span>
-                                        <input type="email" name="email" class="form-control form-control-lg rounded-end-3" placeholder="joao@email.com" required>
+                                        <input type="email" name="email" id="email" class="form-control form-control-lg rounded-end-3" placeholder="joao@email.com" required>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
-                                    <label class="form-label text-dark small">Telefone / WhatsApp</label>
+                                    <label class="form-label text-dark small" for="telefone">Telefone / WhatsApp</label>
                                     <div class="input-group">
                                         <span class="input-group-text bg-white border-end-0 rounded-start-3"><i class="bi bi-whatsapp"></i></span>
-                                        <input type="text" name="telefone" class="form-control form-control-lg rounded-end-3" placeholder="(00) 00000-0000">
+                                        <input type="text" name="telefone" id="telefone" class="form-control form-control-lg rounded-end-3" placeholder="(00) 00000-0000">
                                     </div>
                                 </div>
                                 <div class="col-md-12">
-                                    <label class="form-label text-dark small">CPF ou CNPJ</label>
+                                    <label class="form-label text-dark small" for="cpf_cnpj">CPF ou CNPJ</label>
                                     <div class="input-group">
                                         <span class="input-group-text bg-white border-end-0 rounded-start-3"><i class="bi bi-card-text"></i></span>
-                                        <input type="text" name="cpf_cnpj" class="form-control form-control-lg rounded-end-3" placeholder="000.000.000-00">
+                                        <input type="text" name="cpf_cnpj" id="cpf_cnpj" class="form-control form-control-lg rounded-end-3" placeholder="000.000.000-00">
                                     </div>
                                 </div>
                             </div>
@@ -136,11 +137,11 @@ require_once __DIR__ . '/../controller/TravaAdmin.php';
                             </h6>
                             <div class="row g-3">
                                 <div class="col-md-6">
-                                    <label class="form-label text-dark small">Username (Login)</label>
-                                    <input type="text" name="username" class="form-control form-control-lg rounded-3" placeholder="ex: joao.silva" required>
+                                    <label class="form-label text-dark small" for="username">Username (Login)</label>
+                                    <input type="text" name="username" id="username" class="form-control form-control-lg rounded-3" placeholder="ex: joao.silva" required>
                                 </div>
                                 <div class="col-md-6">
-                                    <label class="form-label text-dark small">Senha Provisória</label>
+                                    <label class="form-label text-dark small" for="senha_provisoria">Senha Provisória</label>
                                     <div class="input-group">
                                         <input type="password" name="senha_provisoria" id="senha_provisoria" class="form-control form-control-lg rounded-start-3" required>
                                         <button class="btn btn-outline-secondary border-start-0" type="button" id="btnGerarSenha" title="Gerar Senha Aleatória">
@@ -152,10 +153,10 @@ require_once __DIR__ . '/../controller/TravaAdmin.php';
                                     </div>
                                 </div>
                                 <div class="col-md-12">
-                                    <label class="form-label text-dark small">Perfil de Acesso</label>
+                                    <label class="form-label text-dark small" for="perfil">Perfil de Acesso</label>
                                     <div class="input-group">
                                         <span class="input-group-text bg-white border-end-0 rounded-start-3"><i class="bi bi-layers text-secondary"></i></span>
-                                        <select name="perfil" class="form-select form-control-lg rounded-end-3">
+                                        <select name="perfil" id="perfil" class="form-select form-control-lg rounded-end-3">
                                             <option value="Morador" selected>Cliente</option>
                                             <option value="Administrador">Administrador</option>
                                         </select>

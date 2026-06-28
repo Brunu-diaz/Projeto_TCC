@@ -91,6 +91,7 @@ if (empty($_SESSION['csrf_token'])) {
     <title>MedidaCerta - Editar Perfil</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><path fill='%230d6efd' d='M8 16a6 6 0 0 0 6-6c0-1.65-1.35-4-6-10-4.65 6-6 8.35-6 10a6 6 0 0 0 6 6z'/></svg>">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
@@ -118,6 +119,57 @@ if (empty($_SESSION['csrf_token'])) {
             background: #a71d2a;
             transform: scale(1.1);
         }
+
+    /* Container do grupo */
+#modalSenha .input-group {
+    border: 1px solid #dee2e6;
+    border-radius: 10px !important;
+    overflow: hidden; /* Corta as sobras para garantir o arredondamento */
+    transition: border-color 0.2s;
+}
+
+/* Foco no grupo todo */
+#modalSenha .input-group:focus-within {
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.1);
+}
+
+/* O Campo de Texto */
+#modalSenha .input-group .form-control {
+    border: none !important; /* Remove a borda individual */
+    box-shadow: none !important;
+    height: 45px;
+}
+
+/* O Botão do Olhinho */
+#modalSenha .input-group .btn {
+    border: none !important; /* Remove a borda individual */
+    background-color: #fff !important;
+    color: #6c757d;
+    padding-right: 15px;
+    padding-left: 10px;
+}
+
+#modalSenha .input-group .btn:hover {
+    color: #0d6efd;
+}
+
+        .alert-floating-container {
+            position: fixed;
+            top: 25px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1060;
+        }
+
+        .alert-compacto {
+            background: #ffffff;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            border-radius: 50px;
+            padding: 10px 25px;
+            font-weight: 500;
+            color: #198754;
+        }
     </style>
 </head>
 
@@ -128,20 +180,21 @@ if (empty($_SESSION['csrf_token'])) {
     include_once __DIR__ . '/includes/headerCliente.php';
     ?>
 
-    <main class="container py-5">
+    <div class="alert-floating-container">
         <?php if (isset($_GET['sucesso'])): ?>
-            <div class="alert alert-success alert-dismissible fade show rounded-pill px-4 shadow-sm" role="alert">
+            <div class="alert alert-compacto fade show" id="sucessoAlert">
                 <i class="bi bi-check-circle-fill me-2"></i> Perfil atualizado com sucesso!
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
         <?php endif; ?>
-
         <?php if (isset($_GET['erro'])): ?>
-            <div class="alert alert-danger alert-dismissible fade show rounded-pill px-4 shadow-sm" role="alert">
-                <i class="bi bi-exclamation-triangle-fill me-2"></i> Erro ao processar solicitação.
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            <div class="alert alert-compacto fade show text-danger" id="alertaFlutuante" style="color: #dc3545; border-color: #f8d7da;">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                <?= htmlspecialchars($_GET['erro']) ?>
             </div>
         <?php endif; ?>
+    </div>
+
+    <main class="container py-5">
 
         <div class="row mb-4">
             <div class="col-12 text-center text-md-start">
@@ -243,36 +296,54 @@ if (empty($_SESSION['csrf_token'])) {
     </main>
 
     <div class="modal fade" id="modalSenha" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content border-0 shadow" style="border-radius: 15px;">
-                <div class="modal-header border-bottom-0 pt-4 px-4">
-                    <h5 class="modal-title fw-bold">Alterar Senha</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <form action="../controller/SenhaControl.php" method="POST">
-                    <div class="modal-body px-4">
-                        <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
-                        <div class="mb-3">
-                            <label class="form-label">Senha Atual</label>
-                            <input type="password" name="senha_atual" class="form-control" required>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Nova Senha</label>
-                            <input type="password" name="nova_senha" class="form-control" required minlength="6">
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Confirmar Nova Senha</label>
-                            <input type="password" name="confirma_senha" class="form-control" required>
-                        </div>
-                    </div>
-                    <div class="modal-footer border-top-0 pb-4 px-4">
-                        <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">Cancelar</button>
-                        <button type="submit" class="btn btn-primary rounded-pill px-4">Salvar Nova Senha</button>
-                    </div>
-                </form>
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow" style="border-radius: 15px;">
+            <div class="modal-header border-bottom-0 pt-4 px-4">
+                <h5 class="modal-title fw-bold">Alterar Senha</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
+            <form action="../controller/SenhaControl.php" method="POST">
+                <div class="modal-body px-4">
+                    <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Senha Atual</label>
+                        <div class="input-group">
+                            <input type="password" name="senha_atual" class="form-control" required>
+                            <button class="btn btn-outline-secondary" type="button" onclick="togglePassword(this)">
+                                <i class="bi bi-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Nova Senha</label>
+                        <div class="input-group">
+                            <input type="password" name="nova_senha" class="form-control" required minlength="6">
+                            <button class="btn btn-outline-secondary" type="button" onclick="togglePassword(this)">
+                                <i class="bi bi-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Confirmar Nova Senha</label>
+                        <div class="input-group">
+                            <input type="password" name="confirma_senha" class="form-control" required>
+                            <button class="btn btn-outline-secondary" type="button" onclick="togglePassword(this)">
+                                <i class="bi bi-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer border-top-0 pb-4 px-4">
+                    <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary rounded-pill px-4">Salvar Nova Senha</button>
+                </div>
+            </form>
         </div>
     </div>
+</div>
 
     <?php include '../view/includes/footerCliente.php'; ?>
 
@@ -353,6 +424,44 @@ if (empty($_SESSION['csrf_token'])) {
             });
         }
     </script>
+
+    <script>
+        const sucessoAlert = document.getElementById('sucessoAlert');
+        const alertToRemove = sucessoAlert;
+
+        if (alertToRemove) {
+            // 1. Limpa o parâmetro da URL sem recarregar a página
+            // Isso impede que o F5 mostre a mensagem de novo
+            if (window.history.replaceState) {
+                const url = new URL(window.location);
+                url.searchParams.delete('sucesso');
+                url.searchParams.delete('erro');
+                window.history.replaceState({}, document.title, url.pathname);
+            }
+
+            // 2. Animação de sumir o alerta após 3 segundos
+            setTimeout(() => {
+                alertToRemove.style.transition = "opacity 0.6s ease";
+                alertToRemove.style.opacity = "0";
+                setTimeout(() => alertToRemove.remove(), 600);
+            }, 3000);
+        }
+    </script>
+
+    <script>
+function togglePassword(button) {
+    const input = button.parentElement.querySelector('input');
+    const icon = button.querySelector('i');
+
+    if (input.type === "password") {
+        input.type = "text";
+        icon.classList.replace('bi-eye', 'bi-eye-slash');
+    } else {
+        input.type = "password";
+        icon.classList.replace('bi-eye-slash', 'bi-eye');
+    }
+}
+</script>
 </body>
 
 </html>

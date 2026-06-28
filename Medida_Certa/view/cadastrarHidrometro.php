@@ -27,9 +27,11 @@ try {
     <title>MedidaCerta - Novo Hidrômetro</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><path fill='%230d6efd' d='M8 16a6 6 0 0 0 6-6c0-1.65-1.35-4-6-10-4.65 6-6 8.35-6 10a6 6 0 0 0 6 6z'/></svg>">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/css/tom-select.bootstrap5.min.css" rel="stylesheet">
     <link rel="stylesheet" href="../assets/css/unificado.css">
     <style>
         .edit-card {
@@ -70,6 +72,18 @@ try {
             border-bottom: 2px solid #eff6ff;
             padding-bottom: 8px;
             margin-bottom: 20px;
+        }
+
+        /* Faz o Tom Select respeitar o visual do Bootstrap 5 e seu layout */
+        .ts-control {
+            border-radius: 0.375rem !important;
+            /* Padrão Bootstrap ou ajuste para seu rounded-3 */
+            padding: 0.5rem 0.75rem !important;
+        }
+
+        .ts-dropdown {
+            border-radius: 0.375rem !important;
+            margin-top: 5px !important;
         }
     </style>
 </head>
@@ -137,7 +151,8 @@ try {
                         <div class="row g-4">
                             <div class="col-md-12">
                                 <label class="form-label text-uppercase">Unidade Responsável</label>
-                                <select name="id_unidade" class="form-select">
+                                <!-- Adicionado o ID para o filtro e mantido a classe form-select -->
+                                <select id="select-unidade-responsavel" name="id_unidade" class="form-select">
                                     <option value="">Selecione a Unidade</option>
                                     <?php foreach ($unidades as $u): ?>
                                         <option value="<?= $u['id_unidade'] ?>">
@@ -169,6 +184,29 @@ try {
 
     <?php include '../view/includes/footer.php'; ?>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/js/tom-select.complete.min.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Inicializa o filtro para a Unidade Responsável
+            new TomSelect("#select-unidade-responsavel", {
+                create: false,
+                sortField: {
+                    field: "text",
+                    order: "asc"
+                },
+                render: {
+                    // Mensagem personalizada quando não encontra resultados
+                    no_results: function(data, escape) {
+                        return '<div class="no-results py-2 px-3 text-muted">Nenhuma unidade encontrada...</div>';
+                    },
+                    // Mantém o padding e estilo visual nas opções
+                    option: function(data, escape) {
+                        return '<div class="py-2 px-3">' + escape(data.text) + '</div>';
+                    }
+                }
+            });
+        });
+    </script>
 </body>
 
 </html>

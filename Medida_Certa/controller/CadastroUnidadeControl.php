@@ -1,62 +1,62 @@
 <?php
-require_once '../model/dto/UsuarioDTO.php';
-require_once '../model/dao/UsuarioDAO.php';
+// 1. Inicia a sessão (embora agora usemos $_GET, é boa prática manter para segurança/auth)
+if (!isset($_SESSION)) {
+    session_start();
+}
 
+// 2. Importações necessárias
+require_once __DIR__ . '/../controller/TravaAdmin.php';
+require_once __DIR__ . '/../model/dao/Conexao.php';
+
+// 3. Verifica se a requisição é POST
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    // Sanitização e Captura de Dados Pessoais
-    $nome = filter_input(INPUT_POST, 'nome', FILTER_SANITIZE_SPECIAL_CHARS);
-    $email = filter_input(INPUT_POST, 'email', FILTER_SANITIZE_EMAIL);
-    $cpf_cnpj = $_POST['cpf_cnpj'];
-    $telefone = $_POST['telefone'];
-    $username = $_POST['username'];
-    $senha_provisoria = $_POST['senha_provisoria'];
-    
-    // CAPTURA DO PERFIL (Vindo do <select> do formulário)
-    $id_perfil = filter_input(INPUT_POST, 'id_perfil', FILTER_SANITIZE_NUMBER_INT);
 
-    // Dados da Unidade
-    $tipo_unidade = $_POST['tipo_unidade'];
-    $endereco = $_POST['endereco'];
-    $numero = $_POST['numero'];
-    $bloco = $_POST['bloco'];
-    $codigo_hidrometro = $_POST['codigo_hidrometro'];
+    // Recupera e sanitiza os dados do formulário
+    $id_usuario  = filter_input(INPUT_POST, 'id_usuario', FILTER_VALIDATE_INT);
+    $endereco    = filter_input(INPUT_POST, 'endereco', FILTER_SANITIZE_SPECIAL_CHARS);
+    $numero      = filter_input(INPUT_POST, 'numero', FILTER_SANITIZE_SPECIAL_CHARS);
+    $bloco       = filter_input(INPUT_POST, 'bloco', FILTER_SANITIZE_SPECIAL_CHARS);
+    $complemento = filter_input(INPUT_POST, 'complemento', FILTER_SANITIZE_SPECIAL_CHARS);
 
-    // Validação mínima
-    if ($nome && $email && $username && $senha_provisoria && $id_perfil) {
-        $usuarioDTO = new UsuarioDTO();
-        
-        // Populando o DTO com dados pessoais
-        $usuarioDTO->setNome($nome);
-        $usuarioDTO->setEmail($email);
-        $usuarioDTO->setCpfCnpj($cpf_cnpj);
-        $usuarioDTO->setTelefone($telefone);
-        $usuarioDTO->setUsername($username);
-        $usuarioDTO->setSenha(password_hash($senha_provisoria, PASSWORD_DEFAULT));
-        
-        // AJUSTE: Perfil dinâmico e Status inicial Inativo (0)
-        $usuarioDTO->setIdPerfil($id_perfil); 
-        $usuarioDTO->setAtivo(0); // Força o ativo = 0 para troca de senha no 1º acesso
+    // Validação de campos obrigatórios (incluindo o novo select de complemento)
+    if (!$id_usuario || !$endereco || !$numero || !$complemento) {
+        $msgErro = urlencode("Preencha todos os campos obrigatórios corretamente.");
+        header("Location: ../view/cadastrarUnidade.php?erro=$msgErro");
+        exit;
+    }
 
-        // Populando o DTO com dados da Unidade
-        $usuarioDTO->setTipoUnidade($tipo_unidade);
-        $usuarioDTO->setEndereco($endereco);
-        $usuarioDTO->setNumero($numero);
-        $usuarioDTO->setBloco($bloco);
-        $usuarioDTO->setCodigoHidrometro($codigo_hidrometro);
+    try {
+        $pdo = Conexao::getConexao();
 
-        $usuarioDAO = new UsuarioDAO();
-        $resultado = $usuarioDAO->cadastrarUsuario($usuarioDTO);
+        // SQL para inserção
+        $sql = "INSERT INTO unidade (id_usuario, endereco, numero, bloco, complemento) 
+                VALUES (:id_usuario, :endereco, :numero, :bloco, :complemento)";
 
-        if ($resultado) {
+        $stmt = $pdo->prepare($sql);
+
+        // Bind dos valores para evitar SQL Injection
+        $stmt->bindValue(':id_usuario', $id_usuario);
+        $stmt->bindValue(':endereco', $endereco);
+        $stmt->bindValue(':numero', $numero);
+        $stmt->bindValue(':bloco', strtoupper($bloco)); // Padronização do bloco
+        $stmt->bindValue(':complemento', $complemento); // Recebe "Residencial" ou "Comercial"
+
+        if ($stmt->execute()) {
+            // SUCESSO: Redireciona para a listagem (ajuste o nome da view se necessário)
             header("Location: ../view/cadastrarUnidades.php?sucesso=1");
             exit;
         } else {
-            header("Location: ../view/cadastrarUnidades.php?erro=Falha+no+cadastro");
-            exit;
+            throw new Exception("Erro ao inserir dados no banco.");
         }
-    } else {
-        // Se faltar algum campo obrigatório
-        header("Location: ../view/cadastrarUnidades.php?erro=Preencha+todos+os+campos+obrigatorios");
+
+    } catch (Exception $e) {
+        // ERRO: Redireciona de volta para o formulário com a mensagem de erro
+        $msgErro = urlencode("Não foi possível cadastrar a unidade: " . $e->getMessage());
+        header("Location: ../view/cadastrarUnidade.php?erro=$msgErro");
         exit;
     }
+} else {
+    // Se tentarem acessar o control diretamente via URL
+    header("Location: ../view/cadastrarUnidades.php");
+    exit;
 }

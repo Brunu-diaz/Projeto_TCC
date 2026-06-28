@@ -12,6 +12,103 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../assets/css/quemsomos.css">
+    <style>
+        /* Container para alinhar os dois membros */
+        .equipe-wrapper {
+            display: flex;
+            flex-wrap: wrap;
+            /* Quebra para duas linhas em mobile */
+            gap: 1.5rem;
+            /* Espaçamento entre os membros */
+        }
+
+        /* Wrapper para um membro individual (Ícone + Texto) */
+        .membro-wrapper {
+            display: flex;
+            align-items: start;
+            /* Alinha o ícone com o topo do nome */
+            gap: 1rem;
+            /* Espaçamento entre o ícone e o texto */
+            flex: 1;
+            /* Faz os dois membros terem larguras iguais */
+            min-width: 250px;
+            /* Largura mínima para mobile */
+        }
+
+        /* Estilo para o ícone circular */
+        .membro-icon-circle {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: rgba(13, 110, 253, 0.08);
+            /* bg-primary-subtle */
+            color: #0d6efd;
+            /* text-primary */
+            flex-shrink: 0;
+            /* Impede o ícone de encolher */
+        }
+
+        /* Container principal da composição das duas fotos */
+        .team-double-wrapper {
+            position: relative;
+            width: 100%;
+            max-width: 360px;
+            height: 340px;
+            margin: 0 auto;
+        }
+
+        /* Base comum para as caixas das fotos */
+        .creator-box {
+            position: absolute;
+            width: 210px;
+            height: 210px;
+            transition: transform 0.3s ease, z-index 0.2s;
+        }
+
+        .creator-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            /* Garante que o rosto não fique esticado */
+        }
+
+        /* Posicionamento da Foto da Jeovanice (Superior Esquerda) */
+        .photo-jeovanice {
+            top: -10px;
+            left: -15px;
+            z-index: 5;
+        }
+
+        /* Posicionamento da Foto do Bruno (Inferior Direita - Sobreposto) */
+        .photo-bruno {
+            bottom: 20px;
+            right: 25px;
+            z-index: 10;
+        }
+
+        /* Efeito de destaque ao passar o mouse */
+        .creator-box:hover {
+            transform: scale(1.05);
+            z-index: 12;
+            /* Traz a foto focada para a frente */
+        }
+
+        /* Ajustes finos para Mobile */
+        @media (max-width: 576px) {
+            .team-double-wrapper {
+                max-width: 290px;
+                height: 270px;
+            }
+
+            .creator-box {
+                width: 160px;
+                height: 160px;
+            }
+        }
+    </style>
 </head>
 
 <body>
@@ -118,17 +215,48 @@
 
                             <div class="row align-items-center g-5 pt-5 border-top">
                                 <div class="col-md-5 order-md-2 text-center">
-                                    <div class="team-image-wrapper shadow-lg rounded-circle p-2 bg-white">
-                                        <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?q=80&w=600&auto=format&fit=crop" alt="Equipe MedidaCerta" class="img-fluid rounded-circle team-photo">
-                                        <div class="drop-decorator badge bg-primary rounded-pill shadow">
-                                            <i class="bi bi-droplet-fill text-white"></i>
+                                    <div class="team-double-wrapper">
+                                        <div class="creator-box photo-jeovanice shadow-lg rounded-circle p-1 bg-white">
+                                            <img src="../assets/img/WhatsApp Image 2026-05-09 at 05.10.11.jpeg" alt="Jeovanice Rodrigues" class="img-fluid rounded-circle">
+                                        </div>
+
+                                        <div class="creator-box photo-bruno shadow-lg rounded-circle p-1 bg-white">
+                                            <img src="../assets/img/WhatsApp Image 2026-05-17 at 17.18.20.jpeg" alt="Bruno da Silva" class="img-fluid rounded-circle">
+                                        </div>
+
+                                        <div class="drop-decorator badge bg-primary rounded-circle shadow d-flex align-items-center justify-content-center" style="width: 40px; height: 40px; position: absolute; bottom: 5px; right: 25px; z-index: 15;">
+                                            <i class="bi bi-droplet-fill text-white" style="font-size: 1.1rem;"></i>
                                         </div>
                                     </div>
                                 </div>
+
                                 <div class="col-md-7 order-md-1 text-start">
-                                    <h2 class="fw-bold text-dark section-title">A Mente por trás do Projeto</h2>
-                                    <p class="text-muted lead mt-3">O MedidaCerta nasceu da dedicação de estudantes de TI apaixonados por soluções reais para Brasília.</p>
-                                    <p class="text-muted small">Nossa missão é unir tecnologia de ponta com sustentabilidade, garantindo que a gestão hídrica em condomínios seja justa, transparente e livre de desperdícios.</p>
+                                    <h2 class="fw-bold text-dark section-title">As Mentes por trás do Projeto</h2>
+                                    <p class="text-muted lead mt-3">
+                                        O MedidaCerta nasceu da visão estratégica e técnica de <strong>Bruno da Silva Dias</strong> e <strong>Jeovanice Rodrigues Gomes</strong>, estudantes de TI apaixonados por transformar a gestão hídrica em Brasília.
+                                    </p>
+
+                                    <div class="equipe-wrapper mt-4 mb-4">
+                                        <div class="membro-wrapper">
+                                            <div class="membro-icon-circle">
+                                                <i class="bi bi-code-slash"></i>
+                                            </div>
+                                            <div>
+                                                <h6 class="mb-0 fw-bold">Bruno da Silva Dias</h6>
+                                                <small class="text-muted">Desenvolvedor e Idealizador</small>
+                                            </div>
+                                        </div>
+
+                                        <div class="membro-wrapper">
+                                            <div class="membro-icon-circle">
+                                                <i class="bi bi-lightbulb"></i>
+                                            </div>
+                                            <div>
+                                                <h6 class="mb-0 fw-bold">Jeovanice Rodrigues Gomes</h6>
+                                                <small class="text-muted">Desenvolvedora e Gestora de Projeto</small>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
