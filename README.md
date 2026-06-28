@@ -31,20 +31,19 @@ O banco de dados foi planejado para mitigar falhas operacionais humanas. A rela�
 
 1 - Realize um git clone do repositório:
 
-  [https://github.com/Brunu-diaz/Projeto_TCC.git]
+- [https://github.com/Brunu-diaz/Projeto_TCC.git]
 
 2 - Configure o Ambiente:
 
-  Mova a pasta do projeto para o diretório htdocs do seu XAMPP.
-
-  Importe o arquivo do banco de dados no seu phpMyAdmin / MySQL Workbench.
+- Mova a pasta do projeto para o diretório htdocs do seu XAMPP.
+- Importe o arquivo do banco de dados no seu phpMyAdmin / MySQL Workbench.
 
 3 - Acesse no navegador:
 
-  http://localhost/Projeto_TCC
+- http://localhost/Projeto_TCC
 
 👤 Desenvolvedor
 
-Nome: Bruno da Silva Dias
-Linkedin: https://www.linkedin.com/in/bruno-dias-76983a1aa
-E-mail: brunudiaz@gmail.com
+- Nome: Bruno da Silva Dias
+- Linkedin: https://www.linkedin.com/in/bruno-dias-76983a1aa
+- E-mail: brunudiaz@gmail.com
